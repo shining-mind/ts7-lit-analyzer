@@ -106,7 +106,7 @@ Dependencies are installed from the public npm registry. Declare every direct de
 
 ## Tests and validation
 
-Library and workspace tests use `node:test` and `node:assert/strict`. Node 26 runs TypeScript tests directly with type stripping. Build packages before running tests that import their compiled entry points.
+Library and workspace tests use `node:test` and `node:assert/strict`. Node 26 runs TypeScript tests directly with type stripping. Build packages before running tests that import their compiled entry points. The isolated legacy parity fixture has its own TypeScript 5 installation and frozen lockfile; `pnpm test` installs it before running the baseline tests.
 
 Run the applicable checks from the repository root:
 

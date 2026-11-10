@@ -1,0 +1,7 @@
+packages: []
+
+lockfileIncludeTarballUrl: false
+registry: https://registry.npmjs.org/
+minimumReleaseAge: 20160
+minimumReleaseAgeStrict: true
+saveExact: true
