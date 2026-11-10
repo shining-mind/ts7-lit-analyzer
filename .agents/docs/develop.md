@@ -45,7 +45,7 @@ Apply these conventions only where property minification, subclassing, or cross-
 ## Tests and validation
 
 - Add or update meaningful positive and negative tests for changed behavior when the applicable test workflow exists.
-- Follow existing test conventions and compile TypeScript before running compiled tests.
+- Follow existing test conventions. Run TypeScript tests directly with Node 26 type stripping and check them separately with `pnpm typecheck`.
 - Test source ranges, unsaved changes, invalidation, and incomplete inputs where relevant.
 - Run `pnpm build`, `pnpm typecheck`, `pnpm lint`, `pnpm format:check`, and `pnpm test` when applicable.
 - Verify package portability with packed artifacts when package metadata or dependencies change.

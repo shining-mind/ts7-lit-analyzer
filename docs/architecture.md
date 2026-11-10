@@ -76,7 +76,7 @@ An unavailable API or transport is a documented blocker, not proof of parity. Th
 
 ## Testing and packaging
 
-Library and CLI tests use `node:test` and `node:assert/strict`, compiling TypeScript before running compiled tests. VS Code integration uses `@vscode/test-cli`, `@vscode/test-electron` and Mocha in a real Extension Development Host, with isolated settings and pinned dependencies. Exercise diagnostics and ranges, completion/hover/definition commands, and updates caused by another unsaved document; wait for conditions with timeouts rather than arbitrary sleeps. Verify failure exit codes and logs. Provider tests are complemented by a small visual smoke test for highlighting and displayed suggestions.
+Library and CLI tests use `node:test` and `node:assert/strict`. Node 26 runs TypeScript tests directly with type stripping, while `pnpm typecheck` checks them separately without emitting files. VS Code integration uses `@vscode/test-cli`, `@vscode/test-electron` and Mocha in a real Extension Development Host, with isolated settings and pinned dependencies. Exercise diagnostics and ranges, completion/hover/definition commands, and updates caused by another unsaved document; wait for conditions with timeouts rather than arbitrary sleeps. Verify failure exit codes and logs. Provider tests are complemented by a small visual smoke test for highlighting and displayed suggestions.
 
 Fixtures cover source, declarations, JS-only dependencies, bindings, directives, source coordinates and missing/partial/stale/corrupt manifests. Compare the legacy baseline while testing corrections against actual semantics. Measure cold indexing, warm completion/hover percentiles, update latency, memory and IPC; set budgets from measured baselines.
 

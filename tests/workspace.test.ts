@@ -11,12 +11,13 @@ for (const name of [
   test(`${name} exposes its built entry point`, async () => {
     const manifest = JSON.parse(
       await readFile(
-        new URL(`../packages/${name}/package.json`, import.meta.url)
+        new URL(`../packages/${name}/package.json`, import.meta.url),
+        'utf8'
       )
     );
     const entry = manifest.exports['.'];
     await import(
-      new URL(`../packages/${name}/${entry.import}`, import.meta.url)
+      new URL(`../packages/${name}/${entry.import}`, import.meta.url).href
     );
     assert.ok(
       (
