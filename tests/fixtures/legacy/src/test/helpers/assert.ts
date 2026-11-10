@@ -1,11 +1,10 @@
-import type {LitAnalyzerRuleId} from 'lit-analyzer/lib/analyze/lit-analyzer-config.js';
-import type {LitDiagnostic} from 'lit-analyzer/lib/analyze/types/lit-diagnostic.js';
+import type {AnalyzerDiagnostic} from '@ts7-lit-analyzer/analyzer';
 import type {TsTestContext} from './ts-test.ts';
 
 export function hasDiagnostic(
   t: TsTestContext,
-  diagnostics: LitDiagnostic[],
-  ruleName: LitAnalyzerRuleId
+  diagnostics: AnalyzerDiagnostic[],
+  ruleName: string
 ): void {
   if (diagnostics.length !== 1) {
     prettyLogDiagnostics(t, diagnostics);
@@ -16,7 +15,7 @@ export function hasDiagnostic(
 
 export function hasNoDiagnostics(
   t: TsTestContext,
-  diagnostics: LitDiagnostic[]
+  diagnostics: AnalyzerDiagnostic[]
 ): void {
   if (diagnostics.length !== 0) {
     prettyLogDiagnostics(t, diagnostics);
@@ -24,7 +23,10 @@ export function hasNoDiagnostics(
   t.is(diagnostics.length, 0);
 }
 
-function prettyLogDiagnostics(t: TsTestContext, diagnostics: LitDiagnostic[]) {
+function prettyLogDiagnostics(
+  t: TsTestContext,
+  diagnostics: AnalyzerDiagnostic[]
+) {
   t.log(
     diagnostics.map(
       (diagnostic) => `${diagnostic.source}: ${diagnostic.message}`

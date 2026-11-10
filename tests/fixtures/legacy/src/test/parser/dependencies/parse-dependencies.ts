@@ -1,6 +1,6 @@
 import {parseAllIndirectImports} from 'lit-analyzer/lib/analyze/parse/parse-dependencies/parse-dependencies.js';
 import {isFacadeModule} from 'lit-analyzer/lib/analyze/parse/parse-dependencies/visit-dependencies.js';
-import {prepareAnalyzer} from '../../helpers/analyze.ts';
+import {prepareAnalyzer} from '../../helpers/legacy-analyze.ts';
 import {tsTest} from '../../helpers/ts-test.ts';
 
 tsTest('Correctly finds all imports in a file', (t) => {

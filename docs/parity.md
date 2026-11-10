@@ -22,7 +22,7 @@ A verified legacy result is not automatically the desired TS7 behavior. Intentio
 
 The isolated fixture in `tests/fixtures/legacy/` has its own manifest and lockfile, so legacy TypeScript does not mix with the workspace's TypeScript 7 installation. It is outside the pnpm workspace. Upstream test cases and assertions are preserved under `src/test/` and run directly as TypeScript with Node 26 and `node:test`, without AVA or a compilation step. The suite covers 210 passing scenarios and 3 upstream skips using the latest supported legacy TypeScript version, 5.2.2.
 
-Run the complete baseline with `pnpm test:baseline`, or include it with all other checks through `pnpm test`. These commands install the fixture with its frozen lockfile before running the Node.js tests. The scenario harness selects its implementation through `ANALYZER_PROVIDER`, which defaults to `legacy`; `src/test/helpers/legacy-provider.ts` creates the published legacy analyzer. A future TS7 provider can be added behind the same boundary without changing scenario assertions. A passing legacy suite alone does not prove TS7 correctness. To run only the legacy CLI example:
+Run the complete baseline with `pnpm test:baseline`, or include it with all other checks through `pnpm test`. These commands install the fixture with its frozen lockfile before running the Node.js tests. The scenario harness selects its implementation through `ANALYZER_PROVIDER`, which defaults to `legacy`; `src/test/helpers/legacy-provider.ts` creates the published legacy analyzer. Shared scenario contracts for configuration, ranges, diagnostics, and code fixes belong to `packages/analyzer` rather than the legacy fixture. Parser and indexer scenarios that intentionally inspect legacy-specific compiler models remain in the legacy adapter. A future TS7 provider can be added behind the same boundary without changing scenario assertions. A passing legacy suite alone does not prove TS7 correctness. To run only the legacy CLI example:
 
 ```sh
 cd tests/fixtures/legacy
@@ -66,24 +66,24 @@ No legacy false positives or false negatives have been catalogued from these loc
 
 ## Feature matrix
 
-| Capability                                     | Fixture IDs                                     | Legacy baseline | TS7 status      |
-| ---------------------------------------------- | ----------------------------------------------- | --------------- | --------------- |
-| CLI project and file selection                 | `cli/project-selection/*`                       | pending         | not implemented |
-| CLI output formats and exit codes              | `cli/output/*`                                  | pending         | not implemented |
-| Rule severity, strict mode, and suppression    | `cli/configuration/*`                           | pending         | not implemented |
-| Lit tag recognition and template extraction    | `templates/imports/*`, `templates/extraction/*` | pending         | not implemented |
-| Source maps and edits                          | `templates/source-maps/*`                       | pending         | not implemented |
-| Standard and Lit component discovery           | `registry/discovery/*`                          | pending         | not implemented |
-| Property and attribute bindings                | `bindings/property/*`, `bindings/attribute/*`   | pending         | not implemented |
-| Boolean, event, content, and element bindings  | `bindings/{boolean,event,content,element}/*`    | pending         | not implemented |
-| Built-in and user directives                   | `bindings/directives/*`                         | pending         | not implemented |
-| Declarations and JavaScript/JSDoc dependencies | `registry/dependencies/*`                       | pending         | not implemented |
-| Optional manifests and stale metadata          | `manifests/*`                                   | pending         | not implemented |
-| CSS diagnostics and editor intelligence        | `css/*`                                         | pending         | not implemented |
-| Completion, hover, and definition              | `editor/navigation/*`                           | pending         | not implemented |
-| Diagnostics, code actions, and fixes           | `editor/diagnostics/*`, `editor/fixes/*`        | pending         | not implemented |
-| Rename, formatting, folding, and auto-close    | `editor/editing/*`                              | pending         | not implemented |
-| Unsaved buffers and project references         | `editor/snapshots/*`, `project-references/*`    | pending         | not implemented |
-| Public indexing API                            | `api/indexing/*`                                | pending         | not implemented |
+| Capability                                     | Fixture IDs                                                                         | Legacy baseline    | TS7 status      |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------ | --------------- |
+| CLI project and file selection                 | `cli/project-selection/*`                                                           | pending            | not implemented |
+| CLI output formats and exit codes              | `tests/legacy-baseline.test.ts`                                                     | partially verified | not implemented |
+| Rule severity, strict mode, and suppression    | `src/test/rules/*`                                                                  | partially verified | not implemented |
+| Lit tag recognition and template extraction    | `src/test/parser/html-document/*`, `src/test/indexer/*`                             | partially verified | not implemented |
+| Source maps and edits                          | `templates/source-maps/*`                                                           | pending            | not implemented |
+| Standard and Lit component discovery           | `src/test/indexer/*`, `src/test/parser/dependencies/*`                              | partially verified | not implemented |
+| Property and attribute bindings                | `src/test/rules/*`                                                                  | partially verified | not implemented |
+| Boolean, event, content, and element bindings  | `src/test/rules/*`                                                                  | partially verified | not implemented |
+| Built-in and user directives                   | `src/test/rules/no-invalid-directive-binding.ts`, `no-incompatible-type-binding.ts` | partially verified | not implemented |
+| Declarations and JavaScript/JSDoc dependencies | `src/test/parser/dependencies/*`                                                    | partially verified | not implemented |
+| Optional manifests and stale metadata          | `manifests/*`                                                                       | pending            | not implemented |
+| CSS diagnostics and editor intelligence        | `css/*`                                                                             | pending            | not implemented |
+| Completion, hover, and definition              | `editor/navigation/*`                                                               | pending            | not implemented |
+| Diagnostics, code actions, and fixes           | `src/test/rules/*`, especially `no-missing-import.ts`                               | partially verified | not implemented |
+| Rename, formatting, folding, and auto-close    | `editor/editing/*`                                                                  | pending            | not implemented |
+| Unsaved buffers and project references         | `editor/snapshots/*`, `project-references/*`                                        | pending            | not implemented |
+| Public indexing API                            | `src/test/indexer/index-entries.ts`                                                 | partially verified | not implemented |
 
 Every in-scope entry must receive a verified legacy baseline and an explicit TS7 status before full parity is claimed.

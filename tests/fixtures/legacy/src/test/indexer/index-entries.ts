@@ -2,7 +2,7 @@ import type {Node, SourceFile} from 'typescript';
 
 import {getCurrentTsModule, tsTest} from '../helpers/ts-test.ts';
 import type {TsTestContext} from '../helpers/ts-test.ts';
-import {getIndexEntries} from '../helpers/analyze.ts';
+import {getIndexEntries} from '../helpers/legacy-analyze.ts';
 
 import type {LitIndexEntry} from 'lit-analyzer/lib/analyze/document-analyzer/html/lit-html-document-analyzer.js';
 import {HtmlNodeKind} from 'lit-analyzer/lib/analyze/types/html-node/html-node-types.js';

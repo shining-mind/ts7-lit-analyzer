@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@ts7-lit-analyzer/analyzer':
+        specifier: file:../../../packages/analyzer
+        version: file:../../../packages/analyzer
       '@types/node':
         specifier: 26.6.5
         version: 26.6.5
@@ -47,6 +50,9 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@ts7-lit-analyzer/analyzer@file:../../../packages/analyzer':
+    resolution: {directory: ../../../packages/analyzer, type: directory}
 
   '@types/node@26.6.5':
     resolution: {integrity: sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==}
@@ -286,6 +292,8 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.3
+
+  '@ts7-lit-analyzer/analyzer@file:../../../packages/analyzer': {}
 
   '@types/node@26.6.5':
     dependencies:

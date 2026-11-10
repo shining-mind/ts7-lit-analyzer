@@ -7,6 +7,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
+    "@ts7-lit-analyzer/analyzer": "file:../../../packages/analyzer",
     "@types/node": "26.6.5",
     "lit": "3.3.2",
     "lit-analyzer": "2.0.3",
