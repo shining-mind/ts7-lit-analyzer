@@ -1,7 +1,14 @@
 {
   "name": "ts7-lit-extension",
   "displayName": "TypeScript 7 Lit Extension",
+  "description": "Type-aware Lit tooling for TypeScript 7 projects",
   "publisher": "ts7-lit-analyzer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shining-mind/ts7-lit-analyzer.git",
+    "directory": "packages/vscode-extension"
+  },
+  "license": "SEE LICENSE IN LICENSE",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,13 +20,12 @@
   ],
   "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test:vscode": "vscode-test"
+    "build": "rolldown -c && tsc -p tsconfig.build.json",
+    "build:test": "tsc -p tsconfig.json --noEmit false --outDir .test-dist",
+    "typecheck": "tsc -p tsconfig.json",
+    "test:vscode": "pnpm run build:test && vscode-test",
+    "package:vsix": "vsce package --no-dependencies --out dist/ts7-lit-extension-0.0.0.vsix"
   },
-  "files": [
-    "dist"
-  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -32,6 +38,11 @@
     "@types/vscode": "1.140.0",
     "@vscode/test-cli": "0.0.15",
     "@vscode/test-electron": "3.1.0",
-    "mocha": "12.0.3"
+    "@vscode/vsce": "4.0.0",
+    "mocha": "12.0.3",
+    "rolldown": "1.2.15"
+  },
+  "dependencies": {
+    "@ts7-lit-analyzer/analyzer": "workspace:*"
   }
 }

@@ -7,9 +7,15 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
+  "bin": {
+    "ts7-lit-analyzer": "./dist/bin.js"
+  },
   "files": [
     "dist"
   ],
+  "dependencies": {
+    "@ts7-lit-analyzer/analyzer": "workspace:*"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

@@ -33,6 +33,7 @@ pnpm typecheck
 pnpm lint
 pnpm format:check
 pnpm test
+pnpm test:packaging
 pnpm test:vscode
 ```
 

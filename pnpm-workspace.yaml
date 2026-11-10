@@ -9,4 +9,6 @@ trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 525600
 blockExoticSubdeps: true
 strictDepBuilds: true
+allowBuilds:
+  '@vscode/vsce-sign': true
 saveExact: true
