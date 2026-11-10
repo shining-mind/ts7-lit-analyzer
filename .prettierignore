@@ -1,5 +1,6 @@
 node_modules
 dist
+.test-projects
 pnpm-lock.yaml
 .agents/skills/openspec-*/
 .claude/skills/openspec-*/
