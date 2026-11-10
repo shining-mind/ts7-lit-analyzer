@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
-import {cp, mkdir, mkdtemp, readFile, rm} from 'node:fs/promises';
+import {mkdir, mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -21,9 +21,19 @@ test('packed artifacts install and run in a standalone fixture', async (t) => {
   const archiveDirectory = join(temporaryDirectory, 'archives');
   const consumerDirectory = join(temporaryDirectory, 'consumer');
   await mkdir(archiveDirectory, {recursive: true});
-  await cp(join(workspaceRoot, 'fixtures/standalone'), consumerDirectory, {
-    recursive: true,
-  });
+  await mkdir(consumerDirectory, {recursive: true});
+  await writeFile(
+    join(consumerDirectory, 'package.json'),
+    JSON.stringify(
+      {
+        name: 'ts7-lit-analyzer-standalone-fixture',
+        private: true,
+        type: 'module',
+      },
+      null,
+      2
+    )
+  );
 
   const archives = packageNames.map((packageName) => {
     const output = execFileSync(
