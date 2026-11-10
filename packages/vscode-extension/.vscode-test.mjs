@@ -5,7 +5,7 @@ import {join} from 'node:path';
 const testDataDirectory = join(tmpdir(), `ts7-lit-vscode-${process.pid}`);
 
 export default defineConfig({
-  files: 'dist/test/**/*.test.js',
+  files: '.test-dist/test/**/*.test.js',
   version: '1.140.0',
   extensionDevelopmentPath: '.',
   workspaceFolder: 'fixtures/smoke',

@@ -43,7 +43,7 @@ Apply these conventions only where property minification, subclassing, or cross-
 - Do not add a dependency without confirming that the required capability is missing and recording why the dependency is appropriate.
 - Use exact versions for all direct external dependencies; do not use `^`, `~`, tags, or open ranges. The workspace enforces `saveExact`.
 - Do not install or update to a package version published less than 14 days ago. The workspace enforces `minimumReleaseAge: 20160`; choose an older compatible release rather than bypassing the policy.
-- Keep dependency installation within the workspace supply-chain policies: public npm registry, locked exact resolutions, no exotic transitive sources, no trust downgrades for releases from the past year, and no unapproved dependency build scripts. Do not add package exceptions without an explicit reviewed rationale.
+- Keep dependency installation within the workspace supply-chain policies: public npm registry, locked exact resolutions, no exotic transitive sources, no trust downgrades for releases from the past year, and no unapproved dependency build scripts. Do not add package exceptions without an explicit reviewed rationale. The sole current build-script exception is `@vscode/vsce-sign`, whose reviewed postinstall copies the optional platform-specific signing binary required by VSIX packaging.
 
 ## Tests and validation
 

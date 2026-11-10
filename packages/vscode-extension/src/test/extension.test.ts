@@ -10,7 +10,8 @@ suite('Extension activation', () => {
     if (extension === undefined) {
       throw new Error('The extension is not installed in the test host');
     }
-    await extension.activate();
+    const api = await extension.activate();
     assert.equal(extension.isActive, true);
+    assert.equal(api.analyzerVersion, '0.0.0');
   });
 });

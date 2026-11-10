@@ -2,8 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-    "types": ["node", "mocha"]
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["node", "mocha", "vscode"]
   },
   "include": ["src/**/*.ts"]
 }

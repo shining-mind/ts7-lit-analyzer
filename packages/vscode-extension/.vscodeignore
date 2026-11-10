@@ -1,0 +1,10 @@
+.test-dist/
+.vscode-test.mjs
+.vscode-test/
+fixtures/
+node_modules/
+rolldown.config.mjs
+src/
+tsconfig.json
+tsconfig.build.json
+dist/*.vsix
