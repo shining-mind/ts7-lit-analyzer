@@ -1,0 +1,7 @@
+node_modules
+dist
+pnpm-lock.yaml
+.agents/skills/openspec-*/
+.claude/skills/openspec-*/
+.kimi-code/skills/openspec-*/
+.opencode/skills/openspec-*/
