@@ -1,11 +1,21 @@
 {
   "name": "@ts7-lit-analyzer/vscode-extension",
+  "displayName": "TypeScript 7 Lit Extension",
+  "publisher": "ts7-lit-analyzer",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "vscode": "^1.140.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:vscode": "vscode-test"
   },
   "files": [
     "dist"
@@ -15,5 +25,13 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "devDependencies": {
+    "@types/mocha": "10.0.10",
+    "@types/node": "26.6.5",
+    "@types/vscode": "1.140.0",
+    "@vscode/test-cli": "0.0.15",
+    "@vscode/test-electron": "3.1.0",
+    "mocha": "12.0.3"
   }
 }

@@ -18,7 +18,7 @@ The Oxlint configuration maps Lit's effective ESLint configuration as follows:
 
 - `eslint:recommended` is represented by Oxlint's `correctness` category at error severity.
 - `plugin:@typescript-eslint/eslint-recommended` and `plugin:@typescript-eslint/recommended` are represented by the TypeScript plugin, the correctness category, and explicitly configured TypeScript rules.
-- `import/extensions` is `error` with `always`.
+- `import/extensions` is `error` with `always` and `ignorePackages: true`, so the rule targets relative imports without requiring extensions in package specifiers.
 - `no-prototype-builtins`, `@typescript-eslint/ban-types`, `explicit-module-boundary-types`, `no-empty-function`, and `no-non-null-assertion` are disabled.
 - `@typescript-eslint/no-explicit-any` is an error, except in `*_test.ts` files.
 - `@typescript-eslint/no-unused-vars` is a warning with `argsIgnorePattern: "^_"`.
