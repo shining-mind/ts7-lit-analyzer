@@ -2,3 +2,11 @@ packages:
   - packages/*
 
 lockfileIncludeTarballUrl: false
+registry: https://registry.npmjs.org/
+minimumReleaseAge: 20160
+minimumReleaseAgeStrict: true
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 525600
+blockExoticSubdeps: true
+strictDepBuilds: true
+saveExact: true

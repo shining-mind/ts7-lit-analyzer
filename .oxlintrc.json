@@ -9,7 +9,13 @@
     "es2020": true
   },
   "rules": {
-    "import/extensions": ["error", "always"],
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "ignorePackages": true
+      }
+    ],
     "eslint/no-prototype-builtins": "off",
     "typescript/ban-types": "off",
     "typescript/explicit-module-boundary-types": "off",

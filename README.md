@@ -24,7 +24,7 @@ See [architecture](docs/architecture.md) for the architecture, milestones, testi
 
 ## Development
 
-The workspace requires Node 26 and pnpm 12.14.0. From the repository root:
+The workspace requires Node 26 and pnpm 12.14.0. It uses the public npm registry, exact direct dependency versions, and a 14-day minimum release age for dependency versions. From the repository root:
 
 ```sh
 pnpm install --frozen-lockfile
@@ -33,6 +33,7 @@ pnpm typecheck
 pnpm lint
 pnpm format:check
 pnpm test
+pnpm test:vscode
 ```
 
 Build before running the smoke tests. The four private packages contain only placeholder entry points; there is no analyzer, CLI, or VS Code extension implementation yet. The Oxlint configuration follows Lit's ESLint configuration where supported; see [Formatting and linting](docs/linting.md) for the upstream baseline, rule mapping, and known differences.

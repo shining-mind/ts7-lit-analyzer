@@ -102,6 +102,8 @@ pnpm install --frozen-lockfile
 pnpm build
 ```
 
+Dependencies are installed from the public npm registry. Declare every direct dependency with an exact version and do not use version ranges. Newly resolved package versions must have been published at least 14 days ago; choose an older compatible release when necessary rather than bypassing the workspace policy. The workspace also blocks exotic transitive dependencies, rejects trust downgrades for releases from the past year, and does not run unapproved dependency build scripts. Review any proposed exception explicitly instead of disabling these checks.
+
 ## Tests and validation
 
 Library and workspace tests use `node:test` and `node:assert/strict`. Node 26 runs TypeScript tests directly with type stripping. Build packages before running tests that import their compiled entry points.
@@ -114,6 +116,7 @@ pnpm typecheck
 pnpm lint
 pnpm format:check
 pnpm test
+pnpm test:vscode
 ```
 
 VS Code integration requires a real Extension Development Host. Unit or mocked tests do not establish editor integration.

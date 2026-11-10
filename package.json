@@ -12,7 +12,8 @@
     "lint": "oxlint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test tests/*.test.ts"
+    "test": "node --test tests/*.test.ts",
+    "test:vscode": "pnpm --filter ts7-lit-extension run test:vscode"
   },
   "devDependencies": {
     "@fission-ai/openspec": "1.15.0",
