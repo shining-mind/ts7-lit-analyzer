@@ -1,6 +1,4 @@
-# Agent instructions
-
-## Context
+# TypeScript 7 Lit Analyzer
 
 This is a public, English-language project developing type-aware Lit template diagnostics and editor features with TypeScript 7. The design-stage workspace contains four private packages: the analyzer core, TypeScript 7 semantic provider, CLI, and VS Code extension. It uses Node 26, pnpm workspaces, strict TypeScript, Oxlint, Prettier, and Node.js tests. The architecture is a proposal; do not present planned functionality as implemented.
 
