@@ -3,8 +3,8 @@ import * as vscode from 'vscode';
 
 suite('Extension activation', () => {
   test('activates in an isolated Extension Development Host', async () => {
-    const extension = vscode.extensions.all.find(({extensionPath}) =>
-      extensionPath.replaceAll('\\', '/').endsWith('/packages/vscode-extension')
+    const extension = vscode.extensions.getExtension(
+      'ts7-lit-analyzer.ts7-lit-extension'
     );
 
     if (extension === undefined) {

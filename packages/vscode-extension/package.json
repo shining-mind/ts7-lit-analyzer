@@ -1,5 +1,5 @@
 {
-  "name": "@ts7-lit-analyzer/vscode-extension",
+  "name": "ts7-lit-extension",
   "displayName": "TypeScript 7 Lit Extension",
   "publisher": "ts7-lit-analyzer",
   "version": "0.0.0",
