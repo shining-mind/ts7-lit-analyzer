@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:upstream": "node --test \"src/test/indexer/**/*.ts\" \"src/test/parser/**/*.ts\" \"src/test/rules/**/*.ts\"",
+    "test:upstream": "node --test \"src/test/**/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
