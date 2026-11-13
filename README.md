@@ -34,10 +34,10 @@ pnpm lint
 pnpm format:check
 pnpm test
 pnpm test:packaging
-pnpm test:vscode
+pnpm test:e2e
 ```
 
-Build before running the smoke tests. The four private packages contain only placeholder entry points; there is no analyzer, CLI, or VS Code extension implementation yet. The Oxlint configuration follows Lit's ESLint configuration where supported; see [Formatting and linting](docs/linting.md) for the upstream baseline, rule mapping, and known differences.
+Root `pnpm test` runs `test:smoke` first, then runs baseline, packaging, and `test:e2e` in parallel. Smoke commands build automatically. Run one package's smoke tests with `pnpm --filter @ts7-lit-analyzer/analyzer test:smoke` or `pnpm --filter @ts7-lit-analyzer/analyzer-cli test:smoke`. When running `test:packaging` or `test:e2e` independently, build first. Add `test:unit` only when real unit tests exist. The four private packages contain only placeholder entry points; there is no analyzer, CLI, or VS Code extension implementation yet. The Oxlint configuration follows Lit's ESLint configuration where supported; see [Formatting and linting](docs/linting.md) for the upstream baseline, rule mapping, and known differences.
 
 ## Specifications and changes
 

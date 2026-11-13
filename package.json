@@ -12,9 +12,11 @@
     "lint": "oxlint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "pnpm --dir tests/fixtures/legacy install --frozen-lockfile && node --test tests/*.test.ts && pnpm test:baseline",
-    "test:baseline": "pnpm --dir tests/fixtures/legacy run test:upstream",
+    "test": "pnpm run test:smoke && pnpm run --no-bail \"/^test:(baseline|packaging|e2e)$/\"",
+    "test:smoke": "pnpm build && pnpm --filter @ts7-lit-analyzer/analyzer test:smoke && pnpm --filter @ts7-lit-analyzer/analyzer-cli test:smoke && node --test tests/workspace.test.ts",
+    "test:baseline": "pnpm --dir tests/fixtures/legacy install --frozen-lockfile && node --test tests/legacy-cli-baseline.test.ts && pnpm --dir tests/fixtures/legacy run test:upstream",
     "test:packaging": "node --test tests/packaging.test.ts",
+    "test:e2e": "pnpm test:vscode",
     "test:vscode": "pnpm --filter ts7-lit-extension run test:vscode"
   },
   "devDependencies": {

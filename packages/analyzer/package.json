@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test:smoke": "pnpm --filter @ts7-lit-analyzer/analyzer... build && node --test test/*.test.ts"
   },
   "files": [
     "dist"
