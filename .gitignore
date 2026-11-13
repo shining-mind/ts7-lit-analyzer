@@ -3,4 +3,5 @@ dist/
 .test-dist/
 .vscode-test/
 *.tsbuildinfo
+.worktrees/
 .DS_Store

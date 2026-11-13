@@ -4,6 +4,7 @@
 
 - Address a defined GitHub issue or approved proposal. Use `Part of #<number>` when the PR completes only part of an issue, `Refs #<number>` for other related work, and `Fixes #<number>` only when merging the PR should close the entire issue. Never use a closing keyword for partial progress.
 - Link the corresponding OpenSpec change for substantial behavior or architecture work.
+- Use absolute GitHub `blob` URLs for repository files in PR descriptions, for example `https://github.com/<owner>/<repo>/blob/<commit-sha>/<path>`. Prefer a commit SHA for stable specification and archive links. Do not use repository-relative file paths such as `openspec/specs/...`: GitHub can resolve them as an empty compare URL.
 - Keep the PR focused. Separate unrelated fixes and refactoring.
 - Do not claim planned, unverified, or partially implemented behavior as complete.
 

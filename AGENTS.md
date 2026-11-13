@@ -8,6 +8,7 @@ This is a public, English-language project developing type-aware Lit template di
 - Keep source code, tests, fixtures, issues, specifications, and other project artifacts in English.
 - Track meaningful work in a GitHub issue and add it to the project board. Record blocking dependencies as issue relationships so the execution order is visible.
 - Use issues for outcomes and progress. Elaborate substantial changes, requirements, scenarios, and implementation tasks in OpenSpec, linking the change and issue. Keep proposed work in `openspec/changes/` and verified behavior in `openspec/specs/`; sync or archive only after implementation and validation.
+- For background OpenSpec implementation, follow Code Factory: plan one change or review one result at a time, use isolated worktrees, and respect the session-configurable `wip_limit` for dispatched but unaccepted changes (default: 3). When that limit is reached, review existing results instead of planning or dispatching another change.
 - Preserve the distinction between actual capabilities, intended parity, and unverified TypeScript 7 or editor API assumptions.
 - Follow established project patterns and package boundaries. Keep the analyzer core, TypeScript 7 semantic provider, CLI, and editor host separate.
 - Source and target types used for assignability must belong to the same TypeScript project and snapshot. Never replace the TypeScript 7 checker with approximate assignability.
@@ -25,6 +26,8 @@ Read only the documents relevant to the task:
 - [Architecture proposal](./docs/architecture.md) — before changing semantic analysis, architecture, milestones, or compatibility assumptions
 - [Source development](./.agents/docs/develop.md) — before any `.ts` or `.scss` edit: style, TypeScript, Lit, SCSS, and comments
 - [OpenSpec changes](./openspec/changes/) and [verified specifications](./openspec/specs/) — before working on a feature or substantial behavior change; also read the linked GitHub issue
+- [Code Factory](./.agents/docs/code-factory.md) — before planning, dispatching, reviewing, or reworking background OpenSpec implementations
+- [Code Factory agent prompt](./.agents/docs/code-factory-agent-prompt.md) — before dispatching or resuming a Code Factory implementation agent
 - [Tooling commands](./.agents/docs/tooling.md) — before running build, typecheck, lint, formatting, or test commands; also before changing tool configuration or versions
 - [Pull request requirements](./.agents/docs/pull-requests.md) — before preparing or reviewing a pull request
 - [Commit requirements](./.agents/docs/commit.md) — before creating, amending, or reviewing a commit
