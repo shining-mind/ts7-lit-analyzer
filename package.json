@@ -12,7 +12,8 @@
     "lint": "oxlint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test tests/*.test.ts",
+    "test": "pnpm --dir tests/fixtures/legacy install --frozen-lockfile && node --test tests/*.test.ts && pnpm test:baseline",
+    "test:baseline": "pnpm --dir tests/fixtures/legacy run test:upstream",
     "test:packaging": "node --test tests/packaging.test.ts",
     "test:vscode": "pnpm --filter ts7-lit-extension run test:vscode"
   },

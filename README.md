@@ -41,6 +41,6 @@ Build before running the smoke tests. The four private packages contain only pla
 
 ## Specifications and changes
 
-The architecture document describes the intended system and open questions. OpenSpec tracks proposed changes under `openspec/changes/` and verified behavior under `openspec/specs/`. Use OpenSpec for substantial behavior or architecture changes; small fixes can be handled directly. Do not describe planned features as implemented.
+The architecture document describes the intended system and open questions. OpenSpec tracks proposed changes under `openspec/changes/` and verified behavior under `openspec/specs/`. Use OpenSpec for substantial behavior or architecture changes; small fixes can be handled directly. Do not describe planned features as implemented. The [legacy parity baseline](docs/parity.md) tracks rule and feature coverage, including cases that are still pending.
 
 Run `pnpm exec openspec --help` for the CLI. OpenSpec skills use the shared `.agents/skills/` directory rather than maintaining a complete copy for every agent harness. Add only the minimum harness-specific integration required for compatibility: for example, `.claude/` exists because Claude Code cannot consume `.agents/skills/` directly. Preserve this shared-skill setup when running OpenSpec updates.

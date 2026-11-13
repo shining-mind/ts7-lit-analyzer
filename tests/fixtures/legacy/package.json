@@ -1,0 +1,17 @@
+{
+  "name": "ts7-lit-analyzer-legacy-baseline",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:upstream": "node --test \"src/test/**/*.test.ts\"",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@ts7-lit-analyzer/analyzer": "file:../../../packages/analyzer",
+    "@types/node": "26.6.5",
+    "lit": "3.3.2",
+    "lit-analyzer": "2.0.3",
+    "ts-lit-plugin": "2.0.2",
+    "typescript": "5.2.2"
+  }
+}
