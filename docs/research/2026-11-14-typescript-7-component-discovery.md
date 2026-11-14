@@ -127,14 +127,14 @@ TypeScript prefers the declaration for consumer semantics. Explicitly adding the
 
 Project-owned TypeScript classes also resolved directly through the checker and produced the expected consumer diagnostic. Existing project-reference research verifies source redirection and unsaved cross-reference updates; generated declaration output is not required for that source path.
 
-### Mismatches are registry conflicts
+### Declarations remain authoritative without consistency checking
 
 Two deliberate mismatch probes showed that TypeScript does not automatically pair or validate the two views:
 
 - A declaration module exported `RawElement` while the implementation exported `OtherElement`.
 - Both exported `RawElement`, but the declaration inherited directly from `HTMLElement` with `count: string`, while the implementation inherited from `BaseElement` with `count: number`.
 
-The consumer continued to use the declaration type in both cases. The adapter must compare resolved export names, canonical declarations, and public inheritance/member shape. A missing or inconsistent counterpart is an explicit conflict or incomplete result, not silently merged metadata.
+The consumer continued to use the declaration type in both cases. The discovery engine must therefore use declarations as the sole authority for public exports, class shape, inheritance, members, and semantic types. JavaScript may supplement registration and framework metadata through public export or tag identity, but the engine does not compare or reconcile the two shapes. Missing or differing implementation exports and members are not discovery conflicts and do not invalidate declaration-backed semantics.
 
 ## Unsaved updates and snapshot isolation
 
@@ -212,7 +212,7 @@ For exact primitive text, TS7 exposes `getStringType`, `getNumberType`, and `get
 
 The registry may retain `type.text` for display, completion, hover, and documentation. It is never a checker input or an assignability fallback. A manifest may supply optional metadata such as slots without weakening this rule.
 
-## Resulting registry architecture
+## Resulting discovery architecture
 
 ```text
 Public project/dependency entrypoints
@@ -228,11 +228,11 @@ TS7 Program + Checker
 Thin registration/framework recognizers
               |
               v
-Core registry
-  tag/property/attribute indexes, stable identities, provenance,
+Discovery result
+  CEM declarations, stable identities, provenance,
   per-capability completeness, immutable snapshot DTOs
 ```
 
-The core finds a property binding by tag name and property name, or an attribute binding by tag name and attribute alias. It does not traverse TypeScript ASTs. Semantic operations are delegated to the adapter using stable declaration identity and snapshot-scoped references.
+The independently extractable `cem-analyzer-ts7` package owns this collection pipeline. A future core registry can index its results by tag, property, and attribute alias without traversing TypeScript ASTs. Semantic operations stay inside the discovery engine and use stable declaration identity plus snapshot-scoped references.
 
-This discovery model supports TypeScript, JavaScript with JSDoc, JavaScript without declarations, declaration-only packages, and paired declaration/JavaScript packages without requiring a manifest. Its correctness boundaries are explicit module inclusion, declaration precedence, mismatch reporting, snapshot isolation, and checker-only assignability.
+This discovery model supports TypeScript, JavaScript with JSDoc, JavaScript without declarations, declaration-only packages, and paired declaration/JavaScript packages without requiring a manifest. Its correctness boundaries are explicit module inclusion, declaration authority, snapshot isolation, and checker-only assignability. Registry indexes, template analysis, and editor integration remain separate follow-up capabilities.
