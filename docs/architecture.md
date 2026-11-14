@@ -22,14 +22,15 @@ Package names are provisional:
 ```text
 packages/
   analyzer/          # core contracts, templates, registry, rules and features
-  analyzer-ts7/      # semantic provider and TS7 sessions
+  cem-analyzer-ts7/  # standalone CEM-based TS7 component discovery
+  analyzer-ts7/      # semantic provider and TS7 host sessions
   analyzer-cli/      # CLI, configuration, output and exit codes
   vscode-extension/   # extension, providers, grammars and editor tests
 fixtures/            # self-contained parity and packaging fixtures
  docs/               # design, compatibility and development documentation
 ```
 
-The core defines a narrow semantic interface. The TS7 adapter owns projects, module resolution, project references, snapshots and checker operations. Both compared types must come from the same project and snapshot. Use `isTypeAssignableTo(source, target)` for assignability; do not substitute `ts-simple-type` or an approximate custom type checker. Cache only within valid project/snapshot boundaries; reject stale results and honor cancellation. API gaps are blockers to investigate and document, not an excuse to claim successful checking.
+The core defines a narrow semantic interface. The TS7 adapter owns host projects, module resolution, project references, snapshots and checker operations. The separately extractable `cem-analyzer-ts7` package owns discovery-specific TS7 snapshots and CEM-based component collection without depending on other workspace packages. Both compared types must come from the same project and snapshot. Use `isTypeAssignableTo(source, target)` for assignability; do not substitute `ts-simple-type` or an approximate custom type checker. Cache only within valid project/snapshot boundaries; reject stale results and honor cancellation. API gaps are blockers to investigate and document, not an excuse to claim successful checking.
 
 ## Development conventions and upstream readiness
 
