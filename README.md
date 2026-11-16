@@ -1,6 +1,6 @@
 # ts7-lit-analyzer
 
-> Design-stage project. No packages or editor extension are available yet.
+> Design-stage project. Packages and the editor extension are under active development; no supported release is available yet.
 
 This project aims to provide type-aware Lit template diagnostics and editor features using TypeScript 7. It targets TypeScript projects that use Lit, including JavaScript-only dependencies consumed by those projects.
 
@@ -18,7 +18,7 @@ Standalone JavaScript projects, full discovery for frameworks other than Lit, an
 
 ## Status and design
 
-This is a proposed architecture, not a working implementation. The first milestone is an end-to-end proof of concept with a real TypeScript 7 checker in both CLI and VS Code, without requiring a manifest. API availability, editor transport, target type construction and performance remain to be verified.
+The overall analyzer architecture remains proposed. The `cem-analyzer-ts7` package implements tested TypeScript 7 component discovery with declaration authority, framework metadata, and snapshot-scoped semantic operations; this does not yet provide a component registry, template diagnostics, CLI analysis, or editor integration. The first full-stack milestone remains an end-to-end proof of concept in both CLI and VS Code. Editor transport, target type construction for templates, and performance remain to be verified.
 
 See [architecture](docs/architecture.md) for the architecture, milestones, testing strategy and open questions. Package names, copyright ownership and contribution process are pending maintainer decisions. Installation and usage instructions will be added when working artifacts exist.
 
@@ -33,11 +33,12 @@ pnpm typecheck
 pnpm lint
 pnpm format:check
 pnpm test
+pnpm test:discovery
 pnpm test:packaging
 pnpm test:e2e
 ```
 
-Root `pnpm test` runs `test:smoke` first, then runs baseline, packaging, and `test:e2e` in parallel. Smoke commands build automatically. Run one package's smoke tests with `pnpm --filter @ts7-lit-analyzer/analyzer test:smoke` or `pnpm --filter @ts7-lit-analyzer/analyzer-cli test:smoke`. When running `test:packaging` or `test:e2e` independently, build first. Add `test:unit` only when real unit tests exist. The four private packages contain only placeholder entry points; there is no analyzer, CLI, or VS Code extension implementation yet. The Oxlint configuration follows Lit's ESLint configuration where supported; see [Formatting and linting](docs/linting.md) for the upstream baseline, rule mapping, and known differences.
+Root `pnpm test` runs `test:smoke` first, then runs baseline, discovery, packaging, and `test:e2e` in parallel. Smoke commands build automatically. Run one package's smoke tests with `pnpm --filter @ts7-lit-analyzer/analyzer test:smoke` or `pnpm --filter @ts7-lit-analyzer/analyzer-cli test:smoke`. `test:discovery` installs the isolated webcomponents fixture, runs the collector package tests, and then exercises the shared fixture through the built public API. When running `test:packaging` or `test:e2e` independently, build first. Add `test:unit` only when real unit tests exist. The five private packages are not released; `cem-analyzer-ts7` implements the tested discovery engine while the analyzer, CLI, and VS Code extension remain placeholders. The Oxlint configuration follows Lit's ESLint configuration where supported; see [Formatting and linting](docs/linting.md) for the upstream baseline, rule mapping, and known differences.
 
 ## Specifications and changes
 

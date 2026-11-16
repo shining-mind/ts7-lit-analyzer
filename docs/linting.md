@@ -12,6 +12,8 @@ The local tool versions are pinned in `package.json`: Prettier 3.9.10 and Oxlint
 
 Run `pnpm format` to format files and `pnpm format:check` to verify formatting.
 
+Prettier preserves author-inserted blank lines but never inserts them between statements, and Oxlint 1.90.0 has no `padding-line-between-statements` rule. Blank-line separation of logical steps is therefore an author responsibility, required by the source development guidelines (`.agents/docs/develop.md`) rather than enforced by tooling. Lit itself does not enforce this; the convention is a local readability refinement, not part of the Lit parity baseline.
+
 ## Oxlint mapping
 
 The Oxlint configuration maps Lit's effective ESLint configuration as follows:

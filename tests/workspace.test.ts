@@ -4,6 +4,7 @@ import {test} from 'node:test';
 
 for (const name of [
   'analyzer',
+  'cem-analyzer-ts7',
   'analyzer-ts7',
   'analyzer-cli',
   'vscode-extension',

@@ -5,7 +5,8 @@ Read this document before deciding where code should live or which package shoul
 ## Package responsibilities
 
 - `packages/analyzer/` owns host-independent contracts, template analysis, component registry, rules, and shared language-service results. It must not depend on the TypeScript 7 adapter, CLI, or VS Code.
-- `packages/analyzer-ts7/` owns TypeScript 7 projects, sessions, snapshots, module resolution, project references, and checker operations. It implements the analyzer core's narrow semantic interface.
+- `packages/cem-analyzer-ts7/` owns the independently extractable CEM-based web-component discovery engine, including its discovery-specific TS7 snapshots, module closure, checker operations, and built-in framework strategies. It must not depend on other workspace packages.
+- `packages/analyzer-ts7/` owns TypeScript 7 projects, sessions, snapshots, module resolution, project references, and checker operations for host semantic integration. It implements the analyzer core's narrow semantic interface and may delegate component discovery to `cem-analyzer-ts7`.
 - `packages/analyzer-cli/` owns command-line configuration, project and file selection, output, and exit codes. It consumes the shared analyzer rather than implementing analysis independently.
 - `packages/vscode-extension/` owns editor activation, providers, transport, grammars, settings, and Extension Host integration. It consumes shared analysis results and must not duplicate analyzer semantics.
 

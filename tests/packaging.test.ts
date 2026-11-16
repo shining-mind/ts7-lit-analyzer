@@ -1,14 +1,16 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {mkdir, mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
 import {tmpdir} from 'node:os';
-import {join} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {dirname, join} from 'node:path';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {test} from 'node:test';
 
 const workspaceRoot = fileURLToPath(new URL('../', import.meta.url));
 const packageNames = [
   'analyzer',
+  'cem-analyzer-ts7',
   'analyzer-ts7',
   'analyzer-cli',
   'vscode-extension',
@@ -47,6 +49,32 @@ test('packed artifacts install and run in a standalone fixture', async (t) => {
     return output.trim().split('\n').at(-1)!;
   });
 
+  const discoveryRequire = createRequire(
+    join(workspaceRoot, 'packages/cem-analyzer-ts7/package.json')
+  );
+  const productionDependencies = [
+    'custom-elements-manifest',
+    'typescript',
+    `@typescript/typescript-${process.platform}-${process.arch}`,
+  ];
+  const typeScriptRequire = createRequire(
+    discoveryRequire.resolve('typescript/package.json')
+  );
+  for (const dependencyName of productionDependencies) {
+    const dependencyRequire = dependencyName.startsWith('@typescript/')
+      ? typeScriptRequire
+      : discoveryRequire;
+    const dependencyManifest = dependencyRequire.resolve(
+      `${dependencyName}/package.json`
+    );
+    const output = execFileSync(
+      'pnpm',
+      ['pack', '--pack-destination', archiveDirectory],
+      {cwd: dirname(dependencyManifest), encoding: 'utf8'}
+    );
+    archives.push(output.trim().split('\n').at(-1)!);
+  }
+
   execFileSync(
     'npm',
     [
@@ -80,6 +108,41 @@ test('packed artifacts install and run in a standalone fixture', async (t) => {
       join(consumerDirectory, 'node_modules', installedName, 'package.json'),
       'utf8'
     );
+  }
+
+  const discoveryPackage = await import(
+    pathToFileURL(
+      join(
+        consumerDirectory,
+        'node_modules/@ts7-lit-analyzer/cem-analyzer-ts7/dist/index.js'
+      )
+    ).href
+  );
+  assert.equal(discoveryPackage.cemAnalyzerTs7PackageVersion, '0.0.0');
+  const discoverySession = await discoveryPackage.createDiscoverySession({
+    mode: 'standalone',
+    currentDirectory: '/virtual',
+    rootFiles: ['/virtual/index.ts'],
+    files: [
+      {
+        fileName: '/virtual/index.ts',
+        text: `export class PackedElement extends HTMLElement { value: number = 0; }
+customElements.define('packed-element', PackedElement);`,
+      },
+    ],
+  });
+  try {
+    const discoveryResult = await discoverySession.collect();
+    assert.equal(
+      discoveryResult.components[0].declaration.members[0].type.text,
+      'number'
+    );
+    assert.equal(
+      discoveryResult.components[0].declaration.tagName,
+      'packed-element'
+    );
+  } finally {
+    await discoverySession.dispose();
   }
 
   const output = execFileSync(
