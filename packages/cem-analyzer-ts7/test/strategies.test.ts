@@ -7,7 +7,7 @@ import type {SourceFile} from 'typescript/ast';
 import {API} from 'typescript/async';
 import {createFileSystemWithLib} from 'typescript/fs';
 
-import {collectFrameworkMetadata} from '../dist/strategies.js';
+import {collectFrameworkMetadata} from '../dist/strategies/index.js';
 
 interface TestProject {
   program: Program;
