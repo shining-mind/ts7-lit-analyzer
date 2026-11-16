@@ -2,7 +2,7 @@
 
 ## Why
 
-The registry and all later template features need one reliable source of component semantics, and the TypeScript 7 probes now define how to collect them from TypeScript, JavaScript, declarations, and dependencies. This change isolates that collection engine before issue [#21](https://github.com/shining-mind/ts7-lit-analyzer/issues/21) adds CEM-based registry contracts or consumer-facing features.
+The registry and all later template features need one reliable source of component semantics, and the TypeScript 7 probes now define how to collect them from TypeScript, JavaScript, declarations, and dependencies. Tracked by issue [#27](https://github.com/shining-mind/ts7-lit-analyzer/issues/27), this change isolates that collection engine before issue [#21](https://github.com/shining-mind/ts7-lit-analyzer/issues/21) adds CEM-based registry contracts or consumer-facing features.
 
 ## What Changes
 

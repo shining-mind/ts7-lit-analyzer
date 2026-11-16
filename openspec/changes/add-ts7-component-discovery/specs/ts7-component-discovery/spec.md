@@ -262,3 +262,41 @@ Unsaved overlays SHALL produce a new isolated discovery snapshot with selective 
 
 - **WHEN** one component file changes
 - **THEN** unaffected component records are structurally reused and their successor semantic types are not eagerly recomputed
+
+#### Scenario: New or removed cross-file registration
+
+- **WHEN** an overlay adds or removes a supported `define`, tag-map, decorator, or compiled-decorator registration in a file other than the class declaration
+- **THEN** the successor collects or re-enriches the referenced class and adds, updates, or removes the corresponding component registration
+
+### Requirement: Incremental module graph
+
+The successor module graph SHALL retain unchanged per-file resolution edges and provenance, re-resolve changed importers and newly reachable modules, and exclude unreachable modules. Collection SHALL include every module new to the successor graph. Host-side graph reuse MUST NOT be presented as a guarantee that the TypeScript 7 program update itself is O(change).
+
+#### Scenario: Newly reachable side-effect import
+
+- **WHEN** an overlay adds a side-effect import of an existing but previously unreachable component module
+- **THEN** the successor graph includes the new module and returns its registered component without requiring a re-export
+
+#### Scenario: Unchanged importer
+
+- **WHEN** an overlay changes a file without changing another importer
+- **THEN** the successor reuses the unchanged importer's resolution edges and does not resolve its module specifiers again
+
+#### Scenario: Import removal prunes the graph
+
+- **WHEN** an overlay removes the last reachable import of a component module
+- **THEN** the successor excludes that module and its component unless another root or import still reaches it
+
+### Requirement: Resolution input invalidation
+
+External dependency edges SHALL record package manifests used during resolution. After any non-empty overlay update, unresolved dependencies SHALL be retried. An importer SHALL also be re-resolved when a recorded resolution input changes, even if its source text is unchanged.
+
+#### Scenario: Missing import target is created
+
+- **WHEN** an overlay creates the target of a previously unresolved import without editing the importer
+- **THEN** the successor retries resolution, collects the newly reachable component, and removes the stale unresolved-module issue
+
+#### Scenario: Package manifest changes
+
+- **WHEN** an overlay changes a package manifest used by an unchanged importer
+- **THEN** the successor re-resolves that importer and replaces the old target and component with the newly resolved target

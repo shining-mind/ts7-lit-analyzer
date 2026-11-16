@@ -26,8 +26,9 @@
 
 ## 5. Incremental updates and workspace validation
 
-- [x] 5.1 Implement overlay-based successor snapshots and selective invalidation; verify direct/transitive JS, declaration, and implementation overlays update semantics, old snapshots remain unchanged, and FS-only/one-shot overlay results report correct `containsOverlays`/`overlayFiles`.
-- [x] 5.2 Implement structural sharing and lazy successor-handle resolution; verify an edit preserves unaffected record object identity and does not eagerly recompute unaffected semantic types.
+- [x] 5.1 Implement overlay-based successor snapshots and selective invalidation; verify direct/transitive JS, declaration, and implementation overlays update semantics, old snapshots remain unchanged, FS-only/one-shot overlay results report correct `containsOverlays`/`overlayFiles`, and newly reachable or newly registered components are not lost.
+- [x] 5.2 Implement structural sharing and lazy successor-handle resolution; verify an edit preserves unaffected record object identity, does not eagerly recompute unaffected semantic types, and correctly adds, updates, or removes cross-file registration/tag-map evidence.
 - [x] 5.3 Update the discovery research and current-status documentation for declaration authority, the standalone package, CEM issue findings, and supported limits; verify no text claims registry, template, editor, upstream, or benchmark results that tests do not establish.
 - [x] 5.4 Create the shared `tests/fixtures/webcomponents` project and representative `tests/discovery-integration.test.ts`; keep the recognizer matrix in package-local in-memory tests and verify root `test:discovery` runs both levels with the fixture's frozen install.
-- [x] 5.5 Run strict OpenSpec validation, build, typecheck, lint, format check, and the full root test suite; verify every requirement scenario is exercised and all checks pass.
+- [x] 5.5 Reuse unchanged per-file module-resolution edges and provenance across overlays; re-resolve changed importers, unresolved dependencies, changed package-manifest inputs, and newly reachable modules; prune unreachable modules and verify unaffected importers are not resolved again without claiming an O(change) TS7 program update.
+- [x] 5.6 Run strict OpenSpec validation, build, typecheck, lint, format check, and the full root test suite; verify every requirement scenario is exercised and all checks pass.

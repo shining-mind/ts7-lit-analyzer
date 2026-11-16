@@ -108,15 +108,21 @@ Each record will separate registration, class/member semantics, reactive attribu
 
 The engine will not use dependency diagnostics as a completeness signal because the derived configuration disables `checkJs`. An unresolved module or excluded semantic file is incomplete even when TypeScript emits no diagnostic and displays `any`.
 
-### Update through overlays with selective reuse
+### Update through overlays with graph and record reuse
 
-Applying an overlay will call TS7 `snapshot.update` with an in-memory filesystem layer and produce a new discovery generation. The engine will rebuild the affected module roots and records, including dependent inheritance/export records, while retaining unchanged record objects and their stable declaration keys.
+Applying an overlay will call TS7 `snapshot.update` with an in-memory filesystem layer and produce a new discovery generation. The successor module graph will retain unchanged per-file resolution edges and provenance, re-resolve changed importers and newly reachable modules, and remove modules that are no longer reachable from the configured roots. Newly reachable modules must be collected even when their classes are not re-exported by the changed importer.
 
-Native handles remain in snapshot-local maps and are never transferred. Semantic types for unaffected records are resolved in the successor only when requested. The previous snapshot remains queryable until disposed, allowing stale-result protection and old/new verification. Disposal releases both current and retained native resources according to session ownership.
+External dependency edges will record the consumer-facing and canonical package manifests used during resolution. An unchanged importer will be re-resolved when one of those inputs changes. Unresolved edges will be retried after every non-empty overlay update because a newly created file can make them resolvable without any importer edit. These resolution-input dependencies prevent stale targets and stale `unresolved-module` issues while preserving reuse for edges whose inputs are unchanged.
+
+Affectedness will follow both semantic dependencies and component evidence. Reverse import and declaration/implementation edges invalidate dependent semantics as before. Changed registration, tag-map, decorator, or compiled-decorator evidence also invalidates the referenced class declaration in either direction: a new registration must collect a previously unregistered class, while removed evidence must remove or update the former component. The global metadata merge remains the correctness authority for cross-file evidence; incremental collection determines which candidate class records require enrichment.
+
+Unchanged component records retain their objects and stable declaration keys. Native handles remain in snapshot-local maps and are never transferred. Semantic types for unaffected records are resolved in the successor only when requested. The previous snapshot remains queryable until disposed, allowing stale-result protection and old/new verification. Disposal releases both current and retained native resources according to session ownership.
+
+Graph-level reuse avoids repeating host-side module resolution for unchanged files. It does not claim that the TypeScript 7 program update itself is O(change), and it does not introduce scoped roots, editor scheduling, cancellation, or on-demand DTO materialization. Those interactive-host policies remain follow-up work.
 
 Every result has fresh snapshot-level source provenance: `containsOverlays` and canonical `overlayFiles`. This applies equally to incremental and one-shot collection and does not include overlay text. Result-level provenance is rebuilt for each snapshot even when component records are structurally shared.
 
-Alternative considered: eager recreation of every semantic reference would be simpler but violates the agreed incremental update model.
+Alternative considered: rebuilding the complete module graph and every semantic reference would be simpler but violates the agreed incremental update model.
 
 ### Separate package tests from shared host fixtures
 
