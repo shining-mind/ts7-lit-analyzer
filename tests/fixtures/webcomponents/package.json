@@ -1,0 +1,13 @@
+{
+  "name": "ts7-lit-analyzer-webcomponents-fixture",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@fixture/declaration-only": "file:packages/declaration-only",
+    "@fixture/dual": "file:packages/dual",
+    "@fixture/js-only": "file:packages/js-only",
+    "@material/web": "2.5.0",
+    "lit": "3.3.2",
+    "lit-element": "4.2.0"
+  }
+}

@@ -119,6 +119,31 @@ test('packed artifacts install and run in a standalone fixture', async (t) => {
     ).href
   );
   assert.equal(discoveryPackage.cemAnalyzerTs7PackageVersion, '0.0.0');
+  const discoverySession = await discoveryPackage.createDiscoverySession({
+    mode: 'standalone',
+    currentDirectory: '/virtual',
+    rootFiles: ['/virtual/index.ts'],
+    files: [
+      {
+        fileName: '/virtual/index.ts',
+        text: `export class PackedElement extends HTMLElement { value: number = 0; }
+customElements.define('packed-element', PackedElement);`,
+      },
+    ],
+  });
+  try {
+    const discoveryResult = await discoverySession.collect();
+    assert.equal(
+      discoveryResult.components[0].declaration.members[0].type.text,
+      'number'
+    );
+    assert.equal(
+      discoveryResult.components[0].declaration.tagName,
+      'packed-element'
+    );
+  } finally {
+    await discoverySession.dispose();
+  }
 
   const output = execFileSync(
     process.execPath,
