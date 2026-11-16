@@ -7,10 +7,11 @@ Use the workspace scripts rather than invoking package-specific tool binaries di
 - `pnpm lint` — run Oxlint with the repository configuration. Do not treat it as a type check or proof of exact ESLint parity.
 - `pnpm format` — format the workspace with Prettier when the requested changes permit broad formatting; otherwise format only the files you changed with `pnpm exec prettier --write <paths>`.
 - `pnpm format:check` — verify formatting without modifying files.
-- `pnpm test` — run smoke/build first, then run baseline, packaging, and e2e suites in parallel.
+- `pnpm test` — run smoke/build first, then run baseline, discovery, packaging, and e2e suites in parallel.
 - `pnpm test:smoke` — build all packages, run analyzer and CLI smoke tests, then run repository package-entry smoke tests.
 - `pnpm --filter @ts7-lit-analyzer/analyzer test:smoke` and `pnpm --filter @ts7-lit-analyzer/analyzer-cli test:smoke` — build the selected package and its workspace dependencies, then run only its smoke tests with Node 26 `node --test` executing TypeScript directly.
 - `pnpm test:baseline` — install the isolated legacy fixture with its frozen lockfile, run the legacy CLI baseline, then run upstream legacy scenarios directly as TypeScript with Node 26 and `node:test` with pinned TypeScript 5.2.2. This establishes the legacy baseline, not TS7 correctness.
+- `pnpm test:discovery` — install the isolated webcomponents fixture with its frozen lockfile, build and run the `cem-analyzer-ts7` package tests, then run the shared public-API discovery integration tests.
 - `pnpm test:packaging` — pack all packages, install their archives into an isolated offline consumer, execute the CLI, and verify the VSIX contents. Run `pnpm build` first when using this command independently.
 - `pnpm test:e2e` — run the Mocha smoke test in a real, isolated VS Code Extension Development Host through `test:vscode`. Run `pnpm build` first when using this command independently. The first run downloads the pinned VS Code version.
 - `pnpm test:vscode` — run the extension-specific VS Code test command; prefer `test:e2e` for host-independent workflow selection.

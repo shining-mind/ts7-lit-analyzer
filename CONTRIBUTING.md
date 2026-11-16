@@ -39,6 +39,7 @@ We follow the [Google JavaScript Style Guide](https://google.github.io/styleguid
 2. Prefer longer, more descriptive names, over shorter names. For most variables, minification means we don't pay for extra characters in production.
 3. Always err on the side of too many comments. When commenting, "why" is more important than "what".
 4. If you're tempted to add a "what" comment, see if you can't restructure the code and use more descriptive names so that the comment is unnecessary.
+5. Separate logical steps with blank lines: after a multiline statement (object or array literal, wrapped expression, loop or conditional block) and between distinct steps such as consecutive loops. Keep closely related single-line statements together. Prettier preserves these blank lines but does not insert them.
 
 ## TypeScript
 
