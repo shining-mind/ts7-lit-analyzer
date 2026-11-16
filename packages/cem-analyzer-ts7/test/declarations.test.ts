@@ -4,6 +4,7 @@ import {test} from 'node:test';
 import dedent from 'ts-dedent';
 import type {ClassField} from 'custom-elements-manifest';
 
+import {AnalysisCapability} from '../dist/contracts.js';
 import {createSemanticCollector} from '../dist/semantics.js';
 import {withSemanticTestProgram} from './semantic-test-program.js';
 
@@ -44,7 +45,10 @@ test('collects declaration-only package exports without implementation files', a
           ?.text,
         'number'
       );
-      assert.equal(component.analysis.semantics, 'complete');
+      assert.equal(
+        component.analysis.complete & AnalysisCapability.semantics,
+        AnalysisCapability.semantics
+      );
       assert.deepEqual(component.analysis.issues, []);
     }
   );
@@ -108,7 +112,10 @@ test('uses declarations as sole authority for dual declaration and JavaScript pa
         ),
         false
       );
-      assert.equal(component.analysis.semantics, 'complete');
+      assert.equal(
+        component.analysis.complete & AnalysisCapability.semantics,
+        AnalysisCapability.semantics
+      );
       assert.deepEqual(component.analysis.issues, []);
       assert.deepEqual(component.registrations, []);
     }

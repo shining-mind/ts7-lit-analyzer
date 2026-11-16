@@ -4,6 +4,7 @@ import {test} from 'node:test';
 import dedent from 'ts-dedent';
 import type {ClassField, ClassMethod} from 'custom-elements-manifest';
 
+import {AnalysisCapability} from '../dist/contracts.js';
 import {createSemanticCollector} from '../dist/semantics.js';
 import {withSemanticTestProgram} from './semantic-test-program.js';
 
@@ -46,8 +47,18 @@ const candidate = "bad";
       assert.equal(component.declarationEvidence.fileName, fileName);
       assert.equal(component.declarationEvidence.exportName, 'PublicCounter');
       assert.deepEqual(component.registrations, []);
-      assert.equal(component.analysis.registration, 'not-collected');
-      assert.equal(component.analysis.semantics, 'complete');
+      assert.equal(
+        component.analysis.complete & AnalysisCapability.registration,
+        0
+      );
+      assert.equal(
+        component.analysis.incomplete & AnalysisCapability.registration,
+        0
+      );
+      assert.equal(
+        component.analysis.complete & AnalysisCapability.semantics,
+        AnalysisCapability.semantics
+      );
 
       const count = component.declaration.members?.find(
         (member) => member.name === 'count'
@@ -144,7 +155,14 @@ export class CompletenessElement extends HTMLElement {
       const collector = createSemanticCollector({program, project, snapshotId});
       const [component] = await collector.collectSourceFile(fileName);
 
-      assert.equal(component.analysis.semantics, 'incomplete');
+      assert.equal(
+        component.analysis.incomplete & AnalysisCapability.semantics,
+        AnalysisCapability.semantics
+      );
+      assert.equal(
+        component.analysis.complete & AnalysisCapability.semantics,
+        0
+      );
       assert.ok(
         component.analysis.issues.some(
           (issue) =>
@@ -187,7 +205,10 @@ test('accepts an explicit any declaration as complete', async () => {
     async ({program, snapshotId}) => {
       const collector = createSemanticCollector({program, project, snapshotId});
       const [component] = await collector.collectSourceFile(fileName);
-      assert.equal(component.analysis.semantics, 'complete');
+      assert.equal(
+        component.analysis.complete & AnalysisCapability.semantics,
+        AnalysisCapability.semantics
+      );
       assert.deepEqual(component.analysis.issues, []);
     }
   );
@@ -261,7 +282,10 @@ export {RawElement as PublicRaw};
       assert.deepEqual(inherited?.inheritedFrom, {name: 'RawBase'});
       assert.equal(setValue?.parameters?.[0].type?.text, 'string');
       assert.equal(setValue?.return?.type?.text, 'boolean');
-      assert.equal(component.analysis.semantics, 'complete');
+      assert.equal(
+        component.analysis.complete & AnalysisCapability.semantics,
+        AnalysisCapability.semantics
+      );
     }
   );
 });

@@ -26,6 +26,7 @@ import {
   type ParameterDeclaration,
 } from 'typescript/ast';
 
+import {AnalysisCapability} from './contracts.js';
 import type {
   AnalysisIssue,
   DeclarationEvidence,
@@ -198,6 +199,7 @@ class CheckerSemanticCollector implements SemanticCollector {
     if (!constructSignature) {
       return undefined;
     }
+
     const instanceType =
       await this.checker.getReturnTypeOfSignature(constructSignature);
     const classDeclaration = await this.selectDeclaration(classSymbol);
@@ -205,14 +207,19 @@ class CheckerSemanticCollector implements SemanticCollector {
       return undefined;
     }
 
+    const className =
+      (classDeclaration as Declaration & {name?: {text: string}}).name?.text ??
+      classSymbol.name;
+
     const declarationEvidence = this.createDeclarationEvidence(
       classDeclaration,
-      classSymbol.name,
+      className,
       exportSymbol.name
     );
+
     const declaration: CustomElementDeclaration = {
       kind: 'class',
-      name: classSymbol.name,
+      name: className,
       customElement: true,
       members: [],
       attributes: [],
@@ -222,10 +229,12 @@ class CheckerSemanticCollector implements SemanticCollector {
       cssProperties: [],
       cssStates: [],
     };
+
     const description = await classSymbol.getDocumentationComment(this.checker);
     if (description) {
       declaration.description = description;
     }
+
     const [baseType] = (await instanceType.getBaseTypes()) ?? [];
     const baseSymbol = await baseType?.getSymbol();
     if (baseSymbol) {
@@ -234,11 +243,10 @@ class CheckerSemanticCollector implements SemanticCollector {
 
     const members: MemberSemantics[] = [];
     const issues: AnalysisIssue[] = [];
+
     for (const memberSymbol of await instanceType.getProperties()) {
-      const collected = await this.collectMember(
-        memberSymbol,
-        classSymbol.name
-      );
+      const collected = await this.collectMember(memberSymbol, className);
+
       if (collected) {
         declaration.members?.push(collected.member);
         members.push(collected.semantics);
@@ -253,12 +261,8 @@ class CheckerSemanticCollector implements SemanticCollector {
       registrations: [],
       members,
       analysis: {
-        registration: 'not-collected',
-        semantics: issues.length === 0 ? 'complete' : 'incomplete',
-        attributes: 'not-collected',
-        events: 'not-collected',
-        slots: 'not-collected',
-        css: 'not-collected',
+        complete: issues.length === 0 ? AnalysisCapability.semantics : 0,
+        incomplete: issues.length === 0 ? 0 : AnalysisCapability.semantics,
         issues,
       },
     };
@@ -275,10 +279,12 @@ class CheckerSemanticCollector implements SemanticCollector {
     if (!declaration || memberSymbol.name.startsWith('#')) {
       return undefined;
     }
+
     const sourceFile = declaration.getSourceFile();
     if (await this.program.isSourceFileDefaultLibrary(sourceFile)) {
       return undefined;
     }
+
     const modifierFlags =
       (declaration as Declaration & Partial<ModifiersBase>).modifierFlags ?? 0;
     if (modifierFlags & (ModifierFlags.Private | ModifierFlags.Protected)) {
