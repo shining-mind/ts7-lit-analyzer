@@ -40,7 +40,18 @@ export interface SemanticReference {
   snapshotId: string;
 }
 
-export type AnalysisStatus = 'complete' | 'incomplete' | 'not-collected';
+export const AnalysisCapability = {
+  registration: 1 << 0,
+  semantics: 1 << 1,
+  attributes: 1 << 2,
+  events: 1 << 3,
+  slots: 1 << 4,
+  css: 1 << 5,
+  all: (1 << 6) - 1,
+} as const;
+
+export type AnalysisCapability =
+  (typeof AnalysisCapability)[keyof typeof AnalysisCapability];
 
 export interface AnalysisIssue {
   code: string;
@@ -50,13 +61,25 @@ export interface AnalysisIssue {
 }
 
 export interface ComponentAnalysis {
-  registration: AnalysisStatus;
-  semantics: AnalysisStatus;
-  attributes: AnalysisStatus;
-  events: AnalysisStatus;
-  slots: AnalysisStatus;
-  css: AnalysisStatus;
+  complete: number;
+  incomplete: number;
   issues: AnalysisIssue[];
+}
+
+export function markAnalysisComplete(
+  analysis: ComponentAnalysis,
+  capabilities: number
+): void {
+  analysis.complete |= capabilities;
+  analysis.incomplete &= ~capabilities;
+}
+
+export function markAnalysisIncomplete(
+  analysis: ComponentAnalysis,
+  capabilities: number
+): void {
+  analysis.complete &= ~capabilities;
+  analysis.incomplete |= capabilities;
 }
 
 export interface MemberSemantics {
