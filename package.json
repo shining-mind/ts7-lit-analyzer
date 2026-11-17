@@ -15,7 +15,7 @@
     "test": "pnpm run test:smoke && pnpm run --no-bail \"/^test:(baseline|discovery|packaging|e2e)$/\"",
     "test:smoke": "pnpm build && pnpm --filter @ts7-lit-analyzer/analyzer test:smoke && pnpm --filter @ts7-lit-analyzer/analyzer-cli test:smoke && node --test tests/workspace.test.ts",
     "test:baseline": "pnpm --dir tests/fixtures/legacy install --frozen-lockfile && node --test tests/legacy-cli-baseline.test.ts && pnpm --dir tests/fixtures/legacy run test:upstream",
-    "test:discovery": "pnpm --dir tests/fixtures/webcomponents install --frozen-lockfile && pnpm --filter @ts7-lit-analyzer/cem-analyzer-ts7 test && node --test tests/discovery-integration.test.ts",
+    "test:discovery": "pnpm --dir tests/fixtures/webcomponents install --frozen-lockfile && pnpm --filter @ts7-lit-analyzer/cem-analyzer-ts7 test && node --test tests/discovery-integration.test.ts tests/discovery-eager-compatibility.test.ts tests/discovery-prefilter-equivalence.test.ts tests/discovery-lazy-integration.test.ts",
     "test:packaging": "node --test tests/packaging.test.ts",
     "test:e2e": "pnpm test:vscode",
     "test:vscode": "pnpm --filter ts7-lit-extension run test:vscode"

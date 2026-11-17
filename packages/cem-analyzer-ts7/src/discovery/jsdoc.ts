@@ -32,7 +32,7 @@ import {
   type SourceFile,
 } from 'typescript/ast';
 
-import type {SourceRange} from './contracts.js';
+import type {SourceRange} from '../contracts.js';
 
 export interface DocumentationEvidence {
   kind: 'jsdoc' | 'inline-event';

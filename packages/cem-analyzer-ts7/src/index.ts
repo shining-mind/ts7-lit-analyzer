@@ -1,6 +1,6 @@
 export const cemAnalyzerTs7PackageVersion = '0.0.0';
 
-export {createDiscoverySession} from './session.js';
+export {createDiscoverySession} from './session/index.js';
 export {AnalysisCapability} from './contracts.js';
 export type {
   AnalysisIssue,
@@ -8,6 +8,7 @@ export type {
   DeclarationEvidence,
   DiscoveryResult,
   MemberSemantics,
+  MemberTypeQuery,
   PackageIdentity,
   ProjectIdentity,
   RegistrationEvidence,
@@ -21,6 +22,7 @@ export type {
   ConsumerDiscoveryOptions,
   DiscoveryOptions,
   DiscoverySession,
+  LazyDiscoverySession,
   StandaloneDiscoveryOptions,
   VirtualSymlink,
-} from './session.js';
+} from './session/index.js';

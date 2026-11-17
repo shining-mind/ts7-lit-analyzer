@@ -77,6 +77,9 @@ export interface FrameworkStrategyContext {
 
 export interface FrameworkStrategy {
   readonly name: FrameworkName;
+  index(
+    context: FrameworkStrategyContext
+  ): Promise<readonly ComponentFrameworkFragment[]>;
   collect(
     context: FrameworkStrategyContext
   ): Promise<readonly ComponentFrameworkFragment[]>;

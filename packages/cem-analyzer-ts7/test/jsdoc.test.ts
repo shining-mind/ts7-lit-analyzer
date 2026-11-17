@@ -21,7 +21,7 @@ import {createFileSystemWithLib} from 'typescript/fs';
 import {
   collectClassDocumentation,
   collectMemberDocumentation,
-} from '../dist/jsdoc.js';
+} from '../dist/discovery/jsdoc.js';
 
 interface TestProject {
   program: Program;

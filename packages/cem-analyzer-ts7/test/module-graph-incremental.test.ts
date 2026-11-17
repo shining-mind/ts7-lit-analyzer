@@ -17,7 +17,7 @@ import {
   buildModuleGraph,
   type ModuleGraph,
   type ProjectSnapshot,
-} from '../dist/module-graph.js';
+} from '../dist/graph/index.js';
 
 type BuiltGraph = ProjectSnapshot & {graph: ModuleGraph};
 
