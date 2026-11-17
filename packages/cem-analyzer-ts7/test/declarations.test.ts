@@ -5,7 +5,7 @@ import dedent from 'ts-dedent';
 import type {ClassField} from 'custom-elements-manifest';
 
 import {AnalysisCapability} from '../dist/contracts.js';
-import {createSemanticCollector} from '../dist/semantics.js';
+import {createSemanticCollector} from '../dist/semantics/index.js';
 import {withSemanticTestProgram} from './semantic-test-program.js';
 
 const project = {id: 'declaration-test', currentDirectory: '/virtual'};

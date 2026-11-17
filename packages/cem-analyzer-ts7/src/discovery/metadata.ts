@@ -7,6 +7,7 @@ import type {Checker, Program} from 'typescript/async';
 import {
   isClassDeclaration,
   isExpressionStatement,
+  SyntaxKind,
   type ClassDeclaration,
   type Node,
   type SourceFile,
@@ -16,22 +17,46 @@ import {
   AnalysisCapability,
   markAnalysisComplete,
   markAnalysisIncomplete,
-} from './contracts.js';
-import type {DeclarationEvidence, WebComponentRecord} from './contracts.js';
+} from '../contracts.js';
+import type {DeclarationEvidence, WebComponentRecord} from '../contracts.js';
 import {
   collectClassDocumentation,
   collectMemberDocumentation,
   type ClassDocumentationFragment,
 } from './jsdoc.js';
+import type {ModuleGraph} from '../graph/module-graph.js';
 import {
   collectFrameworkMetadata,
   type ComponentFrameworkFragment,
-} from './strategies/index.js';
+} from '../strategies/index.js';
 
 export interface MetadataContext {
   program: Program;
   checker: Checker;
   sourceFiles: readonly SourceFile[];
+}
+
+export async function createMetadataContext(
+  program: Program,
+  rootFiles: readonly string[],
+  graph: ModuleGraph
+): Promise<MetadataContext> {
+  const fileNames = new Set([
+    ...rootFiles,
+    ...graph.modules.map((module) => module.fileName),
+  ]);
+  const sourceFiles = [];
+  for (const fileName of fileNames) {
+    const sourceFile = await program.getSourceFile(fileName);
+    if (sourceFile) {
+      sourceFiles.push(sourceFile);
+    }
+  }
+  return {
+    program,
+    checker: program.getProject().checker,
+    sourceFiles,
+  };
 }
 
 export async function mergeComponentMetadata(
@@ -263,7 +288,7 @@ async function findClassDeclaration(
   return node && isClassDeclaration(node) ? node : undefined;
 }
 
-async function findEvidenceNode(
+export async function findEvidenceNode(
   program: Program,
   evidence: DeclarationEvidence
 ): Promise<Node | undefined> {
@@ -271,6 +296,7 @@ async function findEvidenceNode(
   if (!sourceFile) return undefined;
   function visit(node: Node): Node | undefined {
     if (
+      node.kind !== SyntaxKind.SourceFile &&
       node.getStart(sourceFile) === evidence.range.start &&
       node.end === evidence.range.end
     ) {

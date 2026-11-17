@@ -70,6 +70,7 @@ test('exports CEM-composed records with separate semantic evidence', () => {
   const result: DiscoveryResult = {
     project: component.project,
     snapshotId: 'snapshot-1',
+    generation: 1,
     components: [component],
     issues: [],
     containsOverlays: false,
@@ -112,6 +113,7 @@ test('represents filesystem and overlay provenance without overlay content', () 
   const filesystemResult: DiscoveryResult = {
     project: component.project,
     snapshotId: 'snapshot-1',
+    generation: 1,
     components: [],
     issues: [],
     containsOverlays: false,

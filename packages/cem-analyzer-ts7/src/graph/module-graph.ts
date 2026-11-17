@@ -75,6 +75,7 @@ interface ModuleGraphOptions {
   initial: ProjectSnapshot;
   rootFiles: readonly string[];
   initialProgramRoots?: readonly string[];
+  retainProgramRoots?: readonly string[];
   compilerOptions: RawCompilerOptions;
   fileExists(fileName: string): boolean;
   reload(
@@ -249,7 +250,15 @@ export async function buildModuleGraph(
 
     addProvenance(rootFiles, modules);
     if ([...includedRoots].some((fileName) => !modules.has(fileName))) {
-      const next = await options.reload([...modules.keys()], current);
+      const next = await options.reload(
+        [
+          ...new Set([
+            ...(options.retainProgramRoots ?? []),
+            ...modules.keys(),
+          ]),
+        ],
+        current
+      );
       await current.snapshot.dispose();
       current = next;
     }
@@ -416,7 +425,7 @@ function addUniqueProvenance(
   }
 }
 
-function getImplementationFileName(
+export function getImplementationFileName(
   declarationFileName: string
 ): string | undefined {
   const match = /\.d\.(ts|mts|cts)$/.exec(declarationFileName);

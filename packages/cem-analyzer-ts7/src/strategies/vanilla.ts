@@ -25,7 +25,7 @@ import {
 } from 'typescript/ast';
 
 import type {RegistrationEvidence} from '../contracts.js';
-import {collectClassDocumentation} from '../jsdoc.js';
+import {collectClassDocumentation} from '../discovery/jsdoc.js';
 import {
   addFramework,
   addUnique,
@@ -51,126 +51,152 @@ interface RegistryBinding {
   declaration: VariableDeclaration;
 }
 
-export const vanillaFrameworkStrategy: FrameworkStrategy = {
-  name: 'vanilla',
-  collect: collectVanillaMetadata,
-};
+export class VanillaFrameworkStrategy implements FrameworkStrategy {
+  readonly name = 'vanilla';
 
-async function collectVanillaMetadata(
-  context: FrameworkStrategyContext
-): Promise<ComponentFrameworkFragment[]> {
-  const {checker, sourceFiles} = context;
-  const fragments = new Map<string, MutableFragment>();
-  const classes = collectClasses(sourceFiles);
-  const htmlElement = await checker.resolveName(
-    'HTMLElement',
-    SymbolFlags.Interface
-  );
-  if (!htmlElement) {
-    return [];
+  index(
+    context: FrameworkStrategyContext
+  ): Promise<ComponentFrameworkFragment[]> {
+    return this.scan(context, 'index');
   }
 
-  for (const declaration of classes) {
-    const instanceType = await getInstanceType(checker, declaration);
-    if (
-      !instanceType ||
-      !(await inheritsFrom(
-        checker,
-        instanceType,
-        (symbol) => symbol.id === htmlElement.id
-      ))
-    ) {
-      continue;
+  collect(
+    context: FrameworkStrategyContext
+  ): Promise<ComponentFrameworkFragment[]> {
+    return this.scan(context, 'full');
+  }
+
+  private async scan(
+    context: FrameworkStrategyContext,
+    depth: 'index' | 'full'
+  ): Promise<ComponentFrameworkFragment[]> {
+    const {checker, sourceFiles} = context;
+    const fragments = new Map<string, MutableFragment>();
+    const classes = collectClasses(sourceFiles);
+    const htmlElement = await checker.resolveName(
+      'HTMLElement',
+      SymbolFlags.Interface
+    );
+    if (!htmlElement) {
+      return [];
     }
-    const fragment = await getOrCreateFragment(fragments, declaration);
-    addFramework(fragment, 'vanilla', declaration);
-    await collectObservedAttributes(fragment, declaration, instanceType);
-    const documentation = collectClassDocumentation(declaration);
-    for (const event of documentation.events) {
-      addUnique(fragment.events, event);
-    }
-    for (const item of documentation.evidence) {
+
+    for (const declaration of classes) {
+      const instanceType = await getInstanceType(checker, declaration);
       if (
-        item.kind === 'inline-event' ||
-        item.tagName === 'fires' ||
-        item.tagName === 'event'
+        !instanceType ||
+        !(await inheritsFrom(
+          checker,
+          instanceType,
+          (symbol) => symbol.id === htmlElement.id
+        ))
       ) {
-        addUnique(fragment.evidence, {
-          kind: 'event',
-          strategy: 'vanilla',
-          fileName: item.fileName,
-          range: item.range,
-        });
+        continue;
+      }
+      const fragment = await getOrCreateFragment(fragments, declaration);
+      addFramework(fragment, 'vanilla', declaration);
+      if (depth === 'full') {
+        await collectObservedAttributes(fragment, declaration, instanceType);
+        const documentation = collectClassDocumentation(declaration);
+        for (const event of documentation.events) {
+          addUnique(fragment.events, event);
+        }
+        for (const item of documentation.evidence) {
+          if (
+            item.kind === 'inline-event' ||
+            item.tagName === 'fires' ||
+            item.tagName === 'event'
+          ) {
+            addUnique(fragment.evidence, {
+              kind: 'event',
+              strategy: 'vanilla',
+              fileName: item.fileName,
+              range: item.range,
+            });
+          }
+        }
       }
     }
-  }
 
-  const registries = await collectRegistryBindings(checker, sourceFiles);
-  for (const sourceFile of sourceFiles) {
-    await visitAsync(sourceFile, async (node) => {
-      if (!isCallExpression(node)) {
-        return;
-      }
-      const registration = await recognizeDefinition(checker, node, registries);
-      if (!registration) {
-        return;
-      }
-      const fragment = getOrCreateFragment(fragments, registration.declaration);
-      addUnique(fragment.registrations, registration.evidence);
-      addUnique(fragment.evidence, {
-        kind: 'registration',
-        strategy: 'vanilla',
-        fileName: registration.evidence.fileName,
-        range: registration.evidence.range,
+    const registries = await collectRegistryBindings(checker, sourceFiles);
+    for (const sourceFile of sourceFiles) {
+      await visitAsync(sourceFile, async (node) => {
+        if (!isCallExpression(node)) {
+          return;
+        }
+        const registration = await recognizeDefinition(
+          checker,
+          node,
+          registries
+        );
+        if (!registration) {
+          return;
+        }
+        const fragment = getOrCreateFragment(
+          fragments,
+          registration.declaration
+        );
+        addUnique(fragment.registrations, registration.evidence);
+        addUnique(fragment.evidence, {
+          kind: 'registration',
+          strategy: 'vanilla',
+          fileName: registration.evidence.fileName,
+          range: registration.evidence.range,
+        });
       });
-    });
-  }
+    }
 
-  for (const sourceFile of sourceFiles) {
-    await visitAsync(sourceFile, async (node) => {
-      if (
-        !isInterfaceDeclaration(node) ||
-        node.name.text !== 'HTMLElementTagNameMap'
-      ) {
-        return;
-      }
-      for (const member of node.members) {
+    for (const sourceFile of sourceFiles) {
+      await visitAsync(sourceFile, async (node) => {
         if (
-          !isPropertySignatureDeclaration(member) ||
-          !isStringLiteralLikeNode(member.name) ||
-          !member.type
+          !isInterfaceDeclaration(node) ||
+          node.name.text !== 'HTMLElementTagNameMap'
         ) {
-          continue;
+          return;
         }
-        const type = await checker.getTypeAtLocation(member.type);
-        const symbol = await type.getSymbol();
-        const declaration = symbol ? await classFromSymbol(symbol) : undefined;
-        if (!declaration) {
-          continue;
+        for (const member of node.members) {
+          if (
+            !isPropertySignatureDeclaration(member) ||
+            !isStringLiteralLikeNode(member.name) ||
+            !member.type
+          ) {
+            continue;
+          }
+          const type = await checker.getTypeAtLocation(member.type);
+          const symbol = await type.getSymbol();
+          const declaration = symbol
+            ? await classFromSymbol(symbol)
+            : undefined;
+          if (!declaration) {
+            continue;
+          }
+          const fragment = await getOrCreateFragment(fragments, declaration);
+          const range = sourceRange(member);
+          addUnique(fragment.registrations, {
+            tagName: member.name.text,
+            fileName: sourceFile.fileName,
+            range,
+            scope: 'global',
+            strategy: 'vanilla',
+          });
+          addUnique(fragment.evidence, {
+            kind: 'tag-name-map',
+            strategy: 'vanilla',
+            fileName: sourceFile.fileName,
+            range,
+          });
         }
-        const fragment = await getOrCreateFragment(fragments, declaration);
-        const range = sourceRange(member);
-        addUnique(fragment.registrations, {
-          tagName: member.name.text,
-          fileName: sourceFile.fileName,
-          range,
-          scope: 'global',
-          strategy: 'vanilla',
-        });
-        addUnique(fragment.evidence, {
-          kind: 'tag-name-map',
-          strategy: 'vanilla',
-          fileName: sourceFile.fileName,
-          range,
-        });
-      }
-    });
-  }
+      });
+    }
 
-  return [...fragments.values()].filter((fragment) =>
-    fragment.frameworks.includes('vanilla')
-  );
+    return [...fragments.values()].filter((fragment) =>
+      fragment.frameworks.includes('vanilla')
+    );
+  }
 }
+
+export const vanillaFrameworkStrategy: FrameworkStrategy =
+  new VanillaFrameworkStrategy();
 
 async function collectObservedAttributes(
   fragment: MutableFragment,

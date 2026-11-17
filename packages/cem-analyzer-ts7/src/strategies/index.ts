@@ -16,8 +16,8 @@ import {
 import {litFrameworkStrategy} from './lit.js';
 import {vanillaFrameworkStrategy} from './vanilla.js';
 
-export {litFrameworkStrategy} from './lit.js';
-export {vanillaFrameworkStrategy} from './vanilla.js';
+export {litFrameworkStrategy, LitFrameworkStrategy} from './lit.js';
+export {vanillaFrameworkStrategy, VanillaFrameworkStrategy} from './vanilla.js';
 export type {
   ComponentFrameworkFragment,
   FrameworkEvidence,
@@ -34,11 +34,16 @@ export const builtInFrameworkStrategies: readonly FrameworkStrategy[] = [
 
 export async function collectFrameworkMetadata(
   context: FrameworkStrategyContext,
-  strategies: readonly FrameworkStrategy[] = builtInFrameworkStrategies
+  strategies: readonly FrameworkStrategy[] = builtInFrameworkStrategies,
+  depth: 'index' | 'full' = 'full'
 ): Promise<ComponentFrameworkFragment[]> {
   const fragments = new Map<string, ComponentFrameworkFragment>();
   for (const strategy of strategies) {
-    for (const fragment of await strategy.collect(context)) {
+    const collected =
+      depth === 'index'
+        ? await strategy.index(context)
+        : await strategy.collect(context);
+    for (const fragment of collected) {
       const existing = fragments.get(fragment.declaration.id);
       if (existing) {
         mergeFragment(existing, fragment);

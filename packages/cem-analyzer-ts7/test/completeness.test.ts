@@ -7,7 +7,7 @@ import {AnalysisCapability} from '../dist/contracts.js';
 import {
   createDiscoverySession,
   type DiscoveryOptions,
-} from '../dist/session.js';
+} from '../dist/session/index.js';
 
 function standalone(
   rootFile: string,

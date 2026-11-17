@@ -6,9 +6,9 @@ import dedent from 'ts-dedent';
 import {
   createDiscoverySession,
   type DiscoveryOptions,
-} from '../dist/session.js';
+} from '../dist/session/index.js';
 import type {SemanticReference} from '../src/contracts.js';
-import type {DiscoverySession} from '../src/session.js';
+import type {DiscoverySession} from '../src/session/index.js';
 
 const consumerFileName = '/virtual/consumer.ts';
 const consumerSource = dedent`import {PublicElement} from 'package-a';

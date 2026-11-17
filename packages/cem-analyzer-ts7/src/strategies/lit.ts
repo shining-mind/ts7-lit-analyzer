@@ -57,71 +57,99 @@ interface ReactiveOptions {
   reflect?: boolean;
 }
 
-export const litFrameworkStrategy: FrameworkStrategy = {
-  name: 'lit',
-  collect: collectLitMetadata,
-};
+export class LitFrameworkStrategy implements FrameworkStrategy {
+  readonly name = 'lit';
 
-async function collectLitMetadata(
-  context: FrameworkStrategyContext
-): Promise<ComponentFrameworkFragment[]> {
-  const {checker, sourceFiles} = context;
-  const litClasses = await collectLitClassIdentities(checker, sourceFiles);
-  const decorators = await collectDecoratorIdentities(checker, sourceFiles);
-  const fragments = new Map<string, MutableFragment>();
-
-  for (const declaration of collectClasses(sourceFiles)) {
-    const instanceType = await getInstanceType(checker, declaration);
-    const isLit =
-      instanceType !== undefined &&
-      (await inheritsFrom(checker, instanceType, (symbol) =>
-        litClasses.has(symbol.id)
-      ));
-    if (
-      !isLit &&
-      !(await hasReactiveConfiguration(checker, declaration, decorators))
-    ) {
-      continue;
-    }
-    const fragment = await getOrCreateFragment(fragments, declaration);
-    if (isLit) {
-      addFramework(fragment, 'lit', declaration);
-    }
-
-    for (const decorator of getDecorators(declaration)) {
-      const call = decoratorCall(decorator);
-      const kind = call
-        ? await decoratorKind(checker, call, decorators)
-        : undefined;
-      if (kind !== 'customElement') {
-        continue;
-      }
-      const tagName = call?.arguments[0];
-      if (!tagName || !isStringLiteralLikeNode(tagName)) {
-        continue;
-      }
-      addLitRegistration(fragment, declaration, tagName.text, decorator);
-    }
-
-    for (const member of declaration.members) {
-      if (isPropertyDeclaration(member)) {
-        await collectPropertyDecorators(checker, fragment, member, decorators);
-      }
-      collectStaticProperties(fragment, member);
-    }
+  index(
+    context: FrameworkStrategyContext
+  ): Promise<ComponentFrameworkFragment[]> {
+    return this.scan(context, 'index');
   }
 
-  for (const sourceFile of sourceFiles) {
-    await visitAsync(sourceFile, async (node) => {
-      if (!isCompiledDecorateCall(node)) {
-        return;
-      }
-      await collectCompiledDecorator(checker, fragments, node, decorators);
-    });
+  collect(
+    context: FrameworkStrategyContext
+  ): Promise<ComponentFrameworkFragment[]> {
+    return this.scan(context, 'full');
   }
 
-  return [...fragments.values()];
+  private async scan(
+    context: FrameworkStrategyContext,
+    depth: 'index' | 'full'
+  ): Promise<ComponentFrameworkFragment[]> {
+    const {checker, sourceFiles} = context;
+    const litClasses = await collectLitClassIdentities(checker, sourceFiles);
+    const decorators = await collectDecoratorIdentities(checker, sourceFiles);
+    const fragments = new Map<string, MutableFragment>();
+
+    for (const declaration of collectClasses(sourceFiles)) {
+      const instanceType = await getInstanceType(checker, declaration);
+      const isLit =
+        instanceType !== undefined &&
+        (await inheritsFrom(checker, instanceType, (symbol) =>
+          litClasses.has(symbol.id)
+        ));
+      if (
+        !isLit &&
+        !(await hasReactiveConfiguration(checker, declaration, decorators))
+      ) {
+        continue;
+      }
+      const fragment = await getOrCreateFragment(fragments, declaration);
+      if (isLit) {
+        addFramework(fragment, 'lit', declaration);
+      }
+
+      for (const decorator of getDecorators(declaration)) {
+        const call = decoratorCall(decorator);
+        const kind = call
+          ? await decoratorKind(checker, call, decorators)
+          : undefined;
+        if (kind !== 'customElement') {
+          continue;
+        }
+        const tagName = call?.arguments[0];
+        if (!tagName || !isStringLiteralLikeNode(tagName)) {
+          continue;
+        }
+        addLitRegistration(fragment, declaration, tagName.text, decorator);
+      }
+
+      if (depth === 'full') {
+        for (const member of declaration.members) {
+          if (isPropertyDeclaration(member)) {
+            await collectPropertyDecorators(
+              checker,
+              fragment,
+              member,
+              decorators
+            );
+          }
+          collectStaticProperties(fragment, member);
+        }
+      }
+    }
+
+    for (const sourceFile of sourceFiles) {
+      await visitAsync(sourceFile, async (node) => {
+        if (!isCompiledDecorateCall(node)) {
+          return;
+        }
+        await collectCompiledDecorator(
+          checker,
+          fragments,
+          node,
+          decorators,
+          depth
+        );
+      });
+    }
+
+    return [...fragments.values()];
+  }
 }
+
+export const litFrameworkStrategy: FrameworkStrategy =
+  new LitFrameworkStrategy();
 
 async function collectLitClassIdentities(
   checker: Checker,
@@ -333,7 +361,8 @@ async function collectCompiledDecorator(
   checker: Checker,
   fragments: Map<string, MutableFragment>,
   call: CallExpression,
-  decorators: DecoratorIdentity
+  decorators: DecoratorIdentity,
+  depth: 'index' | 'full'
 ): Promise<void> {
   const decoratorList = call.arguments[0];
   const target = call.arguments[1];
@@ -359,7 +388,7 @@ async function collectCompiledDecorator(
         fileName: call.getSourceFile().fileName,
         range: sourceRange(call),
       });
-    } else if (kind === 'property' || kind === 'state') {
+    } else if (depth === 'full' && (kind === 'property' || kind === 'state')) {
       const memberName = call.arguments[2];
       if (!memberName || !isStringLiteralLikeNode(memberName)) {
         continue;

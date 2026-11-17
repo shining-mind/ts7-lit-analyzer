@@ -101,10 +101,16 @@ export interface WebComponentRecord {
 export interface DiscoveryResult {
   project: ProjectIdentity;
   snapshotId: string;
+  generation: number;
   components: WebComponentRecord[];
   issues: AnalysisIssue[];
   containsOverlays: boolean;
   overlayFiles: string[];
+}
+
+export interface MemberTypeQuery {
+  text: string;
+  reference: SemanticReference;
 }
 
 export interface VirtualSourceFile {
@@ -115,3 +121,30 @@ export interface VirtualSourceFile {
 export interface SourceOverlay extends VirtualSourceFile {
   version?: number;
 }
+
+export interface VirtualSymlink {
+  target: string;
+}
+
+interface DiscoveryOptionsBase {
+  currentDirectory?: string;
+  files?: readonly VirtualSourceFile[];
+  overlays?: readonly SourceOverlay[];
+  symlinks?: Readonly<Record<string, VirtualSymlink>>;
+  eagerness?: 'eager' | 'lazy';
+  retentionBound?: number;
+}
+
+export interface StandaloneDiscoveryOptions extends DiscoveryOptionsBase {
+  mode: 'standalone';
+  rootFiles: readonly string[];
+  compilerOptions?: Readonly<Record<string, unknown>>;
+}
+
+export interface ConsumerDiscoveryOptions extends DiscoveryOptionsBase {
+  mode: 'consumer';
+  configFileName: string;
+}
+
+export type DiscoveryOptions =
+  StandaloneDiscoveryOptions | ConsumerDiscoveryOptions;
