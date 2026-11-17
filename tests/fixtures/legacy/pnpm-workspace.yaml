@@ -1,4 +1,5 @@
-packages: []
+packages:
+  - ../../../packages/cem-analyzer-ts7
 
 lockfileIncludeTarballUrl: false
 registry: https://registry.npmjs.org/

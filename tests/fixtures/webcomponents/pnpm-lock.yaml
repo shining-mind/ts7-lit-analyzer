@@ -17,6 +17,9 @@ importers:
       '@fixture/js-only':
         specifier: file:packages/js-only
         version: file:packages/js-only
+      '@fixture/reexport':
+        specifier: file:packages/reexport
+        version: file:packages/reexport
       '@material/web':
         specifier: 2.5.0
         version: 2.5.0
@@ -37,6 +40,9 @@ packages:
 
   '@fixture/js-only@file:packages/js-only':
     resolution: {directory: packages/js-only, type: directory}
+
+  '@fixture/reexport@file:packages/reexport':
+    resolution: {directory: packages/reexport, type: directory}
 
   '@lit-labs/ssr-dom-shim@1.6.0':
     resolution: {integrity: sha512-VHb0ALPMTlgKjM6yIxxoQNnpKyUKLD04VzeQdsiXkMqkvYlAHxq9glGLmgbb889/1GsohSOAjvQYoiBppXFqrQ==}
@@ -72,6 +78,10 @@ snapshots:
   '@fixture/dual@file:packages/dual': {}
 
   '@fixture/js-only@file:packages/js-only': {}
+
+  '@fixture/reexport@file:packages/reexport':
+    dependencies:
+      '@fixture/js-only': file:packages/js-only
 
   '@lit-labs/ssr-dom-shim@1.6.0': {}
 

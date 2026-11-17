@@ -3,7 +3,7 @@ import type {
   AnalyzerConfig,
   AnalyzerDiagnostic,
   SourceRange,
-} from '@ts7-lit-analyzer/analyzer';
+} from '@ts7-lit-analyzer/analyzer-core';
 import type {TestFile} from './compile-files.ts';
 import {prepareAnalyzer} from './provider.ts';
 

@@ -9,9 +9,8 @@ import {test} from 'node:test';
 
 const workspaceRoot = fileURLToPath(new URL('../', import.meta.url));
 const packageNames = [
-  'analyzer',
+  'analyzer-core',
   'cem-analyzer-ts7',
-  'analyzer-ts7',
   'analyzer-cli',
   'vscode-extension',
 ];
@@ -97,7 +96,25 @@ test('packed artifacts install and run in a standalone fixture', async (t) => {
       'utf8'
     )
   );
-  assert.equal(cliManifest.dependencies['@ts7-lit-analyzer/analyzer'], '0.0.0');
+  assert.equal(
+    cliManifest.dependencies['@ts7-lit-analyzer/analyzer-core'],
+    '0.0.0'
+  );
+
+  const coreManifest = JSON.parse(
+    await readFile(
+      join(
+        consumerDirectory,
+        'node_modules/@ts7-lit-analyzer/analyzer-core/package.json'
+      ),
+      'utf8'
+    )
+  );
+  assert.equal(
+    coreManifest.dependencies['@ts7-lit-analyzer/cem-analyzer-ts7'],
+    '0.0.0'
+  );
+  assert.equal(coreManifest.dependencies['custom-elements-manifest'], '2.1.0');
 
   for (const packageName of packageNames) {
     const installedName =
@@ -143,6 +160,39 @@ customElements.define('packed-element', PackedElement);`,
     );
   } finally {
     await discoverySession.dispose();
+  }
+
+  const corePackage = await import(
+    pathToFileURL(
+      join(
+        consumerDirectory,
+        'node_modules/@ts7-lit-analyzer/analyzer-core/dist/index.js'
+      )
+    ).href
+  );
+  assert.equal(corePackage.analyzerPackageVersion, '0.0.0');
+  const registrySession = await corePackage.createRegistrySession({
+    mode: 'standalone',
+    currentDirectory: '/virtual',
+    rootFiles: ['/virtual/index.ts'],
+    files: [
+      {
+        fileName: '/virtual/index.ts',
+        text: `export class PackedElement extends HTMLElement { value: number = 0; }
+customElements.define('packed-element', PackedElement);`,
+      },
+    ],
+  });
+  try {
+    const view = await registrySession.collect();
+    const packed = view.byTagName('packed-element');
+    assert.equal(packed?.declaration.name, 'PackedElement');
+    assert.equal(
+      corePackage.findProperty(packed, 'value')?.type?.text,
+      'number'
+    );
+  } finally {
+    await registrySession.dispose();
   }
 
   const lazySession = await discoveryPackage.createDiscoverySession({
@@ -195,7 +245,10 @@ customElements.define('packed-element', PackedElement);`,
     join(workspaceRoot, 'packages/vscode-extension/dist/index.js'),
     'utf8'
   );
-  assert.doesNotMatch(extensionBundle, /@ts7-lit-analyzer\/analyzer/);
+  // The extension externalizes workspace packages and TypeScript 7; the bundle
+  // imports the core at runtime rather than inlining the discovery engine.
+  assert.match(extensionBundle, /@ts7-lit-analyzer\/analyzer-core/);
+  assert.doesNotMatch(extensionBundle, /cemAnalyzerTs7PackageVersion/);
 
   execFileSync('pnpm', ['--filter', 'ts7-lit-extension', 'package:vsix'], {
     cwd: workspaceRoot,

@@ -1,7 +1,7 @@
 import type {Program, SourceFile} from 'typescript';
 import {DefaultLitAnalyzerContext} from 'lit-analyzer/lib/analyze/default-lit-analyzer-context.js';
 import {LitAnalyzer} from 'lit-analyzer/lib/analyze/lit-analyzer.js';
-import type {AnalyzerConfig} from '@ts7-lit-analyzer/analyzer';
+import type {AnalyzerConfig} from '@ts7-lit-analyzer/analyzer-core';
 import type {LitAnalyzerConfig} from 'lit-analyzer/lib/analyze/lit-analyzer-config.js';
 import {makeConfig} from 'lit-analyzer/lib/analyze/lit-analyzer-config.js';
 import type {LitAnalyzerContext} from 'lit-analyzer/lib/analyze/lit-analyzer-context.js';

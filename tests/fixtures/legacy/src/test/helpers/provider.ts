@@ -1,4 +1,4 @@
-import type {AnalyzerConfig} from '@ts7-lit-analyzer/analyzer';
+import type {AnalyzerConfig} from '@ts7-lit-analyzer/analyzer-core';
 import type {TestFile} from './compile-files.ts';
 import {prepareLegacyAnalyzer} from './legacy-provider.ts';
 
