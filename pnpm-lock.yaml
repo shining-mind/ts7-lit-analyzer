@@ -182,15 +182,20 @@ importers:
         specifier: 7.1.0-beta
         version: 7.1.0-beta
 
-  packages/analyzer: {}
-
   packages/analyzer-cli:
     dependencies:
-      '@ts7-lit-analyzer/analyzer':
+      '@ts7-lit-analyzer/analyzer-core':
         specifier: workspace:*
-        version: link:../analyzer
+        version: link:../analyzer-core
 
-  packages/analyzer-ts7: {}
+  packages/analyzer-core:
+    dependencies:
+      '@ts7-lit-analyzer/cem-analyzer-ts7':
+        specifier: workspace:*
+        version: link:../cem-analyzer-ts7
+      custom-elements-manifest:
+        specifier: 2.1.0
+        version: 2.1.0
 
   packages/cem-analyzer-ts7:
     dependencies:
@@ -210,9 +215,9 @@ importers:
 
   packages/vscode-extension:
     dependencies:
-      '@ts7-lit-analyzer/analyzer':
+      '@ts7-lit-analyzer/analyzer-core':
         specifier: workspace:*
-        version: link:../analyzer
+        version: link:../analyzer-core
     devDependencies:
       '@types/mocha':
         specifier: 10.0.10

@@ -1,4 +1,4 @@
-import {analyzerPackageVersion} from '@ts7-lit-analyzer/analyzer';
+import {analyzerPackageVersion} from '@ts7-lit-analyzer/analyzer-core';
 import type {ExtensionContext} from 'vscode';
 
 export function activate(_context: ExtensionContext): {

@@ -1,12 +1,13 @@
 {
-  "name": "@ts7-lit-analyzer/analyzer",
+  "name": "@ts7-lit-analyzer/analyzer-core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
-    "test:smoke": "pnpm --filter @ts7-lit-analyzer/analyzer... build && node --test test/*.test.ts"
+    "test:smoke": "pnpm --filter @ts7-lit-analyzer/analyzer-core... build && node --test test/*.test.ts"
   },
   "files": [
     "dist"
@@ -16,5 +17,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "dependencies": {
+    "@ts7-lit-analyzer/cem-analyzer-ts7": "workspace:*",
+    "custom-elements-manifest": "2.1.0"
   }
 }
