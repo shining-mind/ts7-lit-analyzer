@@ -56,25 +56,24 @@ export class RegistrationIndex {
         context.program,
         fragment.declaration
       );
-      if (documentation?.ignored) {
-        continue;
+      if (
+        !documentation?.ignored &&
+        (fragment.registrations.length > 0 || documentation?.tagName)
+      ) {
+        const tagName =
+          documentation?.tagName ?? fragment.registrations[0]?.tagName;
+        this.entries.set(fragment.declaration.id, {
+          declaration: fragment.declaration,
+          frameworks: [...fragment.frameworks],
+          registrations: [...fragment.registrations],
+          evidence: [...fragment.evidence],
+          ...(tagName ? {tagName} : {}),
+          ...(documentation?.summary ? {summary: documentation.summary} : {}),
+          ...(documentation?.description
+            ? {description: documentation.description}
+            : {}),
+        });
       }
-      if (fragment.registrations.length === 0 && !documentation?.tagName) {
-        continue;
-      }
-      const tagName =
-        documentation?.tagName ?? fragment.registrations[0]?.tagName;
-      this.entries.set(fragment.declaration.id, {
-        declaration: fragment.declaration,
-        frameworks: [...fragment.frameworks],
-        registrations: [...fragment.registrations],
-        evidence: [...fragment.evidence],
-        ...(tagName ? {tagName} : {}),
-        ...(documentation?.summary ? {summary: documentation.summary} : {}),
-        ...(documentation?.description
-          ? {description: documentation.description}
-          : {}),
-      });
     }
   }
 }

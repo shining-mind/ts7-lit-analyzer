@@ -93,14 +93,14 @@ export class ComponentRegistry {
       const enriched = this.enriched.get(id);
       if (enriched) {
         components.push(enriched);
-        continue;
+      } else {
+        let record = this.indexed.get(id);
+        if (!record) {
+          record = this.createIndexedRecord(entry, modulesByFile);
+          this.indexed.set(id, record);
+        }
+        components.push(record);
       }
-      let record = this.indexed.get(id);
-      if (!record) {
-        record = this.createIndexedRecord(entry, modulesByFile);
-        this.indexed.set(id, record);
-      }
-      components.push(record);
     }
     return {
       project: this.project,

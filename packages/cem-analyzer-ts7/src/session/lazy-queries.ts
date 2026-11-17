@@ -34,21 +34,21 @@ export class LazyQueryTracker {
     for (const [key, query] of this.queries) {
       if (!reusedComponentIds.has(query.classEvidence.id)) {
         this.queries.delete(key);
-        continue;
-      }
-      const {reference, classEvidence, memberName} = query;
-      semantics.registerSuccessorQuery(reference, async () => {
-        const resolved = await semantics.getMemberTypeQuery(
-          classEvidence,
-          memberName
-        );
-        if (!resolved) {
-          throw new Error(
-            `Cannot resolve successor type for ${classEvidence.id}.${memberName}`
+      } else {
+        const {reference, classEvidence, memberName} = query;
+        semantics.registerSuccessorQuery(reference, async () => {
+          const resolved = await semantics.getMemberTypeQuery(
+            classEvidence,
+            memberName
           );
-        }
-        return resolved.reference;
-      });
+          if (!resolved) {
+            throw new Error(
+              `Cannot resolve successor type for ${classEvidence.id}.${memberName}`
+            );
+          }
+          return resolved.reference;
+        });
+      }
     }
   }
 }

@@ -33,12 +33,11 @@ export async function selectDeclaration(
     : symbol.declarations;
   for (const handle of handles) {
     const declaration = await handle.resolve();
-    if (!declaration) {
-      continue;
-    }
-    fallback ??= declaration;
-    if (declaration.getSourceFile().isDeclarationFile) {
-      return declaration;
+    if (declaration) {
+      fallback ??= declaration;
+      if (declaration.getSourceFile().isDeclarationFile) {
+        return declaration;
+      }
     }
   }
   return fallback;
