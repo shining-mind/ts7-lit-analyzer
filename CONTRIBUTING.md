@@ -41,6 +41,7 @@ We follow the [Google JavaScript Style Guide](https://google.github.io/styleguid
 4. If you're tempted to add a "what" comment, see if you can't restructure the code and use more descriptive names so that the comment is unnecessary.
 5. Separate logical steps with blank lines: after a multiline statement (object or array literal, wrapped expression, loop or conditional block) and between distinct steps such as consecutive loops. Keep closely related single-line statements together. Prettier preserves these blank lines but does not insert them.
 6. Document declarations (classes, interfaces, functions, type aliases) with JSDoc (`/** ... */`) comments. Comments that describe the whole file (such as file headers) and inline rationale inside bodies use `//` comments.
+7. Prefer if/else branching over `continue`/`break` when the loop logic folds into clean branching. Early `return` (such as search exits) and `break` in switch cases are unaffected.
 
 ## TypeScript
 

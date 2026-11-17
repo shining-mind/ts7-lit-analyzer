@@ -5,6 +5,7 @@
 - Follow the [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html) where applicable, together with the surrounding code's naming conventions, structure, and established patterns.
 - Separate logical steps with blank lines. Insert one blank line after a multiline statement (a multiline object or array literal, a wrapped expression or call, a loop or conditional block) before the next statement, and between distinct steps such as consecutive loops. Keep closely related single-line statements together without blank lines. This is a local refinement of Google style §4.6.1 for readability; Prettier preserves author-inserted blank lines but never adds them, and no lint rule enforces this.
 - Prefer clear, simple, readable code and descriptive names over clever or compressed implementations. Do not shorten names merely to reduce source size.
+- Prefer if/else branching over `continue`/`break` when the loop logic folds into clean branching. Early `return` (such as search exits) and `break` in switch cases are unaffected.
 - Default to no comments. Add comments for non-obvious rationale or constraints, emphasizing why rather than what. If a comment would only narrate the code, improve its structure or names instead.
 - Write comments that document a declaration (class, interface, function, type alias) as JSDoc (`/** ... */`) above it. Comments about the file as a whole (such as file headers) and inline rationale inside bodies stay `//` comments.
 - Keep modules focused and public contracts explicit. Avoid unrelated refactoring.
