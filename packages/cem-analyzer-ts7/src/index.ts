@@ -5,8 +5,10 @@ export {AnalysisCapability} from './contracts.js';
 export type {
   AnalysisIssue,
   ComponentAnalysis,
+  ConsumerProvenance,
   DeclarationEvidence,
   DiscoveryResult,
+  DocumentationEvidence,
   MemberSemantics,
   MemberTypeQuery,
   PackageIdentity,

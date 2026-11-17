@@ -5,6 +5,14 @@ export interface SourceRange {
   end: number;
 }
 
+export interface DocumentationEvidence {
+  kind: 'jsdoc' | 'inline-event';
+  tagName: string;
+  fileName: string;
+  range: SourceRange;
+  memberName?: string;
+}
+
 export interface ProjectIdentity {
   id: string;
   currentDirectory: string;
@@ -89,6 +97,17 @@ export interface MemberSemantics {
   signature?: SemanticReference;
 }
 
+/**
+ * A consumer-facing path that reaches a declaration: the exported alias and the
+ * module/package the consumer imports from. Canonical declaration identity stays
+ * authoritative; re-exports contribute additional provenance entries.
+ */
+export interface ConsumerProvenance {
+  exportName: string;
+  module: string;
+  package?: PackageIdentity;
+}
+
 export interface WebComponentRecord {
   declaration: CustomElementDeclaration;
   declarationEvidence: DeclarationEvidence;
@@ -96,6 +115,8 @@ export interface WebComponentRecord {
   registrations: RegistrationEvidence[];
   members: MemberSemantics[];
   analysis: ComponentAnalysis;
+  documentationEvidence?: DocumentationEvidence[];
+  consumerProvenance?: ConsumerProvenance[];
 }
 
 export interface DiscoveryResult {

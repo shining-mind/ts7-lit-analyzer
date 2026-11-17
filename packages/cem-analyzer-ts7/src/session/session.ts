@@ -13,6 +13,8 @@ import type {
   SourceOverlay,
 } from '../contracts.js';
 import {
+  applySuperclassProvenance,
+  collectConsumerProvenance,
   createDiscoveryResult,
   getPackageIdentity,
 } from '../discovery/discovery.js';
@@ -252,6 +254,15 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         state.fullFragments
       );
       if (merged) {
+        applySuperclassProvenance(
+          merged,
+          (state.indexGraph ?? state.graph).modules
+        );
+        await collectConsumerProvenance(
+          merged,
+          state.graph.modules,
+          state.semantics
+        );
         this.registry.setEnriched(merged);
       }
     }

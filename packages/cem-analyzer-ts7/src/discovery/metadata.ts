@@ -3,9 +3,10 @@ import type {
   ClassMember,
   CustomElementField,
 } from 'custom-elements-manifest';
-import type {Checker, Program} from 'typescript/async';
+import type {Checker, Program, Type} from 'typescript/async';
 import {
   isClassDeclaration,
+  isClassExpression,
   isExpressionStatement,
   SyntaxKind,
   type ClassDeclaration,
@@ -29,6 +30,8 @@ import {
   collectFrameworkMetadata,
   type ComponentFrameworkFragment,
 } from '../strategies/index.js';
+import {getInstanceType} from '../strategies/abstract.js';
+import {selectDeclaration} from '../semantics/collection.js';
 
 export interface MetadataContext {
   program: Program;
@@ -86,12 +89,16 @@ export async function mergeComponentMetadata(
     if (documentation?.ignored) continue;
     if (fragment.registrations.length === 0 && !documentation?.tagName)
       continue;
+    const baseDocumentation = classDeclaration
+      ? await collectBaseDocumentation(classDeclaration, context)
+      : [];
     result.push(
       await mergeComponent(
         component,
         fragment,
         documentation,
-        context.program,
+        baseDocumentation,
+        context,
         fragmentsByDeclaration
       )
     );
@@ -103,7 +110,8 @@ async function mergeComponent(
   component: WebComponentRecord,
   fragment: ComponentFrameworkFragment,
   documentation: ClassDocumentationFragment | undefined,
-  program: Program,
+  baseDocumentation: readonly ClassDocumentationFragment[],
+  context: MetadataContext,
   fragmentsByDeclaration: ReadonlyMap<string, ComponentFrameworkFragment>
 ): Promise<WebComponentRecord> {
   const declaration = component.declaration;
@@ -146,7 +154,7 @@ async function mergeComponent(
     );
   }
   for (const semantics of component.members) {
-    const node = await findEvidenceNode(program, semantics.declaration);
+    const node = await findEvidenceNode(context.program, semantics.declaration);
     const documentationHost =
       node?.parent && isExpressionStatement(node.parent) ? node.parent : node;
     if (!documentationHost) continue;
@@ -189,18 +197,40 @@ async function mergeComponent(
     documentation?.attributes ?? [],
     memberAttributes
   );
-  declaration.events = mergeUnique(
-    fragment.events,
-    documentation?.events ?? []
+  declaration.events = mergeNamed(
+    mergeUnique(fragment.events, documentation?.events ?? []),
+    ...baseDocumentation.map((base) => base.events)
   );
-  declaration.slots = mergeUnique(documentation?.slots ?? []);
-  declaration.cssParts = mergeUnique(documentation?.cssParts ?? []);
-  declaration.cssProperties = mergeUnique(documentation?.cssProperties ?? []);
-  declaration.cssStates = mergeUnique(documentation?.cssStates ?? []);
+  declaration.slots = mergeNamed(
+    mergeUnique(documentation?.slots ?? []),
+    ...baseDocumentation.map((base) => base.slots)
+  );
+  declaration.cssParts = mergeNamed(
+    mergeUnique(documentation?.cssParts ?? []),
+    ...baseDocumentation.map((base) => base.cssParts)
+  );
+  declaration.cssProperties = mergeNamed(
+    mergeUnique(documentation?.cssProperties ?? []),
+    ...baseDocumentation.map((base) => base.cssProperties)
+  );
+  declaration.cssStates = mergeNamed(
+    mergeUnique(documentation?.cssStates ?? []),
+    ...baseDocumentation.map((base) => base.cssStates)
+  );
   if (documentation?.description && !declaration.description) {
     declaration.description = documentation.description;
   }
-  if (documentation?.summary) declaration.summary = documentation.summary;
+  const summary =
+    documentation?.summary ??
+    baseDocumentation.find((base) => base.summary)?.summary;
+  if (summary) declaration.summary = summary;
+  const documentationEvidence = [
+    ...(documentation?.evidence ?? []),
+    ...baseDocumentation.flatMap((base) => base.evidence),
+  ];
+  if (documentationEvidence.length > 0) {
+    component.documentationEvidence = documentationEvidence;
+  }
   const tagName = documentation?.tagName ?? fragment.registrations[0]?.tagName;
   if (tagName) {
     declaration.customElement = true;
@@ -278,6 +308,64 @@ function mergeUnique<T>(...groups: readonly (readonly T[])[]): T[] {
     }
   }
   return result;
+}
+
+/**
+ * Deduplicates named metadata by name with first-group precedence, so subclass
+ * documentation wins over inherited base facts without duplicating them.
+ */
+function mergeNamed<T extends {name: string}>(
+  ...groups: readonly (readonly T[])[]
+): T[] {
+  const result: T[] = [];
+  const names = new Set<string>();
+  for (const group of groups) {
+    for (const item of group) {
+      if (!names.has(item.name)) {
+        names.add(item.name);
+        result.push(item);
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Collects class-level documentation from checker-resolved base classes, nearest
+ * first. Declaration selection keeps declaration authority; built-in library
+ * bases contribute no project metadata and stop the walk.
+ */
+async function collectBaseDocumentation(
+  classDeclaration: ClassDeclaration,
+  context: MetadataContext
+): Promise<ClassDocumentationFragment[]> {
+  const fragments: ClassDocumentationFragment[] = [];
+  const visited = new Set<string>();
+  let instanceType: Type | undefined = await getInstanceType(
+    context.checker,
+    classDeclaration
+  );
+  while (instanceType) {
+    const [baseType] = (await instanceType.getBaseTypes()) ?? [];
+    const baseSymbol = baseType ? await baseType.getSymbol() : undefined;
+    if (!baseSymbol) break;
+    const baseDeclaration = await selectDeclaration(baseSymbol);
+    if (
+      !baseDeclaration ||
+      (!isClassDeclaration(baseDeclaration) &&
+        !isClassExpression(baseDeclaration))
+    ) {
+      break;
+    }
+    const sourceFile = baseDeclaration.getSourceFile();
+    if (await context.program.isSourceFileDefaultLibrary(sourceFile)) break;
+    const key = `${sourceFile.fileName}#${baseSymbol.name}`;
+    if (visited.has(key)) break;
+    visited.add(key);
+    fragments.push(collectClassDocumentation(baseDeclaration));
+    instanceType = await getInstanceType(context.checker, baseDeclaration);
+  }
+  return fragments;
 }
 
 async function findClassDeclaration(

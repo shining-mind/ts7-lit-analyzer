@@ -3,6 +3,7 @@ import type {
   ClassMember,
   ClassMethod,
   CustomElementDeclaration,
+  Reference,
 } from 'custom-elements-manifest';
 import {
   SymbolFlags,
@@ -297,7 +298,7 @@ class CheckerSemanticCollector implements SemanticCollector {
     const [baseType] = (await instanceType.getBaseTypes()) ?? [];
     const baseSymbol = await baseType?.getSymbol();
     if (baseSymbol) {
-      declaration.superclass = {name: baseSymbol.name};
+      declaration.superclass = await this.createSuperclassReference(baseSymbol);
     }
 
     const members: MemberSemantics[] = [];
@@ -329,6 +330,26 @@ class CheckerSemanticCollector implements SemanticCollector {
         issues,
       },
     };
+  }
+
+  /**
+   * Resolves the base class through its authoritative declaration so the
+   * reference carries the declaration module path. Built-in library bases keep
+   * a name-only reference; package identity is attached later from the module
+   * graph, which knows canonical dependency packages.
+   */
+  private async createSuperclassReference(
+    baseSymbol: Symbol
+  ): Promise<Reference> {
+    const baseDeclaration = await selectDeclaration(baseSymbol);
+    if (!baseDeclaration) {
+      return {name: baseSymbol.name};
+    }
+    const sourceFile = baseDeclaration.getSourceFile();
+    if (await this.program.isSourceFileDefaultLibrary(sourceFile)) {
+      return {name: baseSymbol.name};
+    }
+    return {name: baseSymbol.name, module: sourceFile.fileName};
   }
 
   private async collectMember(

@@ -43,7 +43,10 @@ const candidate = "bad";
       assert.ok(component);
       assert.equal(component.declaration.name, 'CounterElement');
       assert.equal(component.declaration.description, 'A counter component.');
-      assert.deepEqual(component.declaration.superclass, {name: 'BaseElement'});
+      assert.deepEqual(component.declaration.superclass, {
+        name: 'BaseElement',
+        module: fileName,
+      });
       assert.equal(component.declarationEvidence.fileName, fileName);
       assert.equal(component.declarationEvidence.exportName, 'PublicCounter');
       assert.deepEqual(component.registrations, []);
@@ -267,7 +270,10 @@ export {RawElement as PublicRaw};
 
       assert.equal(component.declaration.name, 'RawElement');
       assert.equal(component.declarationEvidence.fileName, fileName);
-      assert.deepEqual(component.declaration.superclass, {name: 'RawBase'});
+      assert.deepEqual(component.declaration.superclass, {
+        name: 'RawBase',
+        module: fileName,
+      });
       const count = component.declaration.members?.find(
         (member) => member.name === 'count'
       ) as ClassField | undefined;
