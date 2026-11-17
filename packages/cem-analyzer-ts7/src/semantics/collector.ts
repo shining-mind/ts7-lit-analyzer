@@ -80,7 +80,7 @@ export interface SemanticCollector {
 export function createSemanticCollector(
   options: SemanticCollectorOptions
 ): SemanticCollector {
-  return new TypeScriptCheckerSemanticCollector(options);
+  return new CheckerSemanticCollector(options);
 }
 
 /**
@@ -88,7 +88,7 @@ export function createSemanticCollector(
  * Handle storage and on-demand type resolution live in dedicated collaborators;
  * this collector owns the collection pipeline and the public collector contract.
  */
-class TypeScriptCheckerSemanticCollector implements SemanticCollector {
+class CheckerSemanticCollector implements SemanticCollector {
   private readonly program: Program<ProjectId>;
   private readonly checker: Checker;
   private readonly project: ProjectIdentity;
