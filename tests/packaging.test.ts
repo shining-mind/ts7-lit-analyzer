@@ -145,6 +145,45 @@ customElements.define('packed-element', PackedElement);`,
     await discoverySession.dispose();
   }
 
+  const lazySession = await discoveryPackage.createDiscoverySession({
+    mode: 'standalone',
+    currentDirectory: '/virtual',
+    eagerness: 'lazy',
+    retentionBound: 1,
+    rootFiles: ['/virtual/index.ts'],
+    files: [
+      {
+        fileName: '/virtual/index.ts',
+        text: `export class PackedElement extends HTMLElement { value: number = 0; }
+customElements.define('packed-element', PackedElement);`,
+      },
+    ],
+  });
+  try {
+    assert.deepEqual((await lazySession.collect()).components, []);
+    const scoped = await lazySession.collectScope(['/virtual/index.ts']);
+    const indexed = scoped.components[0];
+    assert.equal(indexed.declaration.tagName, 'packed-element');
+    assert.equal(
+      indexed.analysis.complete,
+      discoveryPackage.AnalysisCapability.registration
+    );
+    const componentId = indexed.declarationEvidence.id;
+    const enriched = await lazySession.enrich([componentId]);
+    assert.equal(enriched.components[0].declaration.members[0].type, undefined);
+    const query = await lazySession.getMemberType(componentId, 'value');
+    assert.equal(query.text, 'number');
+    const materialized = await lazySession.materializeTypes();
+    assert.equal(
+      materialized.components[0].declaration.members[0].type.text,
+      'number'
+    );
+    const updated = await lazySession.update([]);
+    assert.ok(updated.generation > materialized.generation);
+  } finally {
+    await lazySession.dispose();
+  }
+
   const output = execFileSync(
     process.execPath,
     [join(consumerDirectory, 'node_modules/.bin/ts7-lit-analyzer')],
