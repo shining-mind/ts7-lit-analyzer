@@ -29,8 +29,8 @@
         "tagName": "fixture-declaration-only"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+declaration-only@file+packages+declaration-only/node_modules/@fixture/declaration-only/index.d.ts#DeclarationOnlyElement",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+declaration-only@file+packages+declaration-only/node_modules/@fixture/declaration-only/index.d.ts",
+        "id": "<fixture>/node_modules/@fixture/declaration-only/index.d.ts#DeclarationOnlyElement",
+        "fileName": "<fixture>/node_modules/@fixture/declaration-only/index.d.ts",
         "range": {
           "start": 0,
           "end": 76
@@ -39,13 +39,13 @@
         "package": {
           "name": "@fixture/declaration-only",
           "version": "1.0.0",
-          "realPath": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+declaration-only@file+packages+declaration-only/node_modules/@fixture/declaration-only"
+          "realPath": "<fixture>/node_modules/@fixture/declaration-only"
         }
       },
       "registrations": [
         {
           "tagName": "fixture-declaration-only",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+declaration-only@file+packages+declaration-only/node_modules/@fixture/declaration-only/index.d.ts",
+          "fileName": "<fixture>/node_modules/@fixture/declaration-only/index.d.ts",
           "range": {
             "start": 135,
             "end": 186
@@ -58,8 +58,8 @@
         {
           "memberName": "label",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+declaration-only@file+packages+declaration-only/node_modules/@fixture/declaration-only/index.d.ts#DeclarationOnlyElement.label",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+declaration-only@file+packages+declaration-only/node_modules/@fixture/declaration-only/index.d.ts",
+            "id": "<fixture>/node_modules/@fixture/declaration-only/index.d.ts#DeclarationOnlyElement.label",
+            "fileName": "<fixture>/node_modules/@fixture/declaration-only/index.d.ts",
             "range": {
               "start": 60,
               "end": 74
@@ -104,8 +104,8 @@
         "tagName": "fixture-dual"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+dual@file+packages+dual/node_modules/@fixture/dual/index.d.ts#DualElement",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+dual@file+packages+dual/node_modules/@fixture/dual/index.d.ts",
+        "id": "<fixture>/node_modules/@fixture/dual/index.d.ts#DualElement",
+        "fileName": "<fixture>/node_modules/@fixture/dual/index.d.ts",
         "range": {
           "start": 0,
           "end": 99
@@ -114,13 +114,13 @@
         "package": {
           "name": "@fixture/dual",
           "version": "1.0.0",
-          "realPath": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+dual@file+packages+dual/node_modules/@fixture/dual"
+          "realPath": "<fixture>/node_modules/@fixture/dual"
         }
       },
       "registrations": [
         {
           "tagName": "fixture-dual",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+dual@file+packages+dual/node_modules/@fixture/dual/index.d.ts",
+          "fileName": "<fixture>/node_modules/@fixture/dual/index.d.ts",
           "range": {
             "start": 158,
             "end": 186
@@ -130,7 +130,7 @@
         },
         {
           "tagName": "fixture-dual",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+dual@file+packages+dual/node_modules/@fixture/dual/index.js",
+          "fileName": "<fixture>/node_modules/@fixture/dual/index.js",
           "range": {
             "start": 202,
             "end": 252
@@ -143,8 +143,8 @@
         {
           "memberName": "count",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+dual@file+packages+dual/node_modules/@fixture/dual/index.d.ts#DualElement.count",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+dual@file+packages+dual/node_modules/@fixture/dual/index.d.ts",
+            "id": "<fixture>/node_modules/@fixture/dual/index.d.ts#DualElement.count",
+            "fileName": "<fixture>/node_modules/@fixture/dual/index.d.ts",
             "range": {
               "start": 49,
               "end": 69
@@ -184,8 +184,8 @@
         "tagName": "fixture-js-only"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+js-only@file+packages+js-only/node_modules/@fixture/js-only/element.js#JsOnlyElement",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+js-only@file+packages+js-only/node_modules/@fixture/js-only/element.js",
+        "id": "<fixture>/node_modules/@fixture/js-only/element.js#JsOnlyElement",
+        "fileName": "<fixture>/node_modules/@fixture/js-only/element.js",
         "range": {
           "start": 0,
           "end": 63
@@ -194,13 +194,13 @@
         "package": {
           "name": "@fixture/js-only",
           "version": "1.0.0",
-          "realPath": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+js-only@file+packages+js-only/node_modules/@fixture/js-only"
+          "realPath": "<fixture>/node_modules/@fixture/js-only"
         }
       },
       "registrations": [
         {
           "tagName": "fixture-js-only",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+js-only@file+packages+js-only/node_modules/@fixture/js-only/element.js",
+          "fileName": "<fixture>/node_modules/@fixture/js-only/element.js",
           "range": {
             "start": 65,
             "end": 120
@@ -213,8 +213,8 @@
         {
           "memberName": "count",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+js-only@file+packages+js-only/node_modules/@fixture/js-only/element.js#JsOnlyElement.count",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@fixture+js-only@file+packages+js-only/node_modules/@fixture/js-only/element.js",
+            "id": "<fixture>/node_modules/@fixture/js-only/element.js#JsOnlyElement.count",
+            "fileName": "<fixture>/node_modules/@fixture/js-only/element.js",
             "range": {
               "start": 51,
               "end": 61
@@ -313,11 +313,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -336,11 +336,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -359,27 +359,27 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "_old",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "value",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -398,43 +398,43 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyKey | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "oldValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "options",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyDeclaration<unknown, unknown> | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "useNewValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "boolean | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "newValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -536,11 +536,11 @@
             "parameters": [
               {
                 "name": "returnValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "string | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -608,8 +608,8 @@
         "tagName": "md-dialog"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/dialog.d.ts#MdDialog",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/dialog.d.ts",
+        "id": "<fixture>/node_modules/@material/web/dialog/dialog.d.ts#MdDialog",
+        "fileName": "<fixture>/node_modules/@material/web/dialog/dialog.d.ts",
         "range": {
           "start": 1352,
           "end": 1440
@@ -618,13 +618,13 @@
         "package": {
           "name": "@material/web",
           "version": "2.5.0",
-          "realPath": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web"
+          "realPath": "<fixture>/node_modules/@material/web"
         }
       },
       "registrations": [
         {
           "tagName": "md-dialog",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/dialog.d.ts",
+          "fileName": "<fixture>/node_modules/@material/web/dialog/dialog.d.ts",
           "range": {
             "start": 239,
             "end": 261
@@ -637,8 +637,8 @@
         {
           "memberName": "open",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.open",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.open",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 954,
               "end": 974
@@ -648,8 +648,8 @@
         {
           "memberName": "quick",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.quick",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.quick",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 1073,
               "end": 1088
@@ -659,8 +659,8 @@
         {
           "memberName": "returnValue",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.returnValue",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.returnValue",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 1317,
               "end": 1337
@@ -670,8 +670,8 @@
         {
           "memberName": "renderRoot",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 19891,
               "end": 19943
@@ -681,8 +681,8 @@
         {
           "memberName": "isUpdatePending",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20276,
               "end": 20301
@@ -692,8 +692,8 @@
         {
           "memberName": "hasUpdated",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20491,
               "end": 20511
@@ -703,8 +703,8 @@
         {
           "memberName": "addController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21488,
               "end": 21540
@@ -714,8 +714,8 @@
         {
           "memberName": "removeController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21646,
               "end": 21701
@@ -725,8 +725,8 @@
         {
           "memberName": "attributeChangedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 23789,
               "end": 23877
@@ -736,8 +736,8 @@
         {
           "memberName": "requestUpdate",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 25019,
               "end": 25153
@@ -747,8 +747,8 @@
         {
           "memberName": "updateComplete",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 28033,
               "end": 28072
@@ -758,8 +758,8 @@
         {
           "memberName": "renderOptions",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 2848,
               "end": 2886
@@ -769,8 +769,8 @@
         {
           "memberName": "type",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.type",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.type",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 1471,
               "end": 1486
@@ -780,8 +780,8 @@
         {
           "memberName": "noFocusTrap",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.noFocusTrap",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.noFocusTrap",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 2002,
               "end": 2023
@@ -791,8 +791,8 @@
         {
           "memberName": "getOpenAnimation",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.getOpenAnimation",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.getOpenAnimation",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 2149,
               "end": 2189
@@ -802,8 +802,8 @@
         {
           "memberName": "getCloseAnimation",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.getCloseAnimation",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.getCloseAnimation",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 2315,
               "end": 2356
@@ -813,8 +813,8 @@
         {
           "memberName": "show",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.show",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.show",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 3490,
               "end": 3512
@@ -824,8 +824,8 @@
         {
           "memberName": "close",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.close",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.close",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 4021,
               "end": 4064
@@ -835,8 +835,8 @@
         {
           "memberName": "connectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.connectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.connectedCallback",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 4069,
               "end": 4095
@@ -846,8 +846,8 @@
         {
           "memberName": "disconnectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.disconnectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/dialog/internal/dialog.d.ts",
+            "id": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts#Dialog.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
             "range": {
               "start": 4100,
               "end": 4129
@@ -937,11 +937,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -960,11 +960,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -983,27 +983,27 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "_old",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "value",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1022,43 +1022,43 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyKey | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "oldValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "options",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyDeclaration<unknown, unknown> | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "useNewValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "boolean | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "newValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1158,8 +1158,8 @@
         "tagName": "md-divider"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/divider.d.ts#MdDivider",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/divider.d.ts",
+        "id": "<fixture>/node_modules/@material/web/divider/divider.d.ts#MdDivider",
+        "fileName": "<fixture>/node_modules/@material/web/divider/divider.d.ts",
         "range": {
           "start": 548,
           "end": 638
@@ -1168,13 +1168,13 @@
         "package": {
           "name": "@material/web",
           "version": "2.5.0",
-          "realPath": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web"
+          "realPath": "<fixture>/node_modules/@material/web"
         }
       },
       "registrations": [
         {
           "tagName": "md-divider",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/divider.d.ts",
+          "fileName": "<fixture>/node_modules/@material/web/divider/divider.d.ts",
           "range": {
             "start": 241,
             "end": 265
@@ -1187,8 +1187,8 @@
         {
           "memberName": "insetStart",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/internal/divider.d.ts#Divider.insetStart",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/internal/divider.d.ts",
+            "id": "<fixture>/node_modules/@material/web/divider/internal/divider.d.ts#Divider.insetStart",
+            "fileName": "<fixture>/node_modules/@material/web/divider/internal/divider.d.ts",
             "range": {
               "start": 382,
               "end": 402
@@ -1198,8 +1198,8 @@
         {
           "memberName": "insetEnd",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/internal/divider.d.ts#Divider.insetEnd",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/internal/divider.d.ts",
+            "id": "<fixture>/node_modules/@material/web/divider/internal/divider.d.ts#Divider.insetEnd",
+            "fileName": "<fixture>/node_modules/@material/web/divider/internal/divider.d.ts",
             "range": {
               "start": 485,
               "end": 503
@@ -1209,8 +1209,8 @@
         {
           "memberName": "renderRoot",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 19891,
               "end": 19943
@@ -1220,8 +1220,8 @@
         {
           "memberName": "isUpdatePending",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20276,
               "end": 20301
@@ -1231,8 +1231,8 @@
         {
           "memberName": "hasUpdated",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20491,
               "end": 20511
@@ -1242,8 +1242,8 @@
         {
           "memberName": "addController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21488,
               "end": 21540
@@ -1253,8 +1253,8 @@
         {
           "memberName": "removeController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21646,
               "end": 21701
@@ -1264,8 +1264,8 @@
         {
           "memberName": "attributeChangedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 23789,
               "end": 23877
@@ -1275,8 +1275,8 @@
         {
           "memberName": "requestUpdate",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 25019,
               "end": 25153
@@ -1286,8 +1286,8 @@
         {
           "memberName": "updateComplete",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 28033,
               "end": 28072
@@ -1297,8 +1297,8 @@
         {
           "memberName": "renderOptions",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 2848,
               "end": 2886
@@ -1308,8 +1308,8 @@
         {
           "memberName": "connectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 4135,
               "end": 4161
@@ -1319,8 +1319,8 @@
         {
           "memberName": "disconnectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 4851,
               "end": 4880
@@ -1330,8 +1330,8 @@
         {
           "memberName": "inset",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/internal/divider.d.ts#Divider.inset",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@material+web@2.5.0/node_modules/@material/web/divider/internal/divider.d.ts",
+            "id": "<fixture>/node_modules/@material/web/divider/internal/divider.d.ts#Divider.inset",
+            "fileName": "<fixture>/node_modules/@material/web/divider/internal/divider.d.ts",
             "range": {
               "start": 285,
               "end": 300
@@ -1403,11 +1403,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1426,11 +1426,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1449,27 +1449,27 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "_old",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "value",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1488,43 +1488,43 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyKey | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "oldValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "options",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyDeclaration<unknown, unknown> | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "useNewValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "boolean | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "newValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1602,8 +1602,8 @@
         "tagName": "fixture-current-lit"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/current-lit-element.ts#FixtureCurrentLitElement",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/current-lit-element.ts",
+        "id": "<fixture>/src/current-lit-element.ts#FixtureCurrentLitElement",
+        "fileName": "<fixture>/src/current-lit-element.ts",
         "range": {
           "start": 92,
           "end": 259
@@ -1613,7 +1613,7 @@
       "registrations": [
         {
           "tagName": "fixture-current-lit",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/current-lit-element.ts",
+          "fileName": "<fixture>/src/current-lit-element.ts",
           "range": {
             "start": 92,
             "end": 129
@@ -1626,8 +1626,8 @@
         {
           "memberName": "count",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/current-lit-element.ts#FixtureCurrentLitElement.count",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/current-lit-element.ts",
+            "id": "<fixture>/src/current-lit-element.ts#FixtureCurrentLitElement.count",
+            "fileName": "<fixture>/src/current-lit-element.ts",
             "range": {
               "start": 191,
               "end": 257
@@ -1637,8 +1637,8 @@
         {
           "memberName": "renderRoot",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 19891,
               "end": 19943
@@ -1648,8 +1648,8 @@
         {
           "memberName": "isUpdatePending",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20276,
               "end": 20301
@@ -1659,8 +1659,8 @@
         {
           "memberName": "hasUpdated",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20491,
               "end": 20511
@@ -1670,8 +1670,8 @@
         {
           "memberName": "addController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21488,
               "end": 21540
@@ -1681,8 +1681,8 @@
         {
           "memberName": "removeController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21646,
               "end": 21701
@@ -1692,8 +1692,8 @@
         {
           "memberName": "attributeChangedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 23789,
               "end": 23877
@@ -1703,8 +1703,8 @@
         {
           "memberName": "requestUpdate",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 25019,
               "end": 25153
@@ -1714,8 +1714,8 @@
         {
           "memberName": "updateComplete",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 28033,
               "end": 28072
@@ -1725,8 +1725,8 @@
         {
           "memberName": "renderOptions",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 2848,
               "end": 2886
@@ -1736,8 +1736,8 @@
         {
           "memberName": "connectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 4135,
               "end": 4161
@@ -1747,8 +1747,8 @@
         {
           "memberName": "disconnectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 4851,
               "end": 4880
@@ -1820,11 +1820,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1843,11 +1843,11 @@
             "parameters": [
               {
                 "name": "controller",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "ReactiveController"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1866,27 +1866,27 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "_old",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               },
               {
                 "name": "value",
+                "optional": false,
+                "rest": false,
                 "type": {
                   "text": "string | null"
-                },
-                "optional": false,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -1905,43 +1905,43 @@
             "parameters": [
               {
                 "name": "name",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyKey | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "oldValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "options",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "PropertyDeclaration<unknown, unknown> | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "useNewValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "boolean | undefined"
-                },
-                "optional": true,
-                "rest": false
+                }
               },
               {
                 "name": "newValue",
+                "optional": true,
+                "rest": false,
                 "type": {
                   "text": "unknown"
-                },
-                "optional": true,
-                "rest": false
+                }
               }
             ],
             "return": {
@@ -2019,8 +2019,8 @@
         "tagName": "fixture-legacy-lit"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/legacy-lit-element.ts#FixtureLegacyLitElement",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/legacy-lit-element.ts",
+        "id": "<fixture>/src/legacy-lit-element.ts#FixtureLegacyLitElement",
+        "fileName": "<fixture>/src/legacy-lit-element.ts",
         "range": {
           "start": 108,
           "end": 252
@@ -2030,7 +2030,7 @@
       "registrations": [
         {
           "tagName": "fixture-legacy-lit",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/legacy-lit-element.ts",
+          "fileName": "<fixture>/src/legacy-lit-element.ts",
           "range": {
             "start": 108,
             "end": 144
@@ -2043,8 +2043,8 @@
         {
           "memberName": "enabled",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/legacy-lit-element.ts#FixtureLegacyLitElement.enabled",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/legacy-lit-element.ts",
+            "id": "<fixture>/src/legacy-lit-element.ts#FixtureLegacyLitElement.enabled",
+            "fileName": "<fixture>/src/legacy-lit-element.ts",
             "range": {
               "start": 205,
               "end": 250
@@ -2054,8 +2054,8 @@
         {
           "memberName": "renderRoot",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 19891,
               "end": 19943
@@ -2065,8 +2065,8 @@
         {
           "memberName": "isUpdatePending",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20276,
               "end": 20301
@@ -2076,8 +2076,8 @@
         {
           "memberName": "hasUpdated",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 20491,
               "end": 20511
@@ -2087,8 +2087,8 @@
         {
           "memberName": "addController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21488,
               "end": 21540
@@ -2098,8 +2098,8 @@
         {
           "memberName": "removeController",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 21646,
               "end": 21701
@@ -2109,8 +2109,8 @@
         {
           "memberName": "attributeChangedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 23789,
               "end": 23877
@@ -2120,8 +2120,8 @@
         {
           "memberName": "requestUpdate",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 25019,
               "end": 25153
@@ -2131,8 +2131,8 @@
         {
           "memberName": "updateComplete",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/@lit+reactive-element@2.1.2/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
             "range": {
               "start": 28033,
               "end": 28072
@@ -2142,8 +2142,8 @@
         {
           "memberName": "renderOptions",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 2848,
               "end": 2886
@@ -2153,8 +2153,8 @@
         {
           "memberName": "connectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 4135,
               "end": 4161
@@ -2164,8 +2164,8 @@
         {
           "memberName": "disconnectedCallback",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/node_modules/.pnpm/lit-element@4.2.0/node_modules/lit-element/development/lit-element.d.ts",
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
             "range": {
               "start": 4851,
               "end": 4880
@@ -2210,8 +2210,8 @@
         "tagName": "fixture-vanilla"
       },
       "declarationEvidence": {
-        "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/vanilla-element.ts#FixtureVanillaElement",
-        "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/vanilla-element.ts",
+        "id": "<fixture>/src/vanilla-element.ts#FixtureVanillaElement",
+        "fileName": "<fixture>/src/vanilla-element.ts",
         "range": {
           "start": 0,
           "end": 256
@@ -2221,7 +2221,7 @@
       "registrations": [
         {
           "tagName": "fixture-vanilla",
-          "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/vanilla-element.ts",
+          "fileName": "<fixture>/src/vanilla-element.ts",
           "range": {
             "start": 258,
             "end": 321
@@ -2234,8 +2234,8 @@
         {
           "memberName": "heading",
           "declaration": {
-            "id": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/vanilla-element.ts#FixtureVanillaElement.heading",
-            "fileName": "/Users/dlartagnan/Projects/external/ts7-lit-analyzer/tests/fixtures/webcomponents/src/vanilla-element.ts",
+            "id": "<fixture>/src/vanilla-element.ts#FixtureVanillaElement.heading",
+            "fileName": "<fixture>/src/vanilla-element.ts",
             "range": {
               "start": 103,
               "end": 177
