@@ -14,7 +14,12 @@ A lazy-mode session SHALL perform no module-graph construction or component coll
 #### Scenario: First request initializes the scope
 
 - **WHEN** the first scoped request names project files
-- **THEN** the engine builds the scope required by those files and returns their reachable components
+- **THEN** the engine builds the collection scope required by those files over the project-wide TypeScript program and registration index, and returns their reachable components
+
+#### Scenario: Laziness scopes collection, not the program
+
+- **WHEN** the first scoped request initializes a lazy session
+- **THEN** the TypeScript program and registration index span the configured project, while member collection is limited to the active scope
 
 #### Scenario: Eager mode unchanged
 
@@ -42,8 +47,8 @@ Lazy collection SHALL start from a caller-supplied file subset and include its c
 
 #### Scenario: Unreferenced package excluded
 
-- **WHEN** an installed package is absent from the project import closure
-- **THEN** its components are not added
+- **WHEN** an installed package is neither a project root nor reached by the project import closure
+- **THEN** the package is not included in the TypeScript program and its components are not added
 
 ### Requirement: Project-wide registration index
 

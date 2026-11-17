@@ -49,7 +49,7 @@
 - [x] 8.6 Split the oversized semantics and session modules into focused collaborators (handle store, collection helpers, member-type resolver; session configuration, snapshot factory, lazy query tracker) without behavior change; verify the package suite, eager gate, fixture integration, packaging, typecheck, lint, and format check pass.
 - [x] 8.7 Group src files into domain directories (session, semantics, registry, discovery, graph) with barrel entries, updating internal, test, and probe imports without behavior change; verify the package suite, fixture tests, packaging, probes, typecheck, lint, and format check pass.
 
-## 9. Review rework (review.md, 2026-11-17)
+## 9. Review rework (2026-11-17)
 
 - [x] 9.1 Reject stale lazy references of invalidated records and register successors only for structurally reused records; replace the positive cross-type assertion with a negative regression and add reused-record survival checks at package and fixture levels.
 - [x] 9.2 Build a project-wide index graph (resolution edges and provenance only) so dependencies reached from out-of-scope roots are indexed with package identity and can be enriched; add the composition regression and keep member collection scoped.
