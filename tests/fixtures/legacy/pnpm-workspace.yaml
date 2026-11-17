@@ -1,4 +1,5 @@
 packages:
+  - ../../../packages/analyzer-core
   - ../../../packages/cem-analyzer-ts7
 
 lockfileIncludeTarballUrl: false

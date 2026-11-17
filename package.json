@@ -14,7 +14,7 @@
     "format:check": "prettier --check .",
     "test": "pnpm run test:smoke && pnpm run --no-bail \"/^test:(baseline|discovery|registry|packaging|e2e)$/\"",
     "test:smoke": "pnpm build && pnpm --filter @ts7-lit-analyzer/analyzer-core test:smoke && pnpm --filter @ts7-lit-analyzer/analyzer-cli test:smoke && node --test tests/workspace.test.ts",
-    "test:baseline": "pnpm --dir tests/fixtures/legacy install --no-frozen-lockfile && node --test tests/legacy-cli-baseline.test.ts && pnpm --dir tests/fixtures/legacy run test:upstream",
+    "test:baseline": "pnpm --dir tests/fixtures/legacy install --frozen-lockfile && node --test tests/legacy-cli-baseline.test.ts && pnpm --dir tests/fixtures/legacy run test:upstream",
     "test:discovery": "pnpm --dir tests/fixtures/webcomponents install --frozen-lockfile && pnpm --filter @ts7-lit-analyzer/cem-analyzer-ts7 test && node --test tests/discovery-integration.test.ts tests/discovery-eager-compatibility.test.ts tests/discovery-prefilter-equivalence.test.ts tests/discovery-lazy-integration.test.ts",
     "test:registry": "pnpm --dir tests/fixtures/webcomponents install --frozen-lockfile && pnpm --filter @ts7-lit-analyzer/analyzer-core... build && node --test tests/registry-integration.test.ts",
     "test:packaging": "node --test tests/packaging.test.ts",

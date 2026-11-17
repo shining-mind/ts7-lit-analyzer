@@ -8,7 +8,7 @@ The engine also absorbed the responsibilities originally proposed for `packages/
 
 ## What Changes
 
-- Rename `packages/analyzer` to `packages/analyzer-core` (`@ts7-lit-analyzer/analyzer-core`), updating consumers, workspace/packaging tests, the legacy fixture's `file:` dependency and frozen lockfile, tooling docs, and architecture docs. Public export names (`analyzerPackageVersion`, shared scenario contracts) are preserved.
+- Rename `packages/analyzer` to `packages/analyzer-core` (`@ts7-lit-analyzer/analyzer-core`), updating consumers, workspace/packaging tests, the legacy fixture's core dependency and frozen lockfile, tooling docs, and architecture docs. Public export names (`analyzerPackageVersion`, shared scenario contracts) are preserved.
 - Remove the empty placeholder `packages/analyzer-ts7`. The core consumes `cem-analyzer-ts7` directly through its public session API; the engine keeps no workspace dependencies and remains independently extractable.
 - Adopt the engine's host-safe contracts as the core's public registry contracts by re-export: CEM schema DTOs as the extensible base with separate identity, evidence, provenance, semantic-reference, and completeness extensions. No mirrored contracts, no TypeScript API objects, no Lit-specific fields.
 - Add a thin registry model to the core: lookup by tag name and declaration identity, property/attribute/event/slot access with attribute-to-property alias resolution, inheritance references, and explicit completeness surfacing (`complete`, `incomplete`, `not-collected`). Empty optional metadata is presented as undocumented, never as confirmed absence.
