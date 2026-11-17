@@ -65,7 +65,7 @@ export class ComponentRegistry {
 
   invalidateAffected(affectedFiles: ReadonlySet<string>): void {
     for (const records of [this.enriched, this.indexed]) {
-      for (const [id, record] of [...records]) {
+      for (const [id, record] of records) {
         if (!isUnaffected(record, affectedFiles)) {
           records.delete(id);
         }
@@ -75,7 +75,7 @@ export class ComponentRegistry {
 
   retainIndexed(ids: ReadonlySet<string>): void {
     for (const records of [this.enriched, this.indexed]) {
-      for (const id of [...records.keys()]) {
+      for (const id of records.keys()) {
         if (!ids.has(id)) {
           records.delete(id);
         }

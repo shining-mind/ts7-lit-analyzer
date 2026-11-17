@@ -31,7 +31,7 @@ export class LazyQueryTracker {
     semantics: SemanticCollector,
     reusedComponentIds: ReadonlySet<string>
   ): void {
-    for (const [key, query] of [...this.queries]) {
+    for (const [key, query] of this.queries) {
       if (!reusedComponentIds.has(query.classEvidence.id)) {
         this.queries.delete(key);
         continue;
