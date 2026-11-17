@@ -1,63 +1,36 @@
 # Component registry
 
-Status: implemented and tested in `packages/analyzer-core` (registry foundation, issue #21). Template analysis, binding diagnostics, CLI/editor integration, and the optional manifest adapter are separate follow-up work and are not provided by the registry.
+This guide explains the registry's design: its role, the entities it deals in, the invariants it guarantees, and the boundaries it deliberately keeps. It is not an API reference. The callable surface is defined by the exported types in `packages/analyzer-core/src` and the engine contracts it adopts; read those for signatures. This document covers what signatures cannot convey — why the registry exists, what it guarantees, and where it intentionally differs from the Custom Elements Manifest analyzer.
 
-## Topology
+Status: implemented and tested in `analyzer-core` (issue #21). Template analysis, binding diagnostics, host integration, and the optional manifest adapter are separate follow-up work.
 
-The registry lives in `analyzer-core`, the host-independent analysis core. It consumes the `cem-analyzer-ts7` discovery engine directly through the engine's public session API; there is no separate TypeScript 7 adapter package. The engine stays independently extractable (no workspace dependencies); the core depends on the engine, not vice versa.
+## Role
 
-A registry session is **single-project**: one TypeScript configuration, one engine program, snapshots and generations within it. The CLI selects one project per invocation. Multi-project coordination (several open tsconfigs / multi-root workspaces) is an editor concern deferred to the VS Code slice; host policies such as open-file tracking, scheduling, and cancellation are future engine extensions plus host orchestration, not registry responsibilities.
+The registry is the host-independent index over the discovery engine's component records, shared by the CLI and editor hosts. It does not collect components or touch the TypeScript AST: the `cem-analyzer-ts7` engine owns discovery and checker semantics, and the core consumes its public session API. There is no separate TypeScript 7 adapter package.
 
-## Adopted contracts
+A registry session is **single-project** — one TypeScript configuration, one engine program, snapshots and generations within it. Multi-project coordination and host policies (open-file tracking, scheduling, cancellation) belong to the hosts and are follow-up work; see [architecture](architecture.md).
 
-The registry does not define a parallel component model. It re-exports the engine's host-safe contracts: Custom Elements Manifest schema DTOs (`CustomElementDeclaration`, members, attributes, events, slots, CSS metadata) as the extensible base, with separate extensions for project/package/declaration identity, registration evidence, provenance, snapshot-scoped semantic references, and per-capability completeness. Engine records are the registry records; `createRegistryView` indexes them without adaptation or TypeScript AST traversal.
+## Key entities
 
-Contracts contain no live TypeScript runtime handles and no Lit-specific fields. A type is carried as an opaque `SemanticReference` (id plus project/snapshot identity), a serializable key into the engine's private handle store; the real `Type`/`Signature` objects stay engine-private. Framework differences appear only in generic evidence and strategy fields, so vanilla and Lit components share one contract shape.
+- **`WebComponentRecord`** — the engine's adopted record: a CEM `CustomElementDeclaration` (members, attributes, events, slots, CSS metadata) composed with separate identity, registration evidence, provenance, semantic references, and per-capability completeness. The registry re-exports these contracts rather than defining a parallel model; engine records are the registry records.
+- **`RegistryView`** — an immutable index bound to one project, snapshot, and generation. Applying a successor discovery result yields a new view; unaffected records are structurally reused and the previous view keeps its data.
+- **`SemanticReference`** — an opaque, snapshot-scoped key to a checker type. The real `Type`/`Signature` handles stay engine-private; contracts carry only the key plus project/snapshot identity, never live TypeScript objects.
+- **`ConsumerProvenance`** — a consumer-facing import path (export alias, module, package) that reaches a declaration. A component imported directly and through renamed re-exports retains every path.
 
-## Lookups and access
+## Invariants
 
-`createRegistryView(result)` returns an immutable view exposing:
+**Canonical identity is authoritative.** Declaration identity uses the canonical real-path module plus qualified symbol name and is stable across edits; source ranges are separate evidence and may shift. Consumer-facing aliases and modules are additive provenance, never a replacement for canonical identity.
 
-- `project`, `snapshotId`, `generation`, `containsOverlays`, `overlayFiles`, `issues` — snapshot identity and provenance (no overlay text).
-- `components()`, `byTagName(tag)`, `byDeclarationId(id)` — lookup with explicit `undefined` misses. Declaration identity is the canonical real-path module plus qualified symbol name; it is stable across edits (source ranges live in separate evidence and may shift).
-- `findMember`, `findProperty`, `findEvent`, `findSlot` — member access.
-- `resolveAttribute(record, attributeName)` — attribute-to-property alias resolution (for example `no-focus-trap` → `noFocusTrap`).
-- `superclassReference(record)` and `memberDeclaration(record, memberName)` — inheritance references and inherited member origins through declaration evidence.
+**Completeness is explicit, per capability.** Each capability is `complete`, `incomplete`, or `not-collected`. Lazy entries that have not been enriched are `not-collected`, never silently complete; unresolved or error-typed semantics are `incomplete` with their issues, never presented as a successful check. For optional metadata (events, slots, CSS), an empty `complete` capability means **undocumented**, not a confirmed absence — without a manifest, absence cannot be proven. Material Web's `MdDialog`, for example, has complete property semantics but undocumented slots.
 
-Applying a successor discovery result produces a new view; unaffected record objects are structurally reused, and the previous view retains its original data.
+**Semantics are checker-only.** Type queries and assignability delegate to the engine through references from one project and snapshot; cross-project and cross-snapshot references are rejected. CEM `type.text` is display documentation, never an assignability input or fallback. Display-oriented features (hover, completion) legitimately consume metadata and materialized text; the checker-only constraint applies to checking, not displaying.
 
-Each record also carries `consumerProvenance`: the consumer-facing export aliases and modules that reach the declaration (including renamed re-exports), with their package identity. Canonical declaration identity stays authoritative; a component imported both directly and through a renamed re-export retains every consumer-facing path.
+## Boundaries and intentional differences
 
-## Completeness and unsupported metadata
+**Superclass provenance is richer than the CEM analyzer.** The CEM analyzer chooses `package` XOR `module` by import-specifier form, so a base imported through a relative specifier inside a dependency loses its package identity. The registry resolves the base through the checker to its canonical declaration: dependency bases carry the canonical package name and declaration module path (including relative imports within a dependency), local bases carry module identity, and built-in bases carry only the class name. This is schema-valid (the CEM `Reference` shape permits both fields) and required for dependency declaration identity; it is a documented compatibility difference, not CEM-identical output. Class-level JSDoc metadata is likewise inherited from checker-resolved base classes with subclass precedence and declaration authority.
 
-`capabilityStatus(record, capability)` reports `complete`, `incomplete`, or `not-collected` from the engine's per-capability analysis. Lazy entries that have not been enriched report `not-collected`, never silent completeness. Incomplete semantics (error types, implicit `any`, unresolved modules) surface their issues and are never presented as successful analysis.
+**Unsupported metadata is explicit.** Slots and events come from JSDoc and inherited base documentation, never from dependency `render` implementations. The optional Custom Elements Manifest adapter is deferred; source discovery works without a manifest.
 
-`optionalMetadataCoverage(record, capability)` distinguishes `documented` from `undocumented` for optional metadata (events, slots, CSS). Without a manifest, an empty complete capability means the metadata is **undocumented**, not a confirmed absence. For example, Material Web's `MdDialog` documents no `@slot`, so its slot coverage is `undocumented` even though its property semantics are complete.
+## Where to look
 
-Unsupported metadata is explicit:
-
-- Slots and events are collected from JSDoc (`@slot`, `@fires`/`@event`, inline event evidence) and inherited from base classes. They are never inferred from dependency `render` implementations.
-- The optional Custom Elements Manifest adapter is deferred; source discovery works without a manifest.
-
-## Superclass provenance differs from the CEM analyzer
-
-The CEM analyzer chooses `package` XOR `module` by import specifier form (bare import → `package`, relative/same-file → `module`). The registry instead resolves the base through the checker to its canonical declaration:
-
-- Dependency bases carry the canonical package name **and** the declaration module path, including bases reached through a relative import inside a dependency (for example `MdDialog` → `Dialog` within `@material/web`).
-- Local bases in another project module carry module identity without a package name; same-module bases carry the current module path.
-- Built-in bases such as `HTMLElement` carry only the class name.
-
-This is schema-valid (the CEM `Reference` shape permits both fields) and intentionally richer than the CEM analyzer's syntactic heuristic; it is required for dependency declaration identity. Class-level JSDoc metadata (events, slots, CSS parts/properties/states, summary) is likewise inherited from checker-resolved base classes with subclass precedence and declaration authority.
-
-## Checker-only semantics
-
-`RegistrySemantics` and the registry session delegate type queries and assignability to the engine using opaque references from one project and snapshot. CEM `type.text` is display documentation only — it is never an assignability input or fallback. `isAssignableToMember` checks against a member's collected reference; a member without a collected reference is incomplete, not a successful check. Cross-project and cross-snapshot references are rejected by the engine.
-
-Display-oriented features (hover, completion) are downstream language features that legitimately consume registry metadata and materialized `type.text`; they are out of scope for the registry foundation. The checker-only constraint applies to assignability and type resolution, not to displaying metadata.
-
-## Verification
-
-- Package-local unit tests in `packages/analyzer-core/test` cover contract adoption, lookups, alias resolution, completeness, view replacement, and semantic delegation with synthetic records and a stub provider (no TS7 sessions).
-- Session tests cover lifecycle, overlay successors, same-snapshot assignability, disposal rejection, and lazy `not-collected` pass-through against in-memory projects.
-- Root `tests/registry-integration.test.ts` (`pnpm test:registry`) exercises the shared webcomponents fixture: project/dependency lookups, Material Web properties/attributes/inherited events/superclass provenance/undocumented slots, re-export canonical identity through pnpm symlinks, unsaved dependency overlays, assignability, and lazy enrichment.
-- Engine inheritance and superclass provenance scenarios are covered by `packages/cem-analyzer-ts7/test/metadata-inheritance.test.ts` and `superclass-provenance.test.ts`.
+The API surface is the exported types in `packages/analyzer-core/src` (`registry`, `semantics`, `session`) and the adopted `cem-analyzer-ts7` contracts. Behavior is covered by package-local unit tests and `tests/registry-integration.test.ts` against the shared webcomponents fixture; engine inheritance and provenance scenarios live in the engine's own tests.
