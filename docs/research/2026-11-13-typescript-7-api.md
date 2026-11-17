@@ -200,6 +200,8 @@ The proposal is potentially useful, especially for embedded-language projections
 
 ### `analyzer-ts7`
 
+> Update (2026-11-17): the separate `analyzer-ts7` adapter was dissolved. The `cem-analyzer-ts7` engine owns the TS7 sessions, snapshots, and checker operations described here, and `analyzer-core` consumes the engine's public session API directly. These responsibilities now live in the engine plus host orchestration; the section is retained as the original research record.
+
 - Sole owner of `API`, native process/pipe connections, snapshots, programs, checkers, AST nodes, filesystem overlays, notifications, project references, disposal, generations, and timing.
 - Translates TypeScript syntax and semantic facts into core contracts. A snapshot-scoped session object should make cross-snapshot assignability difficult by construction.
 - Implements TypeScript mechanics such as alias/re-export resolution and declaration navigation; Lit-specific classification and rules stay in core.
