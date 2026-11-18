@@ -3,7 +3,7 @@ import type {
   ClassMember,
   CustomElementField,
 } from 'custom-elements-manifest';
-import type {Checker, Program, Type} from 'typescript/async';
+import type {Checker, Program} from 'typescript/async';
 import {
   isClassDeclaration,
   isClassExpression,
@@ -30,19 +30,29 @@ import {
   collectFrameworkMetadata,
   type ComponentFrameworkFragment,
 } from '../strategies/index.js';
-import {getInstanceType} from '../strategies/abstract.js';
+import {
+  getInstanceType,
+  type ClassLikeDeclaration,
+} from '../strategies/abstract.js';
 import {selectDeclaration} from '../semantics/collection.js';
+import type {BaseDocumentationCache} from './base-documentation-cache.js';
 
 export interface MetadataContext {
   program: Program;
   checker: Checker;
   sourceFiles: readonly SourceFile[];
+  snapshotId?: string;
+  baseDocumentationCache?: BaseDocumentationCache;
 }
 
 export async function createMetadataContext(
   program: Program,
   rootFiles: readonly string[],
-  graph: ModuleGraph
+  graph: ModuleGraph,
+  options?: {
+    snapshotId?: string;
+    baseDocumentationCache?: BaseDocumentationCache;
+  }
 ): Promise<MetadataContext> {
   const fileNames = new Set([
     ...rootFiles,
@@ -59,6 +69,7 @@ export async function createMetadataContext(
     program,
     checker: program.getProject().checker,
     sourceFiles,
+    ...options,
   };
 }
 
@@ -90,7 +101,11 @@ export async function mergeComponentMetadata(
     if (fragment.registrations.length === 0 && !documentation?.tagName)
       continue;
     const baseDocumentation = classDeclaration
-      ? await collectBaseDocumentation(classDeclaration, context)
+      ? await collectBaseDocumentation(
+          classDeclaration,
+          component.declarationEvidence.id,
+          context
+        )
       : [];
     result.push(
       await mergeComponent(
@@ -333,39 +348,71 @@ function mergeNamed<T extends {name: string}>(
 /**
  * Collects class-level documentation from checker-resolved base classes, nearest
  * first. Declaration selection keeps declaration authority; built-in library
- * bases contribute no project metadata and stop the walk.
+ * bases contribute no project metadata and stop the walk. When the context
+ * carries a session cache, the walk follows cached per-class links instead of
+ * re-resolving shared bases; the uncached walk below is the fallback.
  */
 async function collectBaseDocumentation(
   classDeclaration: ClassDeclaration,
+  startKey: string,
   context: MetadataContext
 ): Promise<ClassDocumentationFragment[]> {
+  if (context.baseDocumentationCache && context.snapshotId) {
+    return context.baseDocumentationCache.collectBaseDocumentation(
+      classDeclaration,
+      startKey,
+      {
+        program: context.program,
+        checker: context.checker,
+        snapshotId: context.snapshotId,
+      }
+    );
+  }
+
   const fragments: ClassDocumentationFragment[] = [];
   const visited = new Set<string>();
-  let instanceType: Type | undefined = await getInstanceType(
-    context.checker,
-    classDeclaration
-  );
-  while (instanceType) {
-    const [baseType] = (await instanceType.getBaseTypes()) ?? [];
-    const baseSymbol = baseType ? await baseType.getSymbol() : undefined;
-    if (!baseSymbol) break;
-    const baseDeclaration = await selectDeclaration(baseSymbol);
-    if (
-      !baseDeclaration ||
-      (!isClassDeclaration(baseDeclaration) &&
-        !isClassExpression(baseDeclaration))
-    ) {
-      break;
-    }
-    const sourceFile = baseDeclaration.getSourceFile();
-    if (await context.program.isSourceFileDefaultLibrary(sourceFile)) break;
-    const key = `${sourceFile.fileName}#${baseSymbol.name}`;
-    if (visited.has(key)) break;
-    visited.add(key);
-    fragments.push(collectClassDocumentation(baseDeclaration));
-    instanceType = await getInstanceType(context.checker, baseDeclaration);
-  }
+  await walk(classDeclaration);
   return fragments;
+
+  async function walk(declaration: ClassLikeDeclaration): Promise<void> {
+    const base = await resolveBaseClass(declaration, context);
+    if (!base) return;
+    const sourceFile = base.declaration.getSourceFile();
+    const key = `${sourceFile.fileName}#${base.name}`;
+    if (
+      visited.has(key) ||
+      (await context.program.isSourceFileDefaultLibrary(sourceFile))
+    ) {
+      return;
+    }
+    visited.add(key);
+    fragments.push(collectClassDocumentation(base.declaration));
+    await walk(base.declaration);
+  }
+}
+
+/**
+ * Resolves the nearest checker-resolved base class, keeping declaration
+ * authority. Returns undefined when the base is missing or is not a class, so
+ * the documentation walk stops there.
+ */
+async function resolveBaseClass(
+  declaration: ClassLikeDeclaration,
+  context: MetadataContext
+): Promise<{declaration: ClassLikeDeclaration; name: string} | undefined> {
+  const instanceType = await getInstanceType(context.checker, declaration);
+  const [baseType] = (await instanceType?.getBaseTypes()) ?? [];
+  const baseSymbol = baseType ? await baseType.getSymbol() : undefined;
+  if (!baseSymbol) return undefined;
+  const baseDeclaration = await selectDeclaration(baseSymbol);
+  if (
+    !baseDeclaration ||
+    (!isClassDeclaration(baseDeclaration) &&
+      !isClassExpression(baseDeclaration))
+  ) {
+    return undefined;
+  }
+  return {declaration: baseDeclaration, name: baseSymbol.name};
 }
 
 async function findClassDeclaration(

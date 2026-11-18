@@ -59,3 +59,37 @@ Superclass references SHALL carry the canonical package name when the checker-re
 
 - **WHEN** a component extends `HTMLElement` directly
 - **THEN** the superclass reference carries the class name without a fabricated package or module identity
+
+### Requirement: Base-documentation caching
+
+The engine SHALL cache base-class documentation within a discovery session as isolated per-class entries keyed by declaration identity, each holding the class's own documentation fragment and a base-link stored as declaration identity rather than merged base data. Collection SHALL follow cached links and re-merge each time. The cache SHALL be intra-session and SHALL preserve declaration authority and the current-snapshot boundary.
+
+#### Scenario: Shared base reused across components
+
+- **WHEN** multiple components inherit a common base chain within one session
+- **THEN** each distinct base class is resolved once and reused for the other components, rather than re-resolved per component
+
+#### Scenario: Own-file invalidation propagates through links
+
+- **WHEN** a base class's own file changes and the session updates
+- **THEN** only that base's cached entry is invalidated, dependent components refresh their inherited documentation through their retained base-links, and subclass entries whose own files are unchanged are not re-resolved
+
+#### Scenario: Concurrent misses coalesce
+
+- **WHEN** several components sharing a base are collected or enriched concurrently and all miss that base's entry
+- **THEN** a single resolution is issued and the concurrent walks await it, rather than each issuing its own checker resolution
+
+#### Scenario: Stale in-flight resolution is rejected
+
+- **WHEN** a base entry is invalidated or the snapshot changes while its resolution is in flight
+- **THEN** the completing resolution is discarded rather than cached as fresh, and a subsequent collection resolves against the current snapshot
+
+#### Scenario: Failed resolution is retryable
+
+- **WHEN** a base resolution fails
+- **THEN** its in-flight promise is evicted so a later collection can retry rather than reusing a cached failure
+
+#### Scenario: Declaration authority preserved through the cache
+
+- **WHEN** a cached base class has both declarations and JavaScript with differing documentation
+- **THEN** cached and refreshed inherited metadata follow the authoritative declaration, consistent with uncached collection

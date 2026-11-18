@@ -15,6 +15,7 @@ The engine also absorbed the responsibilities originally proposed for `packages/
 - Bind registry views to one project, snapshot, and generation; applying a successor discovery result replaces the view, preserves overlay provenance (`containsOverlays`, `overlayFiles`), and rejects stale semantic operations.
 - Add a core registry session composing engine sessions: creation, collection, lazy scope/enrichment pass-through, overlay updates, member type queries, assignability, and disposal. Checker operations delegate to the engine; the core owns no parallel TypeScript semantics. CEM `type.text` remains display-only and is never an assignability input or fallback.
 - Fix the discovery engine: inherit class-level JSDoc metadata (events, slots, CSS parts/properties/states, summary) from checker-resolved base classes, including dependency bases, without inspecting render implementations; retain package and module provenance on superclass references.
+- Cache base-class documentation in the engine as an isolated per-class link cache: each class stores its own JSDoc fragment plus a base-link held as declaration identity, not the base's merged data. The discovery session owns the cache and reuses it across its snapshots; walks follow cached links and re-merge each time. Invalidation is own-file, so editing a base refreshes dependents through their links without re-resolving subclasses. Concurrent misses coalesce through single-flight in-flight promises with snapshot/generation versioning and stale rejection. Intra-session only; cross-session caching stays out of scope.
 - Extend the shared `tests/fixtures/webcomponents` fixture: focused vanilla and Lit elements with documented events/slots/CSS metadata, a re-export dependency package with a renamed export, and simple and composed Lit `html` demo pages. Add focused Material Web assertions: `MdDialog` properties, attributes, inherited events, declaration identity, and explicitly unknown slots (Material Web documents no `@slot`; render-derived slots stay excluded).
 - Rewrite the package boundary in both architecture documents and the AGENTS.md package description; document unsupported metadata and incomplete analysis; add a root registry integration workflow. Rescope issue #22 as engine host-policy extensions (project references, cancellation, timing) plus core orchestration, not a new provider package.
 - Out of scope: template extraction and binding analysis (#23, #5), CLI/editor integration (#24, #25), the optional manifest adapter (#6), and host policies themselves (#22).
@@ -27,14 +28,14 @@ The engine also absorbed the responsibilities originally proposed for `packages/
 
 ### Modified Capabilities
 
-- `ts7-component-discovery`: add requirements for inherited class-level documentation metadata from base classes and for superclass declaration provenance (package/module identity). Existing collection, declaration-authority, and snapshot contracts are unchanged.
+- `ts7-component-discovery`: add requirements for inherited class-level documentation metadata from base classes, for superclass declaration provenance (package/module identity), and for intra-session base-documentation caching with own-file invalidation and single-flight coalescing. Existing collection, declaration-authority, and snapshot contracts are unchanged.
 
 ## Impact
 
 - `packages/analyzer-core` (renamed from `analyzer`): registry contracts re-export, registry model and session, unit and in-memory session tests; new dependencies `@ts7-lit-analyzer/cem-analyzer-ts7` (`workspace:*`) and `custom-elements-manifest` 2.1.0.
 - `packages/analyzer-ts7`: removed; it exported nothing and no package imports it.
 - `packages/analyzer-cli`, `packages/vscode-extension`: dependency specifier and import renames only.
-- `packages/cem-analyzer-ts7`: additive metadata inheritance and superclass provenance; public contracts and extractability unchanged.
+- `packages/cem-analyzer-ts7`: additive metadata inheritance, superclass provenance, and an intra-session base-documentation link cache; public contracts and extractability unchanged.
 - Tests and fixtures: workspace/packaging package lists, legacy fixture dependency and lockfile, new webcomponents fixture elements/pages/re-export package with updated frozen lockfile, root `test:registry` workflow.
 - Documentation: `.agents/docs/architecture.md`, `.agents/docs/tooling.md`, `docs/architecture.md`, `docs/parity.md`, AGENTS.md package description, README status, a registry behavior/limitations document, and discovery research status. Package naming is partially settled by maintainer decision; remaining names stay provisional.
 - Issues: implements #21 (parent #2); unblocks #22 with a rescoped body. Engine gap fixes are included because the #21 acceptance criteria require them.

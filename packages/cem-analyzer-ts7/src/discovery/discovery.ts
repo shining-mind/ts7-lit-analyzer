@@ -11,6 +11,7 @@ import type {
   WebComponentRecord,
 } from '../contracts.js';
 import {mergeComponentMetadata, type MetadataContext} from './metadata.js';
+import type {BaseDocumentationCache} from './base-documentation-cache.js';
 import {
   getImplementationFileName,
   type ModuleGraph,
@@ -21,6 +22,7 @@ import {collectFrameworkMetadata} from '../strategies/index.js';
 
 export interface DiscoveryResultOptions {
   filterCandidates?: boolean;
+  baseDocumentationCache?: BaseDocumentationCache;
 }
 
 export async function createDiscoveryResult(
@@ -71,6 +73,10 @@ export async function createDiscoveryResult(
     program: analysisProject.program,
     checker: analysisProject.checker,
     sourceFiles,
+    snapshotId,
+    ...(options?.baseDocumentationCache
+      ? {baseDocumentationCache: options.baseDocumentationCache}
+      : {}),
   };
   const fragments = await collectFrameworkMetadata(metadataContext);
   const candidates =
