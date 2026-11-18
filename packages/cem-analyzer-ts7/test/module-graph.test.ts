@@ -155,6 +155,15 @@ test('includes relative re-export chains and resolves a renamed export', async (
       assert.ok(component);
       assert.equal(component.declarationEvidence.exportName, 'PublicElement');
       assert.match(component.declarationEvidence.fileName, /component\.js$/);
+      assert.ok(
+        component.consumerProvenance?.some(
+          (provenance) =>
+            provenance.exportName === 'PublicElement' &&
+            /package-a\/index\.js$/.test(provenance.module) &&
+            provenance.package?.name === 'package-a'
+        ),
+        'Expected consumer-facing renamed export and module provenance'
+      );
     }
   );
 });

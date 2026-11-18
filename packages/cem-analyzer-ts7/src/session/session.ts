@@ -13,9 +13,12 @@ import type {
   SourceOverlay,
 } from '../contracts.js';
 import {
+  applySuperclassProvenance,
+  collectConsumerProvenance,
   createDiscoveryResult,
   getPackageIdentity,
 } from '../discovery/discovery.js';
+import {BaseDocumentationCache} from '../discovery/base-documentation-cache.js';
 import {LazyQueryTracker} from './lazy-queries.js';
 import {
   createMetadataContext,
@@ -110,6 +113,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   private readonly registry: ComponentRegistry;
   private readonly retention: SnapshotRetention;
   private readonly lazyQueries = new LazyQueryTracker();
+  private readonly baseDocumentationCache = new BaseDocumentationCache();
   private readonly overlays = new Map<string, string>();
   private state: SessionState | undefined;
   private generation = 1;
@@ -162,7 +166,9 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       state.graph,
       [...this.overlays.keys()],
       state.semantics,
-      state.project
+      state.project,
+      undefined,
+      {baseDocumentationCache: this.baseDocumentationCache}
     );
     return state.result;
   }
@@ -220,7 +226,11 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     const context = await createMetadataContext(
       state.project.program,
       this.configuration.roots,
-      state.indexGraph ?? state.graph
+      state.indexGraph ?? state.graph,
+      {
+        snapshotId: state.snapshotId,
+        baseDocumentationCache: this.baseDocumentationCache,
+      }
     );
     state.fullFragments ??= await collectFrameworkMetadata(context);
     for (const id of componentIds) {
@@ -252,6 +262,15 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         state.fullFragments
       );
       if (merged) {
+        applySuperclassProvenance(
+          merged,
+          (state.indexGraph ?? state.graph).modules
+        );
+        await collectConsumerProvenance(
+          merged,
+          state.graph.modules,
+          state.semantics
+        );
         this.registry.setEnriched(merged);
       }
     }
@@ -304,6 +323,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     }
     const previous = this.ensureActive();
     const {changedFiles, originalOverlays} = this.applyOverlays(overlays);
+    this.baseDocumentationCache.invalidate(changedFiles);
     let next: SessionState | undefined;
     try {
       next = await this.buildSnapshot(previous, changedFiles);
@@ -326,7 +346,8 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
                 previous.graph.modules.map((module) => module.fileName)
               ),
             }
-          : undefined
+          : undefined,
+        {baseDocumentationCache: this.baseDocumentationCache}
       );
       await this.retention.retain(previous.snapshot);
       this.state = next;
@@ -373,6 +394,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   ): Promise<DiscoveryResult> {
     this.ensureNotDisposed();
     const {changedFiles, originalOverlays} = this.applyOverlays(overlays);
+    this.baseDocumentationCache.invalidate(changedFiles);
     if (this.state === undefined) {
       this.generation += 1;
       return this.emptyResult();

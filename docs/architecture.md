@@ -12,7 +12,7 @@ The initial target is Lit in TypeScript projects, including their source, declar
 
 ```text
 CLI host ───────────┐
-                    ├─ shared analyzer ─ semantic provider ─ TS7 project/session
+                    ├─ shared analyzer-core ─ cem-analyzer-ts7 engine ─ TS7 project/session
 VS Code host ───────┘       │
                     templates, registry, rules, language services
 ```
@@ -21,18 +21,17 @@ Package names are provisional:
 
 ```text
 packages/
-  analyzer/          # core contracts, templates, registry, rules and features
+  analyzer-core/     # core contracts, templates, registry, rules and features
   cem-analyzer-ts7/  # standalone CEM-based TS7 component discovery
-  analyzer-ts7/      # semantic provider and TS7 host sessions
   analyzer-cli/      # CLI, configuration, output and exit codes
   vscode-extension/   # extension, providers, grammars and editor tests
 fixtures/            # self-contained parity and packaging fixtures
  docs/               # design, compatibility and development documentation
 ```
 
-The core defines a narrow semantic interface. The TS7 adapter owns host projects, module resolution, project references, snapshots and checker operations. The separately extractable `cem-analyzer-ts7` package owns discovery-specific TS7 snapshots and CEM-based component collection without depending on other workspace packages. Both compared types must come from the same project and snapshot. Use `isTypeAssignableTo(source, target)` for assignability; do not substitute `ts-simple-type` or an approximate custom type checker. Cache only within valid project/snapshot boundaries; reject stale results and honor cancellation. API gaps are blockers to investigate and document, not an excuse to claim successful checking.
+The core consumes the discovery engine directly through its public session API, which is the narrow semantic interface; there is no separate TypeScript 7 adapter package. The separately extractable `cem-analyzer-ts7` package owns discovery-specific TS7 snapshots, module resolution, checker operations, and CEM-based component collection without depending on other workspace packages; the core depends on the engine, not vice versa. Host policies such as project references, cancellation, open-file tracking, and scheduling are future engine extensions plus host orchestration. Both compared types must come from the same project and snapshot. Use `isTypeAssignableTo(source, target)` for assignability; do not substitute `ts-simple-type` or an approximate custom type checker. Cache only within valid project/snapshot boundaries; reject stale results and honor cancellation. API gaps are blockers to investigate and document, not an excuse to claim successful checking.
 
-Status note: the `cem-analyzer-ts7` discovery engine is implemented and tested in both eager and opt-in lazy modes (scoped collection, registration index, on-demand enrichment and types, pre-filter, bounded retention, generations); the README status section and `openspec/specs/ts7-component-discovery` record the verified behavior. Editor scheduling, open-file tracking, cancellation, and the analyzer-core registry remain proposed follow-up work, and the TS7 program itself stays project-wide.
+Status note: the `cem-analyzer-ts7` discovery engine is implemented and tested in both eager and opt-in lazy modes (scoped collection, registration index, on-demand enrichment and types, pre-filter, bounded retention, generations, inherited class-level metadata, and superclass provenance); the README status section and `openspec/specs/ts7-component-discovery` record the verified behavior. The `analyzer-core` registry foundation is implemented and tested over the engine's records (`docs/component-registry.md`). Editor scheduling, open-file tracking, cancellation, template analysis, and host integration remain follow-up work, and the TS7 program itself stays project-wide.
 
 ## Development conventions and upstream readiness
 
@@ -91,5 +90,5 @@ Every package declares its direct dependencies and normal npm `exports`, `types`
 - Can HTML metadata target types and literal unions be obtained in the same snapshot without a custom checker?
 - How should JS-only dependencies be included without changing a consumer's build configuration?
 - What are acceptable measured latency, memory and IPC budgets?
-- What are the final package names, public API stability policy, copyright holder and contribution workflow?
+- What are the remaining package names (the core is settled as `analyzer-core`), public API stability policy, copyright holder and contribution workflow?
 - Whether and how to propose integration with the Lit project is a separate maintainer decision; acceptance upstream is not a prerequisite for this project's work.

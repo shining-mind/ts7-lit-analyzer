@@ -1,4 +1,4 @@
-import type {AnalyzerDiagnostic} from '@ts7-lit-analyzer/analyzer';
+import type {AnalyzerDiagnostic} from '@ts7-lit-analyzer/analyzer-core';
 import type {TsTestContext} from './ts-test.ts';
 
 export function hasDiagnostic(

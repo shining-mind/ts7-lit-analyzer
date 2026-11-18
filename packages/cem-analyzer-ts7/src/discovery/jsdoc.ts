@@ -32,15 +32,9 @@ import {
   type SourceFile,
 } from 'typescript/ast';
 
-import type {SourceRange} from '../contracts.js';
+import type {DocumentationEvidence} from '../contracts.js';
 
-export interface DocumentationEvidence {
-  kind: 'jsdoc' | 'inline-event';
-  tagName: string;
-  fileName: string;
-  range: SourceRange;
-  memberName?: string;
-}
+export type {DocumentationEvidence} from '../contracts.js';
 
 export interface ClassDocumentationFragment {
   description?: string;

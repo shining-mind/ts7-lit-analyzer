@@ -231,6 +231,881 @@
     {
       "declaration": {
         "kind": "class",
+        "name": "MdFilledButton",
+        "customElement": true,
+        "members": [
+          {
+            "kind": "field",
+            "name": "__@internals@281474976710967",
+            "description": "An instance's `ElementInternals`.",
+            "type": {
+              "text": "ElementInternals"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "form",
+            "description": "The associated form element with which this element's value will submit.",
+            "type": {
+              "text": "HTMLFormElement | null"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "labels",
+            "description": "The labels this element is associated with.",
+            "type": {
+              "text": "NodeList"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "disabled",
+            "description": "Whether or not the element is disabled.",
+            "type": {
+              "text": "boolean"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "__@getFormValue@281474976710963",
+            "description": "Gets the current form value of a component. Defaults to the component's\n`value` attribute.",
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "FormValue | null"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "renderRoot",
+            "description": "Node or ShadowRoot into which element DOM should be rendered. Defaults\nto an open shadowRoot.",
+            "type": {
+              "text": "DocumentFragment | HTMLElement"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "isUpdatePending",
+            "description": "True if there is a pending update as a result of calling `requestUpdate()`.\nShould only be read.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "hasUpdated",
+            "description": "Is set to `true` after the first update. The element code cannot assume\nthat `renderRoot` exists before the element `hasUpdated`.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "addController",
+            "description": "Registers a `ReactiveController` to participate in the element's reactive\nupdate cycle. The element automatically calls into any registered\ncontrollers during its lifecycle callbacks.\n\nIf the element is connected when `addController()` is called, the\ncontroller's `hostConnected()` callback will be immediately called.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "removeController",
+            "description": "Removes a `ReactiveController` from the element.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "attributeChangedCallback",
+            "description": "Synchronizes property values when attributes change.\n\nSpecifically, when an attribute is set, the corresponding property is set.\nYou should rarely need to implement this callback. If this method is\noverridden, `super.attributeChangedCallback(name, _old, value)` must be\ncalled.\n\nSee [responding to attribute changes](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes)\non MDN for more information about the `attributeChangedCallback`.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              {
+                "name": "_old",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              },
+              {
+                "name": "value",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "requestUpdate",
+            "description": "Requests an update which is processed asynchronously. This should be called\nwhen an element should update based on some state not triggered by setting\na reactive property. In this case, pass no arguments. It should also be\ncalled when manually implementing a property setter. In this case, pass the\nproperty `name` and `oldValue` to ensure that any configured property\noptions are honored.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyKey | undefined"
+                }
+              },
+              {
+                "name": "oldValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              },
+              {
+                "name": "options",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyDeclaration<unknown, unknown> | undefined"
+                }
+              },
+              {
+                "name": "useNewValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "boolean | undefined"
+                }
+              },
+              {
+                "name": "newValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "updateComplete",
+            "description": "Returns a Promise that resolves when the element has completed updating.\nThe Promise value is a boolean that is `true` if the element completed the\nupdate without triggering another update. The Promise result is `false` if\na property was set inside `updated()`. If the Promise is rejected, an\nexception was thrown during the update.\n\nTo await additional asynchronous work, override the `getUpdateComplete`\nmethod. For example, it is sometimes useful to await a rendered element\nbefore fulfilling this Promise. To do this, first await\n`super.getUpdateComplete()`, then any subsequent state.",
+            "type": {
+              "text": "Promise<boolean>"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "renderOptions",
+            "type": {
+              "text": "RenderOptions"
+            },
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "method",
+            "name": "connectedCallback",
+            "description": "Invoked when the component is added to the document's DOM.\n\nIn `connectedCallback()` you should setup tasks that should only occur when\nthe element is connected to the document. The most common of these is\nadding event listeners to nodes external to the element, like a keydown\nevent handler added to the window.\n\n```ts\nconnectedCallback() {\n  super.connectedCallback();\n  addEventListener('keydown', this._handleKeydown);\n}\n```\n\nTypically, anything done in `connectedCallback()` should be undone when the\nelement is disconnected, in `disconnectedCallback()`.",
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "disconnectedCallback",
+            "description": "Invoked when the component is removed from the document's DOM.\n\nThis callback is the main signal to the element that it may no longer be\nused. `disconnectedCallback()` should ensure that nothing is holding a\nreference to the element (such as event listeners added to nodes external\nto the element), so that it is free to be garbage collected.\n\n```ts\ndisconnectedCallback() {\n  super.disconnectedCallback();\n  window.removeEventListener('keydown', this._handleKeydown);\n}\n```\n\nAn element may be re-connected after being disconnected.",
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "__@getFormState@281474976710965",
+            "description": "Gets the current form state of a component. Defaults to the component's\n`[getFormValue]()` result.\n\nUse this when the state of an element is different from its value, such as\ncheckboxes (internal boolean state and a user string value).",
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "FormValue | null"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "formDisabledCallback",
+            "description": "A callback for when a form component should be disabled or enabled. This\ncan be called in a variety of situations, such as disabled `<fieldset>`s.",
+            "parameters": [
+              {
+                "name": "disabled",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "formResetCallback",
+            "description": "An optional callback for when the form requests to reset its value.\nTypically, the default value that is reset is represented in the attribute\nof an element.\n\nThis means the attribute used for the value should not update as the value\nchanges. For example, a checkbox should not change its default `checked`\nattribute when selected. Ensure form values do not reflect."
+          },
+          {
+            "kind": "method",
+            "name": "formStateRestoreCallback",
+            "description": "An optional callback for when the form restores the state of a component.\nFor example, when a page is reloaded or forms are autofilled."
+          },
+          {
+            "kind": "method",
+            "name": "formAssociatedCallback",
+            "description": "An optional callback for when the associated form changes."
+          },
+          {
+            "kind": "field",
+            "name": "type",
+            "description": "A string indicating the form submission behavior of the element.\n\n- submit: The element submits the form. This is the default value if the\nattribute is not specified, or if it is dynamically changed to an empty or\ninvalid value.\n- reset: The element resets the form.\n- button: The element does nothing.",
+            "type": {
+              "text": "string"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "name",
+            "description": "The HTML name to use in form submission. When combined with a `value`, the\nsubmitting button's name/value will be added to the form.\n\nNames must reflect to a `name` attribute for form integration.\nThe HTML name to use in form submission.",
+            "type": {
+              "text": "string"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "value",
+            "description": "The value of the button. When combined with a `name`, the submitting\nbutton's name/value will be added to the form.",
+            "type": {
+              "text": "string"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "softDisabled",
+            "attribute": "soft-disabled",
+            "reflects": true,
+            "description": "Whether or not the button is \"soft-disabled\" (disabled but still\nfocusable).\n\nUse this when a button needs increased visibility when disabled. See\nhttps://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls\nfor more guidance on when this is needed.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "Button"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "href",
+            "attribute": "href",
+            "description": "The URL that the link button points to.",
+            "type": {
+              "text": "string"
+            },
+            "inheritedFrom": {
+              "name": "Button"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "download",
+            "attribute": "download",
+            "description": "The filename to use when downloading the linked resource.\nIf not specified, the browser will determine a filename.\nThis is only applicable when the button is used as a link (`href` is set).",
+            "type": {
+              "text": "string"
+            },
+            "inheritedFrom": {
+              "name": "Button"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "target",
+            "attribute": "target",
+            "description": "Where to display the linked `href` URL for a link button. Common options\ninclude `_blank` to open in a new tab.",
+            "type": {
+              "text": "\"\" | \"_blank\" | \"_parent\" | \"_self\" | \"_top\""
+            },
+            "inheritedFrom": {
+              "name": "Button"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "trailingIcon",
+            "attribute": "trailing-icon",
+            "reflects": true,
+            "description": "Whether to render the icon at the inline end of the label rather than the\ninline start.\n\n_Note:_ Link buttons cannot have trailing icons.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "Button"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "hasIcon",
+            "attribute": "has-icon",
+            "reflects": true,
+            "description": "Whether to display the icon or not.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "Button"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "focus",
+            "description": "[MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/focus)",
+            "inheritedFrom": {
+              "name": "Button"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "blur",
+            "description": "[MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/blur)",
+            "inheritedFrom": {
+              "name": "Button"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          }
+        ],
+        "attributes": [
+          {
+            "name": "soft-disabled",
+            "fieldName": "softDisabled"
+          },
+          {
+            "name": "href",
+            "fieldName": "href"
+          },
+          {
+            "name": "download",
+            "fieldName": "download"
+          },
+          {
+            "name": "target",
+            "fieldName": "target"
+          },
+          {
+            "name": "trailing-icon",
+            "fieldName": "trailingIcon"
+          },
+          {
+            "name": "has-icon",
+            "fieldName": "hasIcon"
+          }
+        ],
+        "events": [],
+        "slots": [],
+        "cssParts": [],
+        "cssProperties": [],
+        "cssStates": [],
+        "superclass": {
+          "name": "FilledButton",
+          "module": "<fixture>/node_modules/@material/web/button/internal/filled-button.d.ts",
+          "package": "@material/web"
+        },
+        "summary": "Buttons help people take action, such as sending an email, sharing a\n document, or liking a comment.",
+        "tagName": "md-filled-button"
+      },
+      "declarationEvidence": {
+        "id": "<fixture>/node_modules/@material/web/button/filled-button.d.ts#MdFilledButton",
+        "fileName": "<fixture>/node_modules/@material/web/button/filled-button.d.ts",
+        "range": {
+          "start": 815,
+          "end": 915
+        },
+        "exportName": "MdFilledButton",
+        "package": {
+          "name": "@material/web",
+          "version": "2.5.0",
+          "realPath": "<fixture>/node_modules/@material/web"
+        }
+      },
+      "registrations": [
+        {
+          "tagName": "md-filled-button",
+          "fileName": "<fixture>/node_modules/@material/web/button/filled-button.d.ts",
+          "range": {
+            "start": 252,
+            "end": 287
+          },
+          "scope": "global",
+          "strategy": "vanilla"
+        }
+      ],
+      "members": [
+        {
+          "memberName": "__@internals@281474976710967",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/element-internals.d.ts#MdFilledButton.__@internals@281474976710967",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/element-internals.d.ts",
+            "range": {
+              "start": 855,
+              "end": 885
+            }
+          }
+        },
+        {
+          "memberName": "form",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.form",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 410,
+              "end": 448
+            }
+          }
+        },
+        {
+          "memberName": "labels",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.labels",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 520,
+              "end": 546
+            }
+          }
+        },
+        {
+          "memberName": "disabled",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.disabled",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 696,
+              "end": 714
+            }
+          }
+        },
+        {
+          "memberName": "__@getFormValue@281474976710963",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.__@getFormValue@281474976710963",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 886,
+              "end": 921
+            }
+          }
+        },
+        {
+          "memberName": "renderRoot",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 19891,
+              "end": 19943
+            }
+          }
+        },
+        {
+          "memberName": "isUpdatePending",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20276,
+              "end": 20301
+            }
+          }
+        },
+        {
+          "memberName": "hasUpdated",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20491,
+              "end": 20511
+            }
+          }
+        },
+        {
+          "memberName": "addController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21488,
+              "end": 21540
+            }
+          }
+        },
+        {
+          "memberName": "removeController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21646,
+              "end": 21701
+            }
+          }
+        },
+        {
+          "memberName": "attributeChangedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 23789,
+              "end": 23877
+            }
+          }
+        },
+        {
+          "memberName": "requestUpdate",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 25019,
+              "end": 25153
+            }
+          }
+        },
+        {
+          "memberName": "updateComplete",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 28033,
+              "end": 28072
+            }
+          }
+        },
+        {
+          "memberName": "renderOptions",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 2848,
+              "end": 2886
+            }
+          }
+        },
+        {
+          "memberName": "connectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 4135,
+              "end": 4161
+            }
+          }
+        },
+        {
+          "memberName": "disconnectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 4851,
+              "end": 4880
+            }
+          }
+        },
+        {
+          "memberName": "__@getFormState@281474976710965",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.__@getFormState@281474976710965",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 1286,
+              "end": 1321
+            }
+          }
+        },
+        {
+          "memberName": "formDisabledCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.formDisabledCallback",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 1585,
+              "end": 1631
+            }
+          }
+        },
+        {
+          "memberName": "formResetCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.formResetCallback",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 2067,
+              "end": 2094
+            }
+          }
+        },
+        {
+          "memberName": "formStateRestoreCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.formStateRestoreCallback",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 2469,
+              "end": 2560
+            }
+          }
+        },
+        {
+          "memberName": "formAssociatedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts#MdFilledButton.formAssociatedCallback",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-associated.d.ts",
+            "range": {
+              "start": 2726,
+              "end": 2786
+            }
+          }
+        },
+        {
+          "memberName": "type",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-submitter.d.ts#MdFilledButton.type",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-submitter.d.ts",
+            "range": {
+              "start": 1135,
+              "end": 1148
+            }
+          }
+        },
+        {
+          "memberName": "name",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-submitter.d.ts#MdFilledButton.name",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-submitter.d.ts",
+            "range": {
+              "start": 1393,
+              "end": 1406
+            }
+          }
+        },
+        {
+          "memberName": "value",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/labs/behaviors/form-submitter.d.ts#MdFilledButton.value",
+            "fileName": "<fixture>/node_modules/@material/web/labs/behaviors/form-submitter.d.ts",
+            "range": {
+              "start": 1557,
+              "end": 1571
+            }
+          }
+        },
+        {
+          "memberName": "softDisabled",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.softDisabled",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 1218,
+              "end": 1240
+            }
+          }
+        },
+        {
+          "memberName": "href",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.href",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 1308,
+              "end": 1321
+            }
+          }
+        },
+        {
+          "memberName": "download",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.download",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 1553,
+              "end": 1570
+            }
+          }
+        },
+        {
+          "memberName": "target",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.target",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 1717,
+              "end": 1770
+            }
+          }
+        },
+        {
+          "memberName": "trailingIcon",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.trailingIcon",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 1956,
+              "end": 1978
+            }
+          }
+        },
+        {
+          "memberName": "hasIcon",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.hasIcon",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 2042,
+              "end": 2059
+            }
+          }
+        },
+        {
+          "memberName": "focus",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.focus",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 2155,
+              "end": 2169
+            }
+          }
+        },
+        {
+          "memberName": "blur",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/button/internal/button.d.ts#Button.blur",
+            "fileName": "<fixture>/node_modules/@material/web/button/internal/button.d.ts",
+            "range": {
+              "start": 2174,
+              "end": 2187
+            }
+          }
+        }
+      ],
+      "analysis": {
+        "complete": 63,
+        "incomplete": 0,
+        "issues": []
+      }
+    },
+    {
+      "declaration": {
+        "kind": "class",
         "name": "MdDialog",
         "customElement": true,
         "members": [
@@ -596,13 +1471,46 @@
             "fieldName": "noFocusTrap"
           }
         ],
-        "events": [],
+        "events": [
+          {
+            "name": "open",
+            "type": {
+              "text": "Event"
+            }
+          },
+          {
+            "name": "opened",
+            "type": {
+              "text": "Event"
+            }
+          },
+          {
+            "name": "close",
+            "type": {
+              "text": "Event"
+            }
+          },
+          {
+            "name": "closed",
+            "type": {
+              "text": "Event"
+            }
+          },
+          {
+            "name": "cancel",
+            "type": {
+              "text": "Event"
+            }
+          }
+        ],
         "slots": [],
         "cssParts": [],
         "cssProperties": [],
         "cssStates": [],
         "superclass": {
-          "name": "Dialog"
+          "name": "Dialog",
+          "module": "<fixture>/node_modules/@material/web/dialog/internal/dialog.d.ts",
+          "package": "@material/web"
         },
         "summary": "Dialogs can require an action, communicate information, or help\n users accomplish a task. There are two types of dialogs: basic and\n full-screen.",
         "tagName": "md-dialog"
@@ -1152,7 +2060,9 @@
         "cssProperties": [],
         "cssStates": [],
         "superclass": {
-          "name": "Divider"
+          "name": "Divider",
+          "module": "<fixture>/node_modules/@material/web/divider/internal/divider.d.ts",
+          "package": "@material/web"
         },
         "summary": "A divider is a thin line that groups content in lists and\n containers.",
         "tagName": "md-divider"
@@ -1335,6 +2245,1668 @@
             "range": {
               "start": 285,
               "end": 300
+            }
+          }
+        }
+      ],
+      "analysis": {
+        "complete": 63,
+        "incomplete": 0,
+        "issues": []
+      }
+    },
+    {
+      "declaration": {
+        "kind": "class",
+        "name": "MdElevation",
+        "customElement": true,
+        "members": [
+          {
+            "kind": "field",
+            "name": "renderRoot",
+            "description": "Node or ShadowRoot into which element DOM should be rendered. Defaults\nto an open shadowRoot.",
+            "type": {
+              "text": "DocumentFragment | HTMLElement"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "isUpdatePending",
+            "description": "True if there is a pending update as a result of calling `requestUpdate()`.\nShould only be read.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "hasUpdated",
+            "description": "Is set to `true` after the first update. The element code cannot assume\nthat `renderRoot` exists before the element `hasUpdated`.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "addController",
+            "description": "Registers a `ReactiveController` to participate in the element's reactive\nupdate cycle. The element automatically calls into any registered\ncontrollers during its lifecycle callbacks.\n\nIf the element is connected when `addController()` is called, the\ncontroller's `hostConnected()` callback will be immediately called.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "removeController",
+            "description": "Removes a `ReactiveController` from the element.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "attributeChangedCallback",
+            "description": "Synchronizes property values when attributes change.\n\nSpecifically, when an attribute is set, the corresponding property is set.\nYou should rarely need to implement this callback. If this method is\noverridden, `super.attributeChangedCallback(name, _old, value)` must be\ncalled.\n\nSee [responding to attribute changes](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes)\non MDN for more information about the `attributeChangedCallback`.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              {
+                "name": "_old",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              },
+              {
+                "name": "value",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "requestUpdate",
+            "description": "Requests an update which is processed asynchronously. This should be called\nwhen an element should update based on some state not triggered by setting\na reactive property. In this case, pass no arguments. It should also be\ncalled when manually implementing a property setter. In this case, pass the\nproperty `name` and `oldValue` to ensure that any configured property\noptions are honored.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyKey | undefined"
+                }
+              },
+              {
+                "name": "oldValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              },
+              {
+                "name": "options",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyDeclaration<unknown, unknown> | undefined"
+                }
+              },
+              {
+                "name": "useNewValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "boolean | undefined"
+                }
+              },
+              {
+                "name": "newValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "updateComplete",
+            "description": "Returns a Promise that resolves when the element has completed updating.\nThe Promise value is a boolean that is `true` if the element completed the\nupdate without triggering another update. The Promise result is `false` if\na property was set inside `updated()`. If the Promise is rejected, an\nexception was thrown during the update.\n\nTo await additional asynchronous work, override the `getUpdateComplete`\nmethod. For example, it is sometimes useful to await a rendered element\nbefore fulfilling this Promise. To do this, first await\n`super.getUpdateComplete()`, then any subsequent state.",
+            "type": {
+              "text": "Promise<boolean>"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "renderOptions",
+            "type": {
+              "text": "RenderOptions"
+            },
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "method",
+            "name": "disconnectedCallback",
+            "description": "Invoked when the component is removed from the document's DOM.\n\nThis callback is the main signal to the element that it may no longer be\nused. `disconnectedCallback()` should ensure that nothing is holding a\nreference to the element (such as event listeners added to nodes external\nto the element), so that it is free to be garbage collected.\n\n```ts\ndisconnectedCallback() {\n  super.disconnectedCallback();\n  window.removeEventListener('keydown', this._handleKeydown);\n}\n```\n\nAn element may be re-connected after being disconnected.",
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "connectedCallback",
+            "description": "Invoked when the component is added to the document's DOM.\n\nIn `connectedCallback()` you should setup tasks that should only occur when\nthe element is connected to the document. The most common of these is\nadding event listeners to nodes external to the element, like a keydown\nevent handler added to the window.\n\n```ts\nconnectedCallback() {\n  super.connectedCallback();\n  addEventListener('keydown', this._handleKeydown);\n}\n```\n\nTypically, anything done in `connectedCallback()` should be undone when the\nelement is disconnected, in `disconnectedCallback()`.",
+            "inheritedFrom": {
+              "name": "Elevation"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          }
+        ],
+        "attributes": [],
+        "events": [],
+        "slots": [],
+        "cssParts": [],
+        "cssProperties": [],
+        "cssStates": [],
+        "description": "The `<md-elevation>` custom element with default styles.\n\nElevation is the relative distance between two surfaces along the z-axis.",
+        "superclass": {
+          "name": "Elevation",
+          "module": "<fixture>/node_modules/@material/web/elevation/internal/elevation.d.ts",
+          "package": "@material/web"
+        },
+        "tagName": "md-elevation"
+      },
+      "declarationEvidence": {
+        "id": "<fixture>/node_modules/@material/web/elevation/elevation.d.ts#MdElevation",
+        "fileName": "<fixture>/node_modules/@material/web/elevation/elevation.d.ts",
+        "range": {
+          "start": 469,
+          "end": 563
+        },
+        "exportName": "MdElevation",
+        "package": {
+          "name": "@material/web",
+          "version": "2.5.0",
+          "realPath": "<fixture>/node_modules/@material/web"
+        }
+      },
+      "registrations": [
+        {
+          "tagName": "md-elevation",
+          "fileName": "<fixture>/node_modules/@material/web/elevation/elevation.d.ts",
+          "range": {
+            "start": 245,
+            "end": 273
+          },
+          "scope": "global",
+          "strategy": "vanilla"
+        }
+      ],
+      "members": [
+        {
+          "memberName": "renderRoot",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 19891,
+              "end": 19943
+            }
+          }
+        },
+        {
+          "memberName": "isUpdatePending",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20276,
+              "end": 20301
+            }
+          }
+        },
+        {
+          "memberName": "hasUpdated",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20491,
+              "end": 20511
+            }
+          }
+        },
+        {
+          "memberName": "addController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21488,
+              "end": 21540
+            }
+          }
+        },
+        {
+          "memberName": "removeController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21646,
+              "end": 21701
+            }
+          }
+        },
+        {
+          "memberName": "attributeChangedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 23789,
+              "end": 23877
+            }
+          }
+        },
+        {
+          "memberName": "requestUpdate",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 25019,
+              "end": 25153
+            }
+          }
+        },
+        {
+          "memberName": "updateComplete",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 28033,
+              "end": 28072
+            }
+          }
+        },
+        {
+          "memberName": "renderOptions",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 2848,
+              "end": 2886
+            }
+          }
+        },
+        {
+          "memberName": "disconnectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 4851,
+              "end": 4880
+            }
+          }
+        },
+        {
+          "memberName": "connectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/elevation/internal/elevation.d.ts#Elevation.connectedCallback",
+            "fileName": "<fixture>/node_modules/@material/web/elevation/internal/elevation.d.ts",
+            "range": {
+              "start": 216,
+              "end": 242
+            }
+          }
+        }
+      ],
+      "analysis": {
+        "complete": 63,
+        "incomplete": 0,
+        "issues": []
+      }
+    },
+    {
+      "declaration": {
+        "kind": "class",
+        "name": "MdFocusRing",
+        "customElement": true,
+        "members": [
+          {
+            "kind": "field",
+            "name": "renderRoot",
+            "description": "Node or ShadowRoot into which element DOM should be rendered. Defaults\nto an open shadowRoot.",
+            "type": {
+              "text": "DocumentFragment | HTMLElement"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "isUpdatePending",
+            "description": "True if there is a pending update as a result of calling `requestUpdate()`.\nShould only be read.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "hasUpdated",
+            "description": "Is set to `true` after the first update. The element code cannot assume\nthat `renderRoot` exists before the element `hasUpdated`.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "addController",
+            "description": "Registers a `ReactiveController` to participate in the element's reactive\nupdate cycle. The element automatically calls into any registered\ncontrollers during its lifecycle callbacks.\n\nIf the element is connected when `addController()` is called, the\ncontroller's `hostConnected()` callback will be immediately called.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "removeController",
+            "description": "Removes a `ReactiveController` from the element.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "attributeChangedCallback",
+            "description": "Synchronizes property values when attributes change.\n\nSpecifically, when an attribute is set, the corresponding property is set.\nYou should rarely need to implement this callback. If this method is\noverridden, `super.attributeChangedCallback(name, _old, value)` must be\ncalled.\n\nSee [responding to attribute changes](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes)\non MDN for more information about the `attributeChangedCallback`.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              {
+                "name": "_old",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              },
+              {
+                "name": "value",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "requestUpdate",
+            "description": "Requests an update which is processed asynchronously. This should be called\nwhen an element should update based on some state not triggered by setting\na reactive property. In this case, pass no arguments. It should also be\ncalled when manually implementing a property setter. In this case, pass the\nproperty `name` and `oldValue` to ensure that any configured property\noptions are honored.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyKey | undefined"
+                }
+              },
+              {
+                "name": "oldValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              },
+              {
+                "name": "options",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyDeclaration<unknown, unknown> | undefined"
+                }
+              },
+              {
+                "name": "useNewValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "boolean | undefined"
+                }
+              },
+              {
+                "name": "newValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "updateComplete",
+            "description": "Returns a Promise that resolves when the element has completed updating.\nThe Promise value is a boolean that is `true` if the element completed the\nupdate without triggering another update. The Promise result is `false` if\na property was set inside `updated()`. If the Promise is rejected, an\nexception was thrown during the update.\n\nTo await additional asynchronous work, override the `getUpdateComplete`\nmethod. For example, it is sometimes useful to await a rendered element\nbefore fulfilling this Promise. To do this, first await\n`super.getUpdateComplete()`, then any subsequent state.",
+            "type": {
+              "text": "Promise<boolean>"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "renderOptions",
+            "type": {
+              "text": "RenderOptions"
+            },
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "method",
+            "name": "disconnectedCallback",
+            "description": "Invoked when the component is removed from the document's DOM.\n\nThis callback is the main signal to the element that it may no longer be\nused. `disconnectedCallback()` should ensure that nothing is holding a\nreference to the element (such as event listeners added to nodes external\nto the element), so that it is free to be garbage collected.\n\n```ts\ndisconnectedCallback() {\n  super.disconnectedCallback();\n  window.removeEventListener('keydown', this._handleKeydown);\n}\n```\n\nAn element may be re-connected after being disconnected.",
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "visible",
+            "attribute": "visible",
+            "reflects": true,
+            "description": "Makes the focus ring visible.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "FocusRing"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "inward",
+            "attribute": "inward",
+            "reflects": true,
+            "description": "Makes the focus ring animate inwards instead of outwards.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "FocusRing"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "htmlFor",
+            "type": {
+              "text": "string | null"
+            },
+            "inheritedFrom": {
+              "name": "FocusRing"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "control",
+            "type": {
+              "text": "HTMLElement | null"
+            },
+            "inheritedFrom": {
+              "name": "FocusRing"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "attach",
+            "inheritedFrom": {
+              "name": "FocusRing"
+            },
+            "parameters": [
+              {
+                "name": "control",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "HTMLElement"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "detach",
+            "inheritedFrom": {
+              "name": "FocusRing"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "connectedCallback",
+            "description": "Invoked when the component is added to the document's DOM.\n\nIn `connectedCallback()` you should setup tasks that should only occur when\nthe element is connected to the document. The most common of these is\nadding event listeners to nodes external to the element, like a keydown\nevent handler added to the window.\n\n```ts\nconnectedCallback() {\n  super.connectedCallback();\n  addEventListener('keydown', this._handleKeydown);\n}\n```\n\nTypically, anything done in `connectedCallback()` should be undone when the\nelement is disconnected, in `disconnectedCallback()`.",
+            "inheritedFrom": {
+              "name": "FocusRing"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "handleEvent",
+            "inheritedFrom": {
+              "name": "FocusRing"
+            },
+            "parameters": [
+              {
+                "name": "event",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "FocusRingEvent"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "update",
+            "description": "Updates the element. This method reflects property values to attributes\nand calls `render` to render DOM via lit-html. Setting properties inside\nthis method will *not* trigger another update.",
+            "inheritedFrom": {
+              "name": "FocusRing"
+            },
+            "parameters": [
+              {
+                "name": "changed",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "PropertyValueMap<FocusRing>"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          }
+        ],
+        "attributes": [
+          {
+            "name": "visible",
+            "fieldName": "visible"
+          },
+          {
+            "name": "inward",
+            "fieldName": "inward"
+          }
+        ],
+        "events": [
+          {
+            "name": "visibility-changed",
+            "type": {
+              "text": "Event"
+            }
+          }
+        ],
+        "slots": [],
+        "cssParts": [],
+        "cssProperties": [],
+        "cssStates": [],
+        "description": "TODO(b/267336424): add docs",
+        "superclass": {
+          "name": "FocusRing",
+          "module": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+          "package": "@material/web"
+        },
+        "tagName": "md-focus-ring"
+      },
+      "declarationEvidence": {
+        "id": "<fixture>/node_modules/@material/web/focus/md-focus-ring.d.ts#MdFocusRing",
+        "fileName": "<fixture>/node_modules/@material/web/focus/md-focus-ring.d.ts",
+        "range": {
+          "start": 362,
+          "end": 456
+        },
+        "exportName": "MdFocusRing",
+        "package": {
+          "name": "@material/web",
+          "version": "2.5.0",
+          "realPath": "<fixture>/node_modules/@material/web"
+        }
+      },
+      "registrations": [
+        {
+          "tagName": "md-focus-ring",
+          "fileName": "<fixture>/node_modules/@material/web/focus/md-focus-ring.d.ts",
+          "range": {
+            "start": 246,
+            "end": 275
+          },
+          "scope": "global",
+          "strategy": "vanilla"
+        }
+      ],
+      "members": [
+        {
+          "memberName": "renderRoot",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 19891,
+              "end": 19943
+            }
+          }
+        },
+        {
+          "memberName": "isUpdatePending",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20276,
+              "end": 20301
+            }
+          }
+        },
+        {
+          "memberName": "hasUpdated",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20491,
+              "end": 20511
+            }
+          }
+        },
+        {
+          "memberName": "addController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21488,
+              "end": 21540
+            }
+          }
+        },
+        {
+          "memberName": "removeController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21646,
+              "end": 21701
+            }
+          }
+        },
+        {
+          "memberName": "attributeChangedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 23789,
+              "end": 23877
+            }
+          }
+        },
+        {
+          "memberName": "requestUpdate",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 25019,
+              "end": 25153
+            }
+          }
+        },
+        {
+          "memberName": "updateComplete",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 28033,
+              "end": 28072
+            }
+          }
+        },
+        {
+          "memberName": "renderOptions",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 2848,
+              "end": 2886
+            }
+          }
+        },
+        {
+          "memberName": "disconnectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 4851,
+              "end": 4880
+            }
+          }
+        },
+        {
+          "memberName": "visible",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.visible",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 459,
+              "end": 476
+            }
+          }
+        },
+        {
+          "memberName": "inward",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.inward",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 562,
+              "end": 578
+            }
+          }
+        },
+        {
+          "memberName": "htmlFor",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.htmlFor",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 583,
+              "end": 612
+            }
+          }
+        },
+        {
+          "memberName": "control",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.control",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 658,
+              "end": 692
+            }
+          }
+        },
+        {
+          "memberName": "attach",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.attach",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 786,
+              "end": 821
+            }
+          }
+        },
+        {
+          "memberName": "detach",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.detach",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 826,
+              "end": 841
+            }
+          }
+        },
+        {
+          "memberName": "connectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.connectedCallback",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 846,
+              "end": 872
+            }
+          }
+        },
+        {
+          "memberName": "handleEvent",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.handleEvent",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 897,
+              "end": 938
+            }
+          }
+        },
+        {
+          "memberName": "update",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts#FocusRing.update",
+            "fileName": "<fixture>/node_modules/@material/web/focus/internal/focus-ring.d.ts",
+            "range": {
+              "start": 972,
+              "end": 1021
+            }
+          }
+        }
+      ],
+      "analysis": {
+        "complete": 63,
+        "incomplete": 0,
+        "issues": []
+      }
+    },
+    {
+      "declaration": {
+        "kind": "class",
+        "name": "MdRipple",
+        "customElement": true,
+        "members": [
+          {
+            "kind": "field",
+            "name": "disabled",
+            "attribute": "disabled",
+            "reflects": true,
+            "description": "Disables the ripple.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "Ripple"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "htmlFor",
+            "type": {
+              "text": "string | null"
+            },
+            "inheritedFrom": {
+              "name": "Ripple"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "control",
+            "type": {
+              "text": "HTMLElement | null"
+            },
+            "inheritedFrom": {
+              "name": "Ripple"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "attach",
+            "inheritedFrom": {
+              "name": "Ripple"
+            },
+            "parameters": [
+              {
+                "name": "control",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "HTMLElement"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "renderRoot",
+            "description": "Node or ShadowRoot into which element DOM should be rendered. Defaults\nto an open shadowRoot.",
+            "type": {
+              "text": "DocumentFragment | HTMLElement"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "isUpdatePending",
+            "description": "True if there is a pending update as a result of calling `requestUpdate()`.\nShould only be read.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "hasUpdated",
+            "description": "Is set to `true` after the first update. The element code cannot assume\nthat `renderRoot` exists before the element `hasUpdated`.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "addController",
+            "description": "Registers a `ReactiveController` to participate in the element's reactive\nupdate cycle. The element automatically calls into any registered\ncontrollers during its lifecycle callbacks.\n\nIf the element is connected when `addController()` is called, the\ncontroller's `hostConnected()` callback will be immediately called.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "removeController",
+            "description": "Removes a `ReactiveController` from the element.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "attributeChangedCallback",
+            "description": "Synchronizes property values when attributes change.\n\nSpecifically, when an attribute is set, the corresponding property is set.\nYou should rarely need to implement this callback. If this method is\noverridden, `super.attributeChangedCallback(name, _old, value)` must be\ncalled.\n\nSee [responding to attribute changes](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes)\non MDN for more information about the `attributeChangedCallback`.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              {
+                "name": "_old",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              },
+              {
+                "name": "value",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "requestUpdate",
+            "description": "Requests an update which is processed asynchronously. This should be called\nwhen an element should update based on some state not triggered by setting\na reactive property. In this case, pass no arguments. It should also be\ncalled when manually implementing a property setter. In this case, pass the\nproperty `name` and `oldValue` to ensure that any configured property\noptions are honored.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyKey | undefined"
+                }
+              },
+              {
+                "name": "oldValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              },
+              {
+                "name": "options",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyDeclaration<unknown, unknown> | undefined"
+                }
+              },
+              {
+                "name": "useNewValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "boolean | undefined"
+                }
+              },
+              {
+                "name": "newValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "updateComplete",
+            "description": "Returns a Promise that resolves when the element has completed updating.\nThe Promise value is a boolean that is `true` if the element completed the\nupdate without triggering another update. The Promise result is `false` if\na property was set inside `updated()`. If the Promise is rejected, an\nexception was thrown during the update.\n\nTo await additional asynchronous work, override the `getUpdateComplete`\nmethod. For example, it is sometimes useful to await a rendered element\nbefore fulfilling this Promise. To do this, first await\n`super.getUpdateComplete()`, then any subsequent state.",
+            "type": {
+              "text": "Promise<boolean>"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "renderOptions",
+            "type": {
+              "text": "RenderOptions"
+            },
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "method",
+            "name": "disconnectedCallback",
+            "description": "Invoked when the component is removed from the document's DOM.\n\nThis callback is the main signal to the element that it may no longer be\nused. `disconnectedCallback()` should ensure that nothing is holding a\nreference to the element (such as event listeners added to nodes external\nto the element), so that it is free to be garbage collected.\n\n```ts\ndisconnectedCallback() {\n  super.disconnectedCallback();\n  window.removeEventListener('keydown', this._handleKeydown);\n}\n```\n\nAn element may be re-connected after being disconnected.",
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "detach",
+            "inheritedFrom": {
+              "name": "Ripple"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "connectedCallback",
+            "description": "Invoked when the component is added to the document's DOM.\n\nIn `connectedCallback()` you should setup tasks that should only occur when\nthe element is connected to the document. The most common of these is\nadding event listeners to nodes external to the element, like a keydown\nevent handler added to the window.\n\n```ts\nconnectedCallback() {\n  super.connectedCallback();\n  addEventListener('keydown', this._handleKeydown);\n}\n```\n\nTypically, anything done in `connectedCallback()` should be undone when the\nelement is disconnected, in `disconnectedCallback()`.",
+            "inheritedFrom": {
+              "name": "Ripple"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "handlePointerenter",
+            "description": "TODO(b/269799771): make private",
+            "inheritedFrom": {
+              "name": "Ripple"
+            },
+            "parameters": [
+              {
+                "name": "event",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "PointerEvent"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "handlePointerleave",
+            "description": "TODO(b/269799771): make private",
+            "inheritedFrom": {
+              "name": "Ripple"
+            },
+            "parameters": [
+              {
+                "name": "event",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "PointerEvent"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "handleEvent",
+            "inheritedFrom": {
+              "name": "Ripple"
+            },
+            "parameters": [
+              {
+                "name": "event",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "Event"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "Promise<void>"
+              }
+            }
+          }
+        ],
+        "attributes": [
+          {
+            "name": "disabled",
+            "fieldName": "disabled"
+          }
+        ],
+        "events": [],
+        "slots": [],
+        "cssParts": [],
+        "cssProperties": [],
+        "cssStates": [],
+        "superclass": {
+          "name": "Ripple",
+          "module": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+          "package": "@material/web"
+        },
+        "summary": "Ripples, also known as state layers, are visual indicators used to\n communicate the status of a component or interactive element.",
+        "tagName": "md-ripple"
+      },
+      "declarationEvidence": {
+        "id": "<fixture>/node_modules/@material/web/ripple/ripple.d.ts#MdRipple",
+        "fileName": "<fixture>/node_modules/@material/web/ripple/ripple.d.ts",
+        "range": {
+          "start": 784,
+          "end": 872
+        },
+        "exportName": "MdRipple",
+        "package": {
+          "name": "@material/web",
+          "version": "2.5.0",
+          "realPath": "<fixture>/node_modules/@material/web"
+        }
+      },
+      "registrations": [
+        {
+          "tagName": "md-ripple",
+          "fileName": "<fixture>/node_modules/@material/web/ripple/ripple.d.ts",
+          "range": {
+            "start": 239,
+            "end": 261
+          },
+          "scope": "global",
+          "strategy": "vanilla"
+        }
+      ],
+      "members": [
+        {
+          "memberName": "disabled",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.disabled",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 369,
+              "end": 387
+            }
+          }
+        },
+        {
+          "memberName": "htmlFor",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.htmlFor",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 392,
+              "end": 421
+            }
+          }
+        },
+        {
+          "memberName": "control",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.control",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 467,
+              "end": 501
+            }
+          }
+        },
+        {
+          "memberName": "attach",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.attach",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 818,
+              "end": 853
+            }
+          }
+        },
+        {
+          "memberName": "renderRoot",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 19891,
+              "end": 19943
+            }
+          }
+        },
+        {
+          "memberName": "isUpdatePending",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20276,
+              "end": 20301
+            }
+          }
+        },
+        {
+          "memberName": "hasUpdated",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20491,
+              "end": 20511
+            }
+          }
+        },
+        {
+          "memberName": "addController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21488,
+              "end": 21540
+            }
+          }
+        },
+        {
+          "memberName": "removeController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21646,
+              "end": 21701
+            }
+          }
+        },
+        {
+          "memberName": "attributeChangedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 23789,
+              "end": 23877
+            }
+          }
+        },
+        {
+          "memberName": "requestUpdate",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 25019,
+              "end": 25153
+            }
+          }
+        },
+        {
+          "memberName": "updateComplete",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 28033,
+              "end": 28072
+            }
+          }
+        },
+        {
+          "memberName": "renderOptions",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 2848,
+              "end": 2886
+            }
+          }
+        },
+        {
+          "memberName": "disconnectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 4851,
+              "end": 4880
+            }
+          }
+        },
+        {
+          "memberName": "detach",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.detach",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 858,
+              "end": 873
+            }
+          }
+        },
+        {
+          "memberName": "connectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.connectedCallback",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 878,
+              "end": 904
+            }
+          }
+        },
+        {
+          "memberName": "handlePointerenter",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.handlePointerenter",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 1131,
+              "end": 1177
+            }
+          }
+        },
+        {
+          "memberName": "handlePointerleave",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.handlePointerleave",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 1276,
+              "end": 1322
+            }
+          }
+        },
+        {
+          "memberName": "handleEvent",
+          "declaration": {
+            "id": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts#Ripple.handleEvent",
+            "fileName": "<fixture>/node_modules/@material/web/ripple/internal/ripple.d.ts",
+            "range": {
+              "start": 2085,
+              "end": 2126
             }
           }
         }
@@ -1597,7 +4169,9 @@
         "cssProperties": [],
         "cssStates": [],
         "superclass": {
-          "name": "LitElement"
+          "name": "LitElement",
+          "module": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+          "package": "lit-element"
         },
         "tagName": "fixture-current-lit"
       },
@@ -2014,7 +4588,9 @@
         "cssProperties": [],
         "cssStates": [],
         "superclass": {
-          "name": "LitElement"
+          "name": "LitElement",
+          "module": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+          "package": "lit-element"
         },
         "tagName": "fixture-legacy-lit"
       },
@@ -2048,6 +4624,454 @@
             "range": {
               "start": 205,
               "end": 250
+            }
+          }
+        },
+        {
+          "memberName": "renderRoot",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.renderRoot",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 19891,
+              "end": 19943
+            }
+          }
+        },
+        {
+          "memberName": "isUpdatePending",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.isUpdatePending",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20276,
+              "end": 20301
+            }
+          }
+        },
+        {
+          "memberName": "hasUpdated",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.hasUpdated",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 20491,
+              "end": 20511
+            }
+          }
+        },
+        {
+          "memberName": "addController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.addController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21488,
+              "end": 21540
+            }
+          }
+        },
+        {
+          "memberName": "removeController",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.removeController",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 21646,
+              "end": 21701
+            }
+          }
+        },
+        {
+          "memberName": "attributeChangedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.attributeChangedCallback",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 23789,
+              "end": 23877
+            }
+          }
+        },
+        {
+          "memberName": "requestUpdate",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.requestUpdate",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 25019,
+              "end": 25153
+            }
+          }
+        },
+        {
+          "memberName": "updateComplete",
+          "declaration": {
+            "id": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts#ReactiveElement.updateComplete",
+            "fileName": "<fixture>/node_modules/@lit/reactive-element/development/reactive-element.d.ts",
+            "range": {
+              "start": 28033,
+              "end": 28072
+            }
+          }
+        },
+        {
+          "memberName": "renderOptions",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.renderOptions",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 2848,
+              "end": 2886
+            }
+          }
+        },
+        {
+          "memberName": "connectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.connectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 4135,
+              "end": 4161
+            }
+          }
+        },
+        {
+          "memberName": "disconnectedCallback",
+          "declaration": {
+            "id": "<fixture>/node_modules/lit-element/development/lit-element.d.ts#LitElement.disconnectedCallback",
+            "fileName": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+            "range": {
+              "start": 4851,
+              "end": 4880
+            }
+          }
+        }
+      ],
+      "analysis": {
+        "complete": 63,
+        "incomplete": 0,
+        "issues": []
+      }
+    },
+    {
+      "declaration": {
+        "kind": "class",
+        "name": "FixtureLitMetadataElement",
+        "customElement": true,
+        "members": [
+          {
+            "kind": "field",
+            "name": "selectedValue",
+            "attribute": "selected-value",
+            "type": {
+              "text": "string"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "renderRoot",
+            "description": "Node or ShadowRoot into which element DOM should be rendered. Defaults\nto an open shadowRoot.",
+            "type": {
+              "text": "DocumentFragment | HTMLElement"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "isUpdatePending",
+            "description": "True if there is a pending update as a result of calling `requestUpdate()`.\nShould only be read.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "field",
+            "name": "hasUpdated",
+            "description": "Is set to `true` after the first update. The element code cannot assume\nthat `renderRoot` exists before the element `hasUpdated`.",
+            "type": {
+              "text": "boolean"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            }
+          },
+          {
+            "kind": "method",
+            "name": "addController",
+            "description": "Registers a `ReactiveController` to participate in the element's reactive\nupdate cycle. The element automatically calls into any registered\ncontrollers during its lifecycle callbacks.\n\nIf the element is connected when `addController()` is called, the\ncontroller's `hostConnected()` callback will be immediately called.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "removeController",
+            "description": "Removes a `ReactiveController` from the element.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "controller",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "ReactiveController"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "attributeChangedCallback",
+            "description": "Synchronizes property values when attributes change.\n\nSpecifically, when an attribute is set, the corresponding property is set.\nYou should rarely need to implement this callback. If this method is\noverridden, `super.attributeChangedCallback(name, _old, value)` must be\ncalled.\n\nSee [responding to attribute changes](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes)\non MDN for more information about the `attributeChangedCallback`.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              {
+                "name": "_old",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              },
+              {
+                "name": "value",
+                "optional": false,
+                "rest": false,
+                "type": {
+                  "text": "string | null"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "requestUpdate",
+            "description": "Requests an update which is processed asynchronously. This should be called\nwhen an element should update based on some state not triggered by setting\na reactive property. In this case, pass no arguments. It should also be\ncalled when manually implementing a property setter. In this case, pass the\nproperty `name` and `oldValue` to ensure that any configured property\noptions are honored.",
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "parameters": [
+              {
+                "name": "name",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyKey | undefined"
+                }
+              },
+              {
+                "name": "oldValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              },
+              {
+                "name": "options",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "PropertyDeclaration<unknown, unknown> | undefined"
+                }
+              },
+              {
+                "name": "useNewValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "boolean | undefined"
+                }
+              },
+              {
+                "name": "newValue",
+                "optional": true,
+                "rest": false,
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            ],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "field",
+            "name": "updateComplete",
+            "description": "Returns a Promise that resolves when the element has completed updating.\nThe Promise value is a boolean that is `true` if the element completed the\nupdate without triggering another update. The Promise result is `false` if\na property was set inside `updated()`. If the Promise is rejected, an\nexception was thrown during the update.\n\nTo await additional asynchronous work, override the `getUpdateComplete`\nmethod. For example, it is sometimes useful to await a rendered element\nbefore fulfilling this Promise. To do this, first await\n`super.getUpdateComplete()`, then any subsequent state.",
+            "type": {
+              "text": "Promise<boolean>"
+            },
+            "inheritedFrom": {
+              "name": "ReactiveElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "field",
+            "name": "renderOptions",
+            "type": {
+              "text": "RenderOptions"
+            },
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "readonly": true
+          },
+          {
+            "kind": "method",
+            "name": "connectedCallback",
+            "description": "Invoked when the component is added to the document's DOM.\n\nIn `connectedCallback()` you should setup tasks that should only occur when\nthe element is connected to the document. The most common of these is\nadding event listeners to nodes external to the element, like a keydown\nevent handler added to the window.\n\n```ts\nconnectedCallback() {\n  super.connectedCallback();\n  addEventListener('keydown', this._handleKeydown);\n}\n```\n\nTypically, anything done in `connectedCallback()` should be undone when the\nelement is disconnected, in `disconnectedCallback()`.",
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          },
+          {
+            "kind": "method",
+            "name": "disconnectedCallback",
+            "description": "Invoked when the component is removed from the document's DOM.\n\nThis callback is the main signal to the element that it may no longer be\nused. `disconnectedCallback()` should ensure that nothing is holding a\nreference to the element (such as event listeners added to nodes external\nto the element), so that it is free to be garbage collected.\n\n```ts\ndisconnectedCallback() {\n  super.disconnectedCallback();\n  window.removeEventListener('keydown', this._handleKeydown);\n}\n```\n\nAn element may be re-connected after being disconnected.",
+            "inheritedFrom": {
+              "name": "LitElement"
+            },
+            "parameters": [],
+            "return": {
+              "type": {
+                "text": "void"
+              }
+            }
+          }
+        ],
+        "attributes": [
+          {
+            "name": "selected-value",
+            "fieldName": "selectedValue"
+          }
+        ],
+        "events": [
+          {
+            "name": "lit-select",
+            "type": {
+              "text": "CustomEvent<string>"
+            },
+            "description": "Selected."
+          }
+        ],
+        "slots": [
+          {
+            "name": "",
+            "description": "Default content."
+          },
+          {
+            "name": "actions",
+            "description": "Actions content."
+          }
+        ],
+        "cssParts": [
+          {
+            "name": "control",
+            "description": "Control part."
+          }
+        ],
+        "cssProperties": [
+          {
+            "name": "--lit-color",
+            "default": "blue",
+            "description": "Control color."
+          }
+        ],
+        "cssStates": [],
+        "description": "A Lit element with documented metadata.",
+        "superclass": {
+          "name": "LitElement",
+          "module": "<fixture>/node_modules/lit-element/development/lit-element.d.ts",
+          "package": "lit-element"
+        },
+        "tagName": "fixture-lit-metadata"
+      },
+      "declarationEvidence": {
+        "id": "<fixture>/src/lit-metadata-element.ts#FixtureLitMetadataElement",
+        "fileName": "<fixture>/src/lit-metadata-element.ts",
+        "range": {
+          "start": 346,
+          "end": 525
+        },
+        "exportName": "FixtureLitMetadataElement"
+      },
+      "registrations": [
+        {
+          "tagName": "fixture-lit-metadata",
+          "fileName": "<fixture>/src/lit-metadata-element.ts",
+          "range": {
+            "start": 346,
+            "end": 384
+          },
+          "scope": "global",
+          "strategy": "lit"
+        }
+      ],
+      "members": [
+        {
+          "memberName": "selectedValue",
+          "declaration": {
+            "id": "<fixture>/src/lit-metadata-element.ts#FixtureLitMetadataElement.selectedValue",
+            "fileName": "<fixture>/src/lit-metadata-element.ts",
+            "range": {
+              "start": 447,
+              "end": 523
             }
           }
         },
@@ -2239,6 +5263,106 @@
             "range": {
               "start": 103,
               "end": 177
+            }
+          }
+        }
+      ],
+      "analysis": {
+        "complete": 63,
+        "incomplete": 0,
+        "issues": []
+      }
+    },
+    {
+      "declaration": {
+        "kind": "class",
+        "name": "FixtureVanillaMetadataElement",
+        "customElement": true,
+        "members": [
+          {
+            "kind": "field",
+            "name": "heading",
+            "type": {
+              "text": "string"
+            }
+          }
+        ],
+        "attributes": [
+          {
+            "name": "heading",
+            "fieldName": "heading"
+          }
+        ],
+        "events": [
+          {
+            "name": "vanilla-change",
+            "type": {
+              "text": "Event"
+            },
+            "description": "Changed."
+          }
+        ],
+        "slots": [
+          {
+            "name": "",
+            "description": "Default content."
+          },
+          {
+            "name": "header",
+            "description": "Header content."
+          }
+        ],
+        "cssParts": [
+          {
+            "name": "label",
+            "description": "Label part."
+          }
+        ],
+        "cssProperties": [
+          {
+            "name": "--vanilla-color",
+            "default": "red",
+            "description": "Text color."
+          }
+        ],
+        "cssStates": [],
+        "description": "A vanilla element with documented metadata.",
+        "superclass": {
+          "name": "HTMLElement"
+        },
+        "summary": "Vanilla metadata fixture.",
+        "tagName": "fixture-vanilla-metadata"
+      },
+      "declarationEvidence": {
+        "id": "<fixture>/src/vanilla-metadata-element.ts#FixtureVanillaMetadataElement",
+        "fileName": "<fixture>/src/vanilla-metadata-element.ts",
+        "range": {
+          "start": 279,
+          "end": 543
+        },
+        "exportName": "FixtureVanillaMetadataElement"
+      },
+      "registrations": [
+        {
+          "tagName": "fixture-vanilla-metadata",
+          "fileName": "<fixture>/src/vanilla-metadata-element.ts",
+          "range": {
+            "start": 545,
+            "end": 631
+          },
+          "scope": "global",
+          "strategy": "vanilla"
+        }
+      ],
+      "members": [
+        {
+          "memberName": "heading",
+          "declaration": {
+            "id": "<fixture>/src/vanilla-metadata-element.ts#FixtureVanillaMetadataElement.heading",
+            "fileName": "<fixture>/src/vanilla-metadata-element.ts",
+            "range": {
+              "start": 390,
+              "end": 464
             }
           }
         }

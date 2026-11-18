@@ -8,7 +8,7 @@ import {
   type AnalyzerConfig,
   type AnalyzerDiagnostic,
   type SourceRange,
-} from '@ts7-lit-analyzer/analyzer';
+} from '@ts7-lit-analyzer/analyzer-core';
 
 test('exports the analyzer package version', () => {
   assert.equal(analyzerPackageVersion, '0.0.0');

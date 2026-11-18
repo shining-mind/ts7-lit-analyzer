@@ -15,7 +15,7 @@
     "dist"
   ],
   "dependencies": {
-    "@ts7-lit-analyzer/analyzer": "workspace:*"
+    "@ts7-lit-analyzer/analyzer-core": "workspace:*"
   },
   "exports": {
     ".": {

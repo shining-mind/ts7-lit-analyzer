@@ -6,6 +6,7 @@
     "@fixture/declaration-only": "file:packages/declaration-only",
     "@fixture/dual": "file:packages/dual",
     "@fixture/js-only": "file:packages/js-only",
+    "@fixture/reexport": "file:packages/reexport",
     "@material/web": "2.5.0",
     "lit": "3.3.2",
     "lit-element": "4.2.0"

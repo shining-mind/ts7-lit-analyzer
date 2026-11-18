@@ -43,6 +43,6 @@
     "rolldown": "1.2.15"
   },
   "dependencies": {
-    "@ts7-lit-analyzer/analyzer": "workspace:*"
+    "@ts7-lit-analyzer/analyzer-core": "workspace:*"
   }
 }

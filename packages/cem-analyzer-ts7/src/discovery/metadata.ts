@@ -6,6 +6,7 @@ import type {
 import type {Checker, Program} from 'typescript/async';
 import {
   isClassDeclaration,
+  isClassExpression,
   isExpressionStatement,
   SyntaxKind,
   type ClassDeclaration,
@@ -29,17 +30,29 @@ import {
   collectFrameworkMetadata,
   type ComponentFrameworkFragment,
 } from '../strategies/index.js';
+import {
+  getInstanceType,
+  type ClassLikeDeclaration,
+} from '../strategies/abstract.js';
+import {selectDeclaration} from '../semantics/collection.js';
+import type {BaseDocumentationCache} from './base-documentation-cache.js';
 
 export interface MetadataContext {
   program: Program;
   checker: Checker;
   sourceFiles: readonly SourceFile[];
+  snapshotId?: string;
+  baseDocumentationCache?: BaseDocumentationCache;
 }
 
 export async function createMetadataContext(
   program: Program,
   rootFiles: readonly string[],
-  graph: ModuleGraph
+  graph: ModuleGraph,
+  options?: {
+    snapshotId?: string;
+    baseDocumentationCache?: BaseDocumentationCache;
+  }
 ): Promise<MetadataContext> {
   const fileNames = new Set([
     ...rootFiles,
@@ -56,6 +69,7 @@ export async function createMetadataContext(
     program,
     checker: program.getProject().checker,
     sourceFiles,
+    ...options,
   };
 }
 
@@ -86,12 +100,20 @@ export async function mergeComponentMetadata(
     if (documentation?.ignored) continue;
     if (fragment.registrations.length === 0 && !documentation?.tagName)
       continue;
+    const baseDocumentation = classDeclaration
+      ? await collectBaseDocumentation(
+          classDeclaration,
+          component.declarationEvidence.id,
+          context
+        )
+      : [];
     result.push(
       await mergeComponent(
         component,
         fragment,
         documentation,
-        context.program,
+        baseDocumentation,
+        context,
         fragmentsByDeclaration
       )
     );
@@ -103,7 +125,8 @@ async function mergeComponent(
   component: WebComponentRecord,
   fragment: ComponentFrameworkFragment,
   documentation: ClassDocumentationFragment | undefined,
-  program: Program,
+  baseDocumentation: readonly ClassDocumentationFragment[],
+  context: MetadataContext,
   fragmentsByDeclaration: ReadonlyMap<string, ComponentFrameworkFragment>
 ): Promise<WebComponentRecord> {
   const declaration = component.declaration;
@@ -146,7 +169,7 @@ async function mergeComponent(
     );
   }
   for (const semantics of component.members) {
-    const node = await findEvidenceNode(program, semantics.declaration);
+    const node = await findEvidenceNode(context.program, semantics.declaration);
     const documentationHost =
       node?.parent && isExpressionStatement(node.parent) ? node.parent : node;
     if (!documentationHost) continue;
@@ -189,18 +212,40 @@ async function mergeComponent(
     documentation?.attributes ?? [],
     memberAttributes
   );
-  declaration.events = mergeUnique(
-    fragment.events,
-    documentation?.events ?? []
+  declaration.events = mergeNamed(
+    mergeUnique(fragment.events, documentation?.events ?? []),
+    ...baseDocumentation.map((base) => base.events)
   );
-  declaration.slots = mergeUnique(documentation?.slots ?? []);
-  declaration.cssParts = mergeUnique(documentation?.cssParts ?? []);
-  declaration.cssProperties = mergeUnique(documentation?.cssProperties ?? []);
-  declaration.cssStates = mergeUnique(documentation?.cssStates ?? []);
+  declaration.slots = mergeNamed(
+    mergeUnique(documentation?.slots ?? []),
+    ...baseDocumentation.map((base) => base.slots)
+  );
+  declaration.cssParts = mergeNamed(
+    mergeUnique(documentation?.cssParts ?? []),
+    ...baseDocumentation.map((base) => base.cssParts)
+  );
+  declaration.cssProperties = mergeNamed(
+    mergeUnique(documentation?.cssProperties ?? []),
+    ...baseDocumentation.map((base) => base.cssProperties)
+  );
+  declaration.cssStates = mergeNamed(
+    mergeUnique(documentation?.cssStates ?? []),
+    ...baseDocumentation.map((base) => base.cssStates)
+  );
   if (documentation?.description && !declaration.description) {
     declaration.description = documentation.description;
   }
-  if (documentation?.summary) declaration.summary = documentation.summary;
+  const summary =
+    documentation?.summary ??
+    baseDocumentation.find((base) => base.summary)?.summary;
+  if (summary) declaration.summary = summary;
+  const documentationEvidence = [
+    ...(documentation?.evidence ?? []),
+    ...baseDocumentation.flatMap((base) => base.evidence),
+  ];
+  if (documentationEvidence.length > 0) {
+    component.documentationEvidence = documentationEvidence;
+  }
   const tagName = documentation?.tagName ?? fragment.registrations[0]?.tagName;
   if (tagName) {
     declaration.customElement = true;
@@ -278,6 +323,96 @@ function mergeUnique<T>(...groups: readonly (readonly T[])[]): T[] {
     }
   }
   return result;
+}
+
+/**
+ * Deduplicates named metadata by name with first-group precedence, so subclass
+ * documentation wins over inherited base facts without duplicating them.
+ */
+function mergeNamed<T extends {name: string}>(
+  ...groups: readonly (readonly T[])[]
+): T[] {
+  const result: T[] = [];
+  const names = new Set<string>();
+  for (const group of groups) {
+    for (const item of group) {
+      if (!names.has(item.name)) {
+        names.add(item.name);
+        result.push(item);
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Collects class-level documentation from checker-resolved base classes, nearest
+ * first. Declaration selection keeps declaration authority; built-in library
+ * bases contribute no project metadata and stop the walk. When the context
+ * carries a session cache, the walk follows cached per-class links instead of
+ * re-resolving shared bases; the uncached walk below is the fallback.
+ */
+async function collectBaseDocumentation(
+  classDeclaration: ClassDeclaration,
+  startKey: string,
+  context: MetadataContext
+): Promise<ClassDocumentationFragment[]> {
+  if (context.baseDocumentationCache && context.snapshotId) {
+    return context.baseDocumentationCache.collectBaseDocumentation(
+      classDeclaration,
+      startKey,
+      {
+        program: context.program,
+        checker: context.checker,
+        snapshotId: context.snapshotId,
+      }
+    );
+  }
+
+  const fragments: ClassDocumentationFragment[] = [];
+  const visited = new Set<string>();
+  await walk(classDeclaration);
+  return fragments;
+
+  async function walk(declaration: ClassLikeDeclaration): Promise<void> {
+    const base = await resolveBaseClass(declaration, context);
+    if (!base) return;
+    const sourceFile = base.declaration.getSourceFile();
+    const key = `${sourceFile.fileName}#${base.name}`;
+    if (
+      visited.has(key) ||
+      (await context.program.isSourceFileDefaultLibrary(sourceFile))
+    ) {
+      return;
+    }
+    visited.add(key);
+    fragments.push(collectClassDocumentation(base.declaration));
+    await walk(base.declaration);
+  }
+}
+
+/**
+ * Resolves the nearest checker-resolved base class, keeping declaration
+ * authority. Returns undefined when the base is missing or is not a class, so
+ * the documentation walk stops there.
+ */
+async function resolveBaseClass(
+  declaration: ClassLikeDeclaration,
+  context: MetadataContext
+): Promise<{declaration: ClassLikeDeclaration; name: string} | undefined> {
+  const instanceType = await getInstanceType(context.checker, declaration);
+  const [baseType] = (await instanceType?.getBaseTypes()) ?? [];
+  const baseSymbol = baseType ? await baseType.getSymbol() : undefined;
+  if (!baseSymbol) return undefined;
+  const baseDeclaration = await selectDeclaration(baseSymbol);
+  if (
+    !baseDeclaration ||
+    (!isClassDeclaration(baseDeclaration) &&
+      !isClassExpression(baseDeclaration))
+  ) {
+    return undefined;
+  }
+  return {declaration: baseDeclaration, name: baseSymbol.name};
 }
 
 async function findClassDeclaration(
