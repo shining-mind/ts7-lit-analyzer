@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {"name": "app", "path": "app"},
+    {"name": "lib", "path": "lib"},
+    {"name": "second", "path": "second"},
+    {"name": "inferred", "path": "inferred"},
+  ],
+  "settings": {
+    "typescript.enablePromptUseWorkspaceTsdk": false,
+    "files.autoSave": "off",
+  },
+}

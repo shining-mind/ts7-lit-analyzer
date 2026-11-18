@@ -18,6 +18,50 @@
   "activationEvents": [
     "onStartupFinished"
   ],
+  "contributes": {
+    "configuration": {
+      "title": "TypeScript 7 Lit Analyzer",
+      "properties": {
+        "ts7LitAnalyzer.analysis.trigger": {
+          "type": "string",
+          "enum": [
+            "onType",
+            "onSave"
+          ],
+          "default": "onType",
+          "description": "When to run component analysis for changed documents."
+        },
+        "ts7LitAnalyzer.analysis.debounceMs": {
+          "type": "number",
+          "default": 100,
+          "minimum": 0,
+          "description": "Trailing debounce for onType analysis in milliseconds."
+        },
+        "ts7LitAnalyzer.analysis.maxWaitMs": {
+          "type": "number",
+          "default": 500,
+          "minimum": 1,
+          "description": "Maximum time continuous typing can postpone onType analysis."
+        },
+        "ts7LitAnalyzer.analysis.maxResidentProjects": {
+          "type": "number",
+          "default": 8,
+          "minimum": 1,
+          "description": "Maximum live or creating registry sessions; older projects are evicted by LRU."
+        },
+        "ts7LitAnalyzer.logging.level": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "verbose",
+            "debug"
+          ],
+          "default": "normal",
+          "description": "Diagnostic Output verbosity. Timing and memory instrumentation is enabled only in verbose or debug mode."
+        }
+      }
+    }
+  },
   "main": "./dist/index.js",
   "scripts": {
     "build": "rolldown -c && tsc -p tsconfig.build.json",

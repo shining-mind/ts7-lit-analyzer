@@ -1,5 +1,6 @@
 import {readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
+import {registerHooks} from 'node:module';
 import {test} from 'node:test';
 
 for (const name of [
@@ -16,9 +17,44 @@ for (const name of [
       )
     );
     const entry = manifest.exports['.'];
-    await import(
-      new URL(`../packages/${name}/${entry.import}`, import.meta.url).href
-    );
+    const entryUrl = new URL(
+      `../packages/${name}/${entry.import}`,
+      import.meta.url
+    ).href;
+    if (name === 'vscode-extension') {
+      const hooks = registerHooks({
+        resolve(specifier, context, nextResolve) {
+          if (specifier === 'vscode') {
+            return {url: 'mock:vscode', shortCircuit: true};
+          }
+          return nextResolve(specifier, context);
+        },
+        load(url, context, nextLoad) {
+          if (url === 'mock:vscode') {
+            return {
+              format: 'module',
+              source: [
+                'export const workspace = {};',
+                'export const window = {};',
+                'export class Uri {}',
+                'export class TabInputText {}',
+              ].join('\n'),
+              shortCircuit: true,
+            };
+          }
+          return nextLoad(url, context);
+        },
+      });
+      try {
+        const extension = await import(entryUrl);
+        assert.equal(typeof extension.activate, 'function');
+        assert.equal(typeof extension.deactivate, 'function');
+      } finally {
+        hooks.deregister();
+      }
+    } else {
+      await import(entryUrl);
+    }
     assert.ok(
       (
         await readFile(
