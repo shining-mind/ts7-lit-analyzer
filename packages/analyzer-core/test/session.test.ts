@@ -156,3 +156,112 @@ test('lazy session surfaces not-collected semantics until enrichment', async () 
     await session.dispose();
   }
 });
+
+test('cancelled collection and update preserve the current registry view', async () => {
+  const first = await createRegistrySession(options());
+  const controller = new AbortController();
+  const reason = new Error('cancel registry collection');
+  try {
+    const pending = first.collect({signal: controller.signal});
+    controller.abort(reason);
+    await assert.rejects(pending, (error) => error === reason);
+    assert.equal(first.current(), undefined);
+    assert.ok(await first.collect());
+  } finally {
+    await first.dispose();
+  }
+
+  const second = await createRegistrySession(options());
+  const update = new AbortController();
+  const updateReason = new Error('cancel registry update');
+  try {
+    const before = await second.collect();
+    const pending = second.update(
+      [
+        {
+          fileName,
+          text: source.replace('count: number = 0', 'count: string = "x"'),
+        },
+      ],
+      {signal: update.signal}
+    );
+    update.abort(updateReason);
+    await assert.rejects(pending, (error) => error === updateReason);
+    assert.strictEqual(second.current(), before);
+  } finally {
+    await second.dispose();
+  }
+});
+
+test('cancelled lazy semantic query does not replace the view', async () => {
+  const session = (await createRegistrySession(
+    options('lazy')
+  )) as LazyRegistrySession;
+  const controller = new AbortController();
+  const reason = new Error('cancel registry query');
+  try {
+    const scoped = await session.collectScope([fileName]);
+    const id = scoped.byTagName('x-count')!.declarationEvidence.id;
+    const before = await session.enrich([id]);
+    const pending = session.memberType(id, 'count', {
+      signal: controller.signal,
+    });
+    controller.abort(reason);
+    await assert.rejects(pending, (error) => error === reason);
+    assert.strictEqual(session.current(), before);
+    assert.equal((await session.memberType(id, 'count'))?.text, 'number');
+  } finally {
+    await session.dispose();
+  }
+});
+
+test('overlay removal applies a successor with restored provenance', async () => {
+  const session = await createRegistrySession(options());
+  try {
+    await session.update([
+      {
+        fileName,
+        text: source.replace('count: number = 0', 'count: string = "x"'),
+      },
+    ]);
+    const removed = await session.removeOverlays([fileName]);
+    assert.equal(removed.containsOverlays, false);
+    assert.deepEqual(removed.overlayFiles, []);
+    assert.equal(
+      findProperty(removed.byTagName('x-count')!, 'count')?.type?.text,
+      'number'
+    );
+    assert.equal(session.current(), removed);
+  } finally {
+    await session.dispose();
+  }
+});
+
+test('timing access is opt-in and forwards reset', async () => {
+  const disabled = await createRegistrySession(options());
+  try {
+    await disabled.collect();
+    const timing = await disabled.getTimingInfo();
+    assert.equal(timing.enabled, false);
+    assert.equal(timing.totals.requestCount, 0);
+  } finally {
+    await disabled.dispose();
+  }
+
+  const enabled = await createRegistrySession({
+    ...options(),
+    collectTiming: true,
+  });
+  try {
+    await enabled.collect();
+    const before = await enabled.getTimingInfo();
+    assert.equal(before.enabled, true);
+    assert.ok(before.totals.requestCount > 0);
+    assert.ok(before.totals.bytesReceived > 0);
+    await enabled.resetTimingInfo();
+    const after = await enabled.getTimingInfo();
+    assert.ok(after.totals.requestCount < before.totals.requestCount);
+  } finally {
+    await enabled.dispose();
+  }
+});

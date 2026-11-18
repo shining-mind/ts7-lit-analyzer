@@ -1,8 +1,10 @@
 import {
   createDiscoverySession,
+  type DiscoveryOperationOptions,
   type DiscoveryOptions,
   type DiscoveryResult,
   type DiscoverySession,
+  type DiscoveryTimingInfo,
   type LazyDiscoverySession,
   type MemberTypeQuery,
   type SemanticReference,
@@ -23,28 +25,47 @@ import type {WebComponentRecord} from '@ts7-lit-analyzer/cem-analyzer-ts7';
  * operations to the engine; it owns no parallel TypeScript semantics.
  */
 export interface RegistrySession {
-  collect(): Promise<RegistryView>;
-  update(overlays: readonly SourceOverlay[]): Promise<RegistryView>;
+  collect(options?: DiscoveryOperationOptions): Promise<RegistryView>;
+  update(
+    overlays: readonly SourceOverlay[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView>;
+  removeOverlays(
+    fileNames: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView>;
   memberType(
     componentId: string,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined>;
   isAssignable(
     source: SemanticReference,
-    target: SemanticReference
+    target: SemanticReference,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean>;
   isAssignableToMember(
     source: SemanticReference,
     record: WebComponentRecord,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean>;
+  getTimingInfo(): Promise<DiscoveryTimingInfo>;
+  resetTimingInfo(): Promise<void>;
   current(): RegistryView | undefined;
   dispose(): Promise<void>;
 }
 
 export interface LazyRegistrySession extends RegistrySession {
-  collectScope(files: readonly string[]): Promise<RegistryView>;
-  enrich(componentIds: readonly string[]): Promise<RegistryView>;
+  collectScope(
+    files: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView>;
+  enrich(
+    componentIds: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView>;
+  materializeTypes(options?: DiscoveryOperationOptions): Promise<RegistryView>;
 }
 
 export async function createRegistrySession(
@@ -71,57 +92,112 @@ class RegistrySessionImpl implements LazyRegistrySession {
     this.engine = engine;
     this.lazy = lazy;
     const provider: SemanticProvider = {
-      getMemberType: (componentId, memberName) =>
-        this.resolveMemberType(componentId, memberName),
-      isAssignable: (source, target) =>
-        this.engine.isAssignable(source, target),
+      getMemberType: (componentId, memberName, options) =>
+        this.resolveMemberType(componentId, memberName, options),
+      isAssignable: (source, target, options) =>
+        this.engine.isAssignable(source, target, options),
     };
     this.semantics = new RegistrySemantics(provider);
   }
 
-  async collect(): Promise<RegistryView> {
+  async collect(options?: DiscoveryOperationOptions): Promise<RegistryView> {
     this.ensureActive();
-    return this.apply(await this.engine.collect());
+    return this.apply(await this.engine.collect(options), options);
   }
 
-  async update(overlays: readonly SourceOverlay[]): Promise<RegistryView> {
+  async update(
+    overlays: readonly SourceOverlay[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView> {
     this.ensureActive();
-    return this.apply(await this.engine.update(overlays));
+    return this.apply(await this.engine.update(overlays, options), options);
   }
 
-  async collectScope(files: readonly string[]): Promise<RegistryView> {
+  async removeOverlays(
+    fileNames: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView> {
     this.ensureActive();
-    return this.apply(await this.lazyEngine().collectScope(files));
+    return this.apply(
+      await this.engine.removeOverlays(fileNames, options),
+      options
+    );
   }
 
-  async enrich(componentIds: readonly string[]): Promise<RegistryView> {
+  async collectScope(
+    files: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView> {
     this.ensureActive();
-    return this.apply(await this.lazyEngine().enrich(componentIds));
+    return this.apply(
+      await this.lazyEngine().collectScope(files, options),
+      options
+    );
+  }
+
+  async enrich(
+    componentIds: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView> {
+    this.ensureActive();
+    return this.apply(
+      await this.lazyEngine().enrich(componentIds, options),
+      options
+    );
+  }
+
+  async materializeTypes(
+    options?: DiscoveryOperationOptions
+  ): Promise<RegistryView> {
+    this.ensureActive();
+    return this.apply(
+      await this.lazyEngine().materializeTypes(options),
+      options
+    );
   }
 
   async memberType(
     componentId: string,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined> {
     this.ensureActive();
-    return this.semantics.memberType(componentId, memberName);
+    options?.signal?.throwIfAborted();
+    return this.semantics.memberType(componentId, memberName, options);
   }
 
   async isAssignable(
     source: SemanticReference,
-    target: SemanticReference
+    target: SemanticReference,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean> {
     this.ensureActive();
-    return this.semantics.isAssignable(source, target);
+    return this.semantics.isAssignable(source, target, options);
   }
 
   async isAssignableToMember(
     source: SemanticReference,
     record: WebComponentRecord,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean> {
     this.ensureActive();
-    return this.semantics.isAssignableToMember(source, record, memberName);
+    return this.semantics.isAssignableToMember(
+      source,
+      record,
+      memberName,
+      options
+    );
+  }
+
+  async getTimingInfo(): Promise<DiscoveryTimingInfo> {
+    this.ensureActive();
+    return this.engine.getTimingInfo();
+  }
+
+  async resetTimingInfo(): Promise<void> {
+    this.ensureActive();
+    return this.engine.resetTimingInfo();
   }
 
   current(): RegistryView | undefined {
@@ -133,7 +209,11 @@ class RegistrySessionImpl implements LazyRegistrySession {
     await this.engine.dispose();
   }
 
-  private apply(result: DiscoveryResult): RegistryView {
+  private apply(
+    result: DiscoveryResult,
+    options?: DiscoveryOperationOptions
+  ): RegistryView {
+    options?.signal?.throwIfAborted();
     this.view = createRegistryView(result);
     return this.view;
   }
@@ -147,10 +227,11 @@ class RegistrySessionImpl implements LazyRegistrySession {
 
   private resolveMemberType(
     componentId: string,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined> {
     if (this.lazy) {
-      return this.lazyEngine().getMemberType(componentId, memberName);
+      return this.lazyEngine().getMemberType(componentId, memberName, options);
     }
     const record = this.view?.byDeclarationId(componentId);
     const semantics = record?.members.find(

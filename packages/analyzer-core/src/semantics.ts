@@ -1,4 +1,5 @@
 import type {
+  DiscoveryOperationOptions,
   MemberTypeQuery,
   SemanticReference,
   WebComponentRecord,
@@ -12,11 +13,13 @@ import type {
 export interface SemanticProvider {
   getMemberType(
     componentId: string,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined>;
   isAssignable(
     source: SemanticReference,
-    target: SemanticReference
+    target: SemanticReference,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean>;
 }
 
@@ -33,16 +36,18 @@ export class RegistrySemantics {
 
   memberType(
     componentId: string,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined> {
-    return this.provider.getMemberType(componentId, memberName);
+    return this.provider.getMemberType(componentId, memberName, options);
   }
 
   isAssignable(
     source: SemanticReference,
-    target: SemanticReference
+    target: SemanticReference,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean> {
-    return this.provider.isAssignable(source, target);
+    return this.provider.isAssignable(source, target, options);
   }
 
   /**
@@ -53,8 +58,10 @@ export class RegistrySemantics {
   async isAssignableToMember(
     source: SemanticReference,
     record: WebComponentRecord,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean> {
+    options?.signal?.throwIfAborted();
     const target = record.members.find(
       (member) => member.memberName === memberName
     )?.type;
@@ -63,6 +70,6 @@ export class RegistrySemantics {
         `Member ${memberName} has no collected semantic type to check against`
       );
     }
-    return this.provider.isAssignable(source, target);
+    return this.provider.isAssignable(source, target, options);
   }
 }

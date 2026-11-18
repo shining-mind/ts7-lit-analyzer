@@ -8,7 +8,7 @@ Status: implemented and tested in `analyzer-core` (issue #21). Template analysis
 
 The registry is the host-independent index over the discovery engine's component records, shared by the CLI and editor hosts. It does not collect components or touch the TypeScript AST: the `cem-analyzer-ts7` engine owns discovery and checker semantics, and the core consumes its public session API. There is no separate TypeScript 7 adapter package.
 
-A registry session is **single-project** — one TypeScript configuration, one engine program, snapshots and generations within it. Multi-project coordination and host policies (open-file tracking, scheduling, cancellation) belong to the hosts and are follow-up work; see [architecture](architecture.md).
+A registry session is **single-project** — one TypeScript configuration, one engine program, snapshots and generations within it. Multi-project coordination and host policies (open-file tracking and scheduling) belong to the hosts; see [architecture](architecture.md). Per-operation cancellation, overlay removal, and diagnostic timing are forwarded through the existing session without adding core semantics.
 
 ## Key entities
 
@@ -24,6 +24,10 @@ A registry session is **single-project** — one TypeScript configuration, one e
 **Completeness is explicit, per capability.** Each capability is `complete`, `incomplete`, or `not-collected`. Lazy entries that have not been enriched are `not-collected`, never silently complete; unresolved or error-typed semantics are `incomplete` with their issues, never presented as a successful check. For optional metadata (events, slots, CSS), an empty `complete` capability means **undocumented**, not a confirmed absence — without a manifest, absence cannot be proven. Material Web's `MdDialog`, for example, has complete property semantics but undocumented slots.
 
 **Semantics are checker-only.** Type queries and assignability delegate to the engine through references from one project and snapshot; cross-project and cross-snapshot references are rejected. CEM `type.text` is display documentation, never an assignability input or fallback. Display-oriented features (hover, completion) legitimately consume metadata and materialized text; the checker-only constraint applies to checking, not displaying.
+
+**Operations preserve the last good view on cancellation.** Operation options carry a host-neutral `AbortSignal`. Cancellation is logical: a native request may finish, but an aborted operation rejects without applying its result or committing overlays/scope. The current registry view remains usable; this is not a claim of native in-flight cancellation. Removing an overlay applies a successor view backed by configured or filesystem content and corrected overlay provenance.
+
+**Instrumentation is diagnostic and opt-in.** Timing is disabled by default. Enabled sessions expose serializable TypeScript request, latency, IPC, and materialization metrics plus reset, not checker handles or overlay text. The core forwards these measurements without interpreting them or synthesizing parallel semantic data; editor logging and performance probes decide when to collect them.
 
 ## Boundaries and intentional differences
 
