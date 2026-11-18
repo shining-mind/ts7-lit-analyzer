@@ -9,10 +9,12 @@ import {
   isImportEqualsDeclaration,
   isImportTypeNode,
   isLiteralTypeNode,
+  isSourceFile,
   isStringLiteralLikeNode,
   SyntaxKind,
   type Node,
   type SourceFile,
+  type StringLiteralLikeNode,
 } from 'typescript/ast';
 import {
   ModuleKind,
@@ -89,6 +91,7 @@ interface ModuleGraphOptions {
 interface ModuleSpecifier {
   text: string;
   resolutionMode: ResolutionMode | undefined;
+  node: StringLiteralLikeNode;
 }
 
 interface PackageHint {
@@ -171,27 +174,45 @@ export async function buildModuleGraph(
             specifier.resolutionMode,
             {snapshot: current.snapshot}
           );
-          const resolved = result.resolvedModule;
+          const resolved =
+            result.resolvedModule ??
+            (await current.project.program.getResolvedModule(
+              sourceFile.fileName,
+              specifier.text,
+              specifier.resolutionMode ?? ModuleKind.None
+            ));
           const dependency: ModuleDependency = {
             moduleSpecifier: specifier.text,
             resolutionMode: specifier.resolutionMode,
           };
           dependencies.push(dependency);
-          if (resolved === undefined) {
+
+          let resolvedFileName = resolved
+            ? normalizeFileName(resolved.resolvedFileName)
+            : undefined;
+          if (
+            resolvedFileName === undefined ||
+            !options.fileExists(resolvedFileName)
+          ) {
+            resolvedFileName = await resolveModuleSourceFileName(
+              current.project,
+              specifier
+            );
+          }
+          if (resolvedFileName === undefined) {
             continue;
           }
 
-          const resolvedFileName = normalizeFileName(resolved.resolvedFileName);
           dependency.resolvedFileName = resolvedFileName;
           dependency.consumerFileName =
-            resolved.originalPath ?? resolvedFileName;
-          if (resolved.packageId !== undefined) {
+            resolved?.originalPath ?? resolvedFileName;
+          if (resolved?.packageId !== undefined) {
             dependency.packageName = resolved.packageId.name;
             dependency.packageVersion = resolved.packageId.version;
           }
           if (
-            resolved.packageId !== undefined ||
-            resolved.isExternalLibraryImport
+            resolved?.packageId !== undefined ||
+            resolved?.isExternalLibraryImport
           ) {
             const resolutionInputs = findPackageManifests(
               [resolvedFileName, dependency.consumerFileName],
@@ -436,6 +457,20 @@ export function getImplementationFileName(
   return `${declarationFileName.slice(0, -match[0].length)}${extension}`;
 }
 
+async function resolveModuleSourceFileName(
+  project: Project,
+  specifier: ModuleSpecifier
+): Promise<string | undefined> {
+  const symbol = await project.checker.getSymbolAtLocation(specifier.node);
+  for (const declaration of symbol?.declarations ?? []) {
+    const node = await declaration.resolve();
+    if (node && isSourceFile(node)) {
+      return node.fileName;
+    }
+  }
+  return undefined;
+}
+
 function normalizeFiles(fileNames: readonly string[]): string[] {
   return [...new Set(fileNames.map(normalizeFileName))];
 }
@@ -451,7 +486,7 @@ function getModuleSpecifiers(sourceFile: SourceFile): ModuleSpecifier[] {
     resolutionMode: ResolutionMode
   ): void => {
     if (node !== undefined && isStringLiteralLikeNode(node)) {
-      specifiers.push({text: node.text, resolutionMode});
+      specifiers.push({text: node.text, resolutionMode, node});
     }
   };
 

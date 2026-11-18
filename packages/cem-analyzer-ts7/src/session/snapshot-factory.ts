@@ -1,6 +1,6 @@
 import type {API} from 'typescript/async';
 
-import type {ProjectIdentity} from '../contracts.js';
+import type {DiscoveryOperationOptions, ProjectIdentity} from '../contracts.js';
 import {
   buildModuleGraph,
   type ModuleGraph,
@@ -11,6 +11,7 @@ import {
   type SemanticCollector,
 } from '../semantics/collector.js';
 import type {SessionConfiguration} from './configuration.js';
+import {checkCancelled} from './operations.js';
 
 export interface DiscoverySnapshot extends ProjectSnapshot {
   graph: ModuleGraph;
@@ -24,6 +25,7 @@ export interface SnapshotBuildOptions {
   indexGraphRoots?: readonly string[];
   overlays: ReadonlyMap<string, string>;
   retainProgramRoots?: readonly string[];
+  operation?: DiscoveryOperationOptions;
   previous?: {
     snapshot: DiscoverySnapshot;
     changedFiles: readonly string[];
@@ -51,6 +53,7 @@ export class SnapshotFactory {
   }
 
   async build(options: SnapshotBuildOptions): Promise<DiscoverySnapshot> {
+    checkCancelled(options.operation);
     const initialProgramRoots = options.previous
       ? [
           ...new Set([
@@ -66,50 +69,14 @@ export class SnapshotFactory {
       options.overlays,
       options.previous?.snapshot
     );
-    const built = await buildModuleGraph({
-      api: this.api,
-      initial,
-      rootFiles: options.graphRoots,
-      initialProgramRoots,
-      ...(options.retainProgramRoots
-        ? {retainProgramRoots: options.retainProgramRoots}
-        : {}),
-      compilerOptions: this.configuration.compiler,
-      fileExists: (fileName) =>
-        this.configuration.fileExists(fileName, options.overlays),
-      reload: (rootFiles, base) =>
-        this.createProgramSnapshot(rootFiles, options.overlays, base),
-      ...(options.previous
-        ? {
-            previous: {
-              graph: options.previous.snapshot.graph,
-              changedFiles: options.previous.changedFiles,
-            },
-          }
-        : {}),
-    });
-    let final = built;
-    let indexGraph: ModuleGraph | undefined;
-    if (options.indexGraphRoots) {
-      // The index needs the project-wide resolution closure, including
-      // dependencies reached only from out-of-scope roots. This graph carries
-      // edges and provenance only; member collection stays scoped.
-      const indexPrevious = options.previous?.snapshot.indexGraph
-        ? {
-            graph: options.previous.snapshot.indexGraph,
-            changedFiles: options.previous.changedFiles,
-          }
-        : {graph: built.graph, changedFiles: [] as readonly string[]};
-      const projectBuilt = await buildModuleGraph({
+    let current: ProjectSnapshot = initial;
+    try {
+      checkCancelled(options.operation);
+      const built = await buildModuleGraph({
         api: this.api,
-        initial: {snapshot: built.snapshot, project: built.project},
-        rootFiles: options.indexGraphRoots,
-        initialProgramRoots: [
-          ...new Set([
-            ...options.indexGraphRoots,
-            ...built.graph.modules.map((module) => module.fileName),
-          ]),
-        ],
+        initial,
+        rootFiles: options.graphRoots,
+        initialProgramRoots,
         ...(options.retainProgramRoots
           ? {retainProgramRoots: options.retainProgramRoots}
           : {}),
@@ -118,27 +85,74 @@ export class SnapshotFactory {
           this.configuration.fileExists(fileName, options.overlays),
         reload: (rootFiles, base) =>
           this.createProgramSnapshot(rootFiles, options.overlays, base),
-        previous: indexPrevious,
+        ...(options.previous
+          ? {
+              previous: {
+                graph: options.previous.snapshot.graph,
+                changedFiles: options.previous.changedFiles,
+              },
+            }
+          : {}),
       });
-      indexGraph = projectBuilt.graph;
-      final = {
-        ...built,
-        snapshot: projectBuilt.snapshot,
-        project: projectBuilt.project,
-      };
-    }
-    const snapshotId = `snapshot-${final.snapshot.id}`;
-    return {
-      ...final,
-      graph: built.graph,
-      indexGraph,
-      snapshotId,
-      semantics: createSemanticCollector({
-        program: final.project.program,
-        project: this.project,
+      current = built;
+      checkCancelled(options.operation);
+      let final = built;
+      let indexGraph: ModuleGraph | undefined;
+      if (options.indexGraphRoots) {
+        // The index needs the project-wide resolution closure, including
+        // dependencies reached only from out-of-scope roots. This graph carries
+        // edges and provenance only; member collection stays scoped.
+        const indexPrevious = options.previous?.snapshot.indexGraph
+          ? {
+              graph: options.previous.snapshot.indexGraph,
+              changedFiles: options.previous.changedFiles,
+            }
+          : {graph: built.graph, changedFiles: [] as readonly string[]};
+        const projectBuilt = await buildModuleGraph({
+          api: this.api,
+          initial: {snapshot: built.snapshot, project: built.project},
+          rootFiles: options.indexGraphRoots,
+          initialProgramRoots: [
+            ...new Set([
+              ...options.indexGraphRoots,
+              ...built.graph.modules.map((module) => module.fileName),
+            ]),
+          ],
+          ...(options.retainProgramRoots
+            ? {retainProgramRoots: options.retainProgramRoots}
+            : {}),
+          compilerOptions: this.configuration.compiler,
+          fileExists: (fileName) =>
+            this.configuration.fileExists(fileName, options.overlays),
+          reload: (rootFiles, base) =>
+            this.createProgramSnapshot(rootFiles, options.overlays, base),
+          previous: indexPrevious,
+        });
+        current = projectBuilt;
+        indexGraph = projectBuilt.graph;
+        final = {
+          ...built,
+          snapshot: projectBuilt.snapshot,
+          project: projectBuilt.project,
+        };
+      }
+      checkCancelled(options.operation);
+      const snapshotId = `snapshot-${final.snapshot.id}`;
+      return {
+        ...final,
+        graph: built.graph,
+        indexGraph,
         snapshotId,
-      }),
-    };
+        semantics: createSemanticCollector({
+          program: final.project.program,
+          project: this.project,
+          snapshotId,
+        }),
+      };
+    } catch (error) {
+      await current.snapshot.dispose();
+      throw error;
+    }
   }
 
   private async createProgramSnapshot(
@@ -149,7 +163,11 @@ export class SnapshotFactory {
     const params = {
       fileSystem: this.configuration.createFileSystem(overlays),
       createPrograms: [
-        {rootFiles, compilerOptions: this.configuration.compiler},
+        {
+          rootFiles,
+          compilerOptions: this.configuration.compiler,
+          options: {projectReferences: this.configuration.references},
+        },
       ],
     };
     const snapshot = base
