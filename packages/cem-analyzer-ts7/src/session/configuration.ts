@@ -7,6 +7,7 @@ import {
   API,
   ModuleKind,
   ModuleResolutionKind,
+  type CreateProgramOptions,
   type RawCompilerOptions,
 } from 'typescript/async';
 
@@ -24,6 +25,7 @@ export class SessionConfiguration {
   private readonly files = new Map<string, string>();
   private rootFiles: string[] = [];
   private compilerOptions: RawCompilerOptions = {};
+  private projectReferences: CreateProgramOptions['projectReferences'];
 
   constructor(options: DiscoveryOptions, currentDirectory: string) {
     this.options = options;
@@ -39,6 +41,10 @@ export class SessionConfiguration {
 
   get compiler(): RawCompilerOptions {
     return this.compilerOptions;
+  }
+
+  get references(): CreateProgramOptions['projectReferences'] {
+    return this.projectReferences;
   }
 
   async read(api: API): Promise<void> {
@@ -98,6 +104,7 @@ export class SessionConfiguration {
       this.compilerOptions = deriveCompilerOptions(
         project.parsedCommandLine.options as RawCompilerOptions
       );
+      this.projectReferences = project.parsedCommandLine.projectReferences;
     } finally {
       await snapshot.dispose();
     }

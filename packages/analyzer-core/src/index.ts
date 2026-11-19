@@ -8,21 +8,29 @@ export type {
   SourceRange,
 } from './contracts.js';
 
-export {AnalysisCapability} from '@ts7-lit-analyzer/cem-analyzer-ts7';
+export {
+  AnalysisCapability,
+  createProjectAssociationSession,
+} from '@ts7-lit-analyzer/cem-analyzer-ts7';
 export type {
   AnalysisIssue,
+  AssociatedProject,
   ComponentAnalysis,
   ConsumerDiscoveryOptions,
   ConsumerProvenance,
   DeclarationEvidence,
+  DiscoveryOperationOptions,
   DiscoveryOptions,
   DiscoveryResult,
   DiscoverySession,
+  DiscoveryTimingInfo,
   DocumentationEvidence,
   LazyDiscoverySession,
   MemberSemantics,
   MemberTypeQuery,
   PackageIdentity,
+  ProjectAssociationOptions,
+  ProjectAssociationSession,
   ProjectIdentity,
   RegistrationEvidence,
   SemanticReference,
