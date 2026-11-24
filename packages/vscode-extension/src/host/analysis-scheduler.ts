@@ -19,7 +19,7 @@ export interface AnalysisSchedulerOptions {
 /**
  * Schedules per-runtime revisions and serializes session mutations. Applies
  * immediate and save-driven runs, debounce, and maximum wait; result acceptance
- * remains the project runtime's responsibility.
+ * remains `RunAcceptance`'s responsibility.
  */
 export class AnalysisScheduler {
   /** Serializes session mutations and disposal across all resident projects. */
@@ -78,11 +78,13 @@ export class AnalysisScheduler {
       return;
     }
     this.clearTimers(runtime);
-    this.mutationQueue = this.mutationQueue.then(() => this.execute(runtime));
+    this.appendMutation(() => this.execute(runtime), {
+      projectKey: runtime.association.key,
+    });
   }
 
   disposeSession(session: LazyRegistrySession): void {
-    this.mutationQueue = this.mutationQueue.then(() => session.dispose());
+    this.appendMutation(() => session.dispose(), {operation: 'dispose'});
   }
 
   async settled(): Promise<void> {
@@ -91,6 +93,7 @@ export class AnalysisScheduler {
 
   async idle(runtimes: ReadonlyMap<string, ProjectRuntime>): Promise<void> {
     while (
+      !this.isDisposed() &&
       runtimes.values().some((runtime) => runtime.pending || runtime.controller)
     ) {
       for (const runtime of runtimes.values()) {
@@ -101,6 +104,18 @@ export class AnalysisScheduler {
       }
       await this.settled();
     }
+  }
+
+  private appendMutation(
+    operation: () => Promise<void>,
+    fields: Readonly<Record<string, unknown>>
+  ): void {
+    this.mutationQueue = this.mutationQueue.then(operation).catch((error) => {
+      this.logger.error('scheduler.mutationFailed', {
+        ...fields,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    });
   }
 
   clearTimers(runtime: ProjectRuntime): void {

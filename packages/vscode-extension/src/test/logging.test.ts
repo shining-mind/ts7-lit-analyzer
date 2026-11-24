@@ -135,6 +135,43 @@ suite('Diagnostic logging', () => {
       assert.match(resources, /overlayBytes/);
       assert.equal(resources.includes('export {CounterElement}'), false);
       assert.equal(resources.includes('AST'), false);
+
+      const debugSession = [...coordinator['runtimes'].values()].find(
+        (runtime) => runtime.session
+      )!.session!;
+      entries.length = 0;
+      logger.setLevel('normal');
+      coordinator.updateSettings({...settings, collectTiming: false});
+      await waitFor(
+        () =>
+          [...coordinator['runtimes'].values()].some(
+            (runtime) =>
+              runtime.session &&
+              runtime.session !== debugSession &&
+              runtime.view
+          ),
+        'normal session recreated without instrumentation'
+      );
+      await editor.edit((edit) => {
+        edit.insert(new vscode.Position(0, 0), '// normal again\n');
+      });
+      await coordinator.idle();
+      const normalAgain = [...coordinator['runtimes'].values()].find(
+        (runtime) => runtime.session && runtime.session !== debugSession
+      )!.session!;
+      assert.equal((await normalAgain.getTimingInfo()).enabled, false);
+      assert.equal(
+        'moduleResolutionFallbackCount' in normalAgain.current()!,
+        false
+      );
+      assert.equal(
+        entries.some(
+          (entry) =>
+            entry.includes('analysis.resources') ||
+            entry.includes('analysis.timing')
+        ),
+        false
+      );
     } finally {
       await coordinator.dispose();
       logger.dispose();

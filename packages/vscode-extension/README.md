@@ -58,7 +58,7 @@ classDiagram
   EditorAnalysisCoordinator --> AnalysisScheduler
   ProjectAssociationRegistry --> ProjectRouter
   ProjectAssociationRegistry --> ProjectRuntime : creates and evicts
-  AnalysisScheduler --> ProjectRunExecutor : schedules execution
+  AnalysisScheduler --> ProjectRunExecutor : schedules via coordinator
   ProjectRunExecutor --> RunAcceptance : validates freshness
   ProjectRunExecutor --> ProjectRuntime : project-local operations
   ProjectRuntime --> LazyRegistrySession : owns at most one

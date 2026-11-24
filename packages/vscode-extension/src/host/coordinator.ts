@@ -3,7 +3,7 @@ import {
   type DiscoveryOptions,
   type LazyRegistrySession,
 } from '@ts7-lit-analyzer/analyzer-core';
-import {window, type Disposable} from 'vscode';
+import {Uri, window, type Disposable} from 'vscode';
 
 import {AnalysisScheduler} from './analysis-scheduler.js';
 import {DocumentTracker, type TrackedDocument} from './documents.js';
@@ -109,6 +109,8 @@ export class EditorAnalysisCoordinator implements Disposable {
       isDisposed: () => this.disposed,
       maxResidentProjects: () => this.settings.maxResidentProjects,
       clearTimers: (runtime) => this.scheduler.clearTimers(runtime),
+      isDocumentOpen: (document) =>
+        this.tracker.get(Uri.parse(document.uri)) !== undefined,
     });
     this.executor = new ProjectRunExecutor(
       new RunAcceptance({
@@ -292,11 +294,9 @@ export class EditorAnalysisCoordinator implements Disposable {
     await this.registry.associate(document);
     const key = this.associations.get(document.uri);
     if (key) {
-      this.registry.activeProjectKey = key;
       const runtime = this.runtimes.get(key);
       if (runtime) {
-        runtime.lastUsed = Date.now();
-        runtime.resident = true;
+        this.registry.activate(runtime);
         this.scheduler.schedule(runtime, true);
       }
     }

@@ -9,6 +9,7 @@ export interface ProjectAssociationRegistryOptions {
   isDisposed(): boolean;
   maxResidentProjects(): number;
   clearTimers(runtime: ProjectRuntime): void;
+  isDocumentOpen(document: TrackedDocument): boolean;
 }
 
 /**
@@ -27,6 +28,7 @@ export class ProjectAssociationRegistry {
   private readonly isDisposed: () => boolean;
   private readonly maxResidentProjects: () => number;
   private readonly clearTimers: (runtime: ProjectRuntime) => void;
+  private readonly isDocumentOpen: (document: TrackedDocument) => boolean;
 
   constructor(options: ProjectAssociationRegistryOptions) {
     this.router = options.router;
@@ -34,6 +36,7 @@ export class ProjectAssociationRegistry {
     this.isDisposed = options.isDisposed;
     this.maxResidentProjects = options.maxResidentProjects;
     this.clearTimers = options.clearTimers;
+    this.isDocumentOpen = options.isDocumentOpen;
   }
 
   /** Associates a document with its project runtime, deduplicating concurrent requests. */
@@ -47,6 +50,27 @@ export class ProjectAssociationRegistry {
       this.routing.set(document.uri, pending);
     }
     await pending;
+  }
+
+  /** Marks a runtime active and immediately cancels its LRU eviction candidate. */
+  activate(runtime: ProjectRuntime): void {
+    this.activeProjectKey = runtime.association.key;
+    runtime.lastUsed = Date.now();
+    runtime.resident = true;
+    const residentCount = this.runtimes
+      .values()
+      .reduce((count, candidate) => count + (candidate.resident ? 1 : 0), 0);
+    const candidate =
+      residentCount > this.maxResidentProjects()
+        ? this.evictionCandidate(runtime)
+        : undefined;
+
+    if (candidate) {
+      candidate.controller?.abort();
+      candidate.stale = true;
+      candidate.pending = false;
+      this.clearTimers(candidate);
+    }
   }
 
   /**
@@ -63,12 +87,9 @@ export class ProjectAssociationRegistry {
       runtime.resident = true;
       return;
     }
-    const candidate = residents
-      .filter(
-        (item) =>
-          item !== runtime && item.association.key !== this.activeProjectKey
-      )
-      .sort((first, second) => first.lastUsed - second.lastUsed)[0];
+    const candidate =
+      this.evictionCandidate(runtime) ??
+      (this.activeProjectKey === runtime.association.key ? undefined : runtime);
     if (!candidate) {
       runtime.resident = true;
       return;
@@ -93,9 +114,25 @@ export class ProjectAssociationRegistry {
     return key ? this.runtimes.get(key) : undefined;
   }
 
+  private evictionCandidate(
+    runtime: ProjectRuntime
+  ): ProjectRuntime | undefined {
+    return this.runtimes
+      .values()
+      .filter(
+        (candidate) =>
+          candidate.resident &&
+          candidate !== runtime &&
+          candidate.association.key !== this.activeProjectKey
+      )
+      .toArray()
+      .sort((first, second) => first.lastUsed - second.lastUsed)[0];
+  }
+
   private createAssociation(document: TrackedDocument): Promise<void> {
     return this.router.associate(document).then((association) => {
-      if (this.isDisposed()) {
+      if (this.isDisposed() || !this.isDocumentOpen(document)) {
+        this.routing.delete(document.uri);
         return;
       }
       this.associations.set(document.uri, association.key);

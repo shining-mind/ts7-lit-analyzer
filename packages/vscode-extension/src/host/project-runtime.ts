@@ -114,11 +114,11 @@ export class ProjectRuntime {
     await session.collectScope(
       this.openFiles
         .values()
-        .map((uri) => {
+        .flatMap((uri) => {
           const document = context.tracker
             .documents()
             .find((item) => item.uri === uri);
-          return document?.fileName ?? uri;
+          return document ? [document.fileName] : [];
         })
         .toArray(),
       {signal: controller.signal}

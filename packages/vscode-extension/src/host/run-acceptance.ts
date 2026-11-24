@@ -56,6 +56,7 @@ export class RunAcceptance {
         projectKey: runtime.association.key,
         revision,
         runtimeRevision: runtime.revision,
+        viewGeneration: view?.generation,
         resident: runtime.resident,
         aborted: controller.signal.aborted,
         capturedVersions: Object.fromEntries(versions),
