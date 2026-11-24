@@ -8,11 +8,6 @@ import type {DocumentTracker, TrackedDocument} from './documents.js';
 import type {CoordinatorLogger} from './logging.js';
 import type {HostProjectAssociation} from './project-router.js';
 
-type DocumentVersions = ReadonlyMap<
-  string,
-  {version: number; isDirty: boolean}
->;
-
 export interface ProjectRuntimeExecutionContext {
   tracker: DocumentTracker;
   savedDocuments: ReadonlyMap<string, TrackedDocument>;
@@ -26,11 +21,9 @@ export interface ProjectRuntimeExecutionContext {
 }
 
 /**
- * Owns one project association's analysis state and at most one lazy registry
- * session. Reconciles current document inputs and accepts results only while
- * revision, document versions, and residency remain current. Scheduling,
- * routing, and eviction are delegated to `AnalysisScheduler` and
- * `ProjectAssociationRegistry`.
+ * Owns project-local session and overlay state. Reconciles document inputs and
+ * applies views accepted by `ProjectRunExecutor`; global freshness is decided
+ * by `RunAcceptance`.
  */
 export class ProjectRuntime {
   association: HostProjectAssociation;
@@ -55,159 +48,7 @@ export class ProjectRuntime {
     this.association = association;
   }
 
-  async execute(context: ProjectRuntimeExecutionContext): Promise<void> {
-    if (context.isDisposed() || !this.resident) {
-      this.pending = false;
-      return;
-    }
-    const startedAt = context.collectTiming() ? performance.now() : undefined;
-    const revision = this.revision;
-    const versions = captureVersions(context.tracker);
-    const controller = new AbortController();
-    this.controller = controller;
-    this.pending = false;
-    this.due = false;
-    context.logger.debug('analysis.started', {
-      projectKey: this.association.key,
-      revision,
-    });
-
-    try {
-      const session = await this.ensureSession(
-        context,
-        revision,
-        versions,
-        controller
-      );
-      if (!session) {
-        return;
-      }
-      const {saved, currentFiles} = await this.reconcile(
-        context,
-        session,
-        controller
-      );
-      const view = session.current();
-      if (!this.canAccept(context, view, revision, versions, controller)) {
-        return;
-      }
-      await this.acceptCurrentView(
-        context,
-        view,
-        saved,
-        currentFiles,
-        revision,
-        startedAt === undefined ? 0 : performance.now() - startedAt
-      );
-    } catch (error) {
-      this.handleFailure(context, error, revision, versions, controller);
-    } finally {
-      this.finish(context, revision, controller);
-    }
-  }
-
-  private canAccept(
-    context: ProjectRuntimeExecutionContext,
-    view: RegistryView | undefined,
-    revision: number,
-    versions: DocumentVersions,
-    controller: AbortController
-  ): view is RegistryView {
-    if (!view || !this.isCurrent(context, revision, versions, controller)) {
-      context.logger.debug('analysis.rejected', {
-        projectKey: this.association.key,
-        revision,
-        runtimeRevision: this.revision,
-        resident: this.resident,
-        aborted: controller.signal.aborted,
-        capturedVersions: Object.fromEntries(versions),
-        currentVersions: context.tracker.documents().map((document) => ({
-          uri: document.uri,
-          version: document.version,
-          isDirty: document.isDirty,
-        })),
-      });
-      return false;
-    }
-    if (
-      this.view &&
-      this.acceptedRevision === revision &&
-      view.generation <= this.view.generation
-    ) {
-      context.logger.debug('analysis.generationRejected', {
-        projectKey: this.association.key,
-        revision,
-        acceptedRevision: this.acceptedRevision,
-        viewGeneration: view.generation,
-        currentGeneration: this.view.generation,
-      });
-      return false;
-    }
-    return true;
-  }
-
-  private handleFailure(
-    context: ProjectRuntimeExecutionContext,
-    error: unknown,
-    revision: number,
-    versions: DocumentVersions,
-    controller: AbortController
-  ): void {
-    if (!this.isCurrent(context, revision, versions, controller)) {
-      return;
-    }
-    if (controller.signal.aborted) {
-      context.logger.debug('analysis.cancelled', {
-        projectKey: this.association.key,
-        revision,
-      });
-    } else {
-      this.error = error instanceof Error ? error.message : String(error);
-      context.logger.error('analysis.failed', {
-        projectKey: this.association.key,
-        error: this.error,
-      });
-    }
-  }
-
-  private finish(
-    context: ProjectRuntimeExecutionContext,
-    revision: number,
-    controller: AbortController
-  ): void {
-    context.logger.debug('analysis.finished', {
-      projectKey: this.association.key,
-      revision,
-      acceptedRevision: this.acceptedRevision,
-      viewGeneration: this.view?.generation,
-    });
-    if (this.controller === controller) {
-      this.controller = undefined;
-    }
-  }
-
-  private async ensureSession(
-    context: ProjectRuntimeExecutionContext,
-    revision: number,
-    versions: ReadonlyMap<string, {version: number; isDirty: boolean}>,
-    controller: AbortController
-  ): Promise<LazyRegistrySession | undefined> {
-    if (this.session) {
-      return this.session;
-    }
-    const created = await context.createSession(this.sessionOptions(context));
-    if (!this.isCurrent(context, revision, versions, controller)) {
-      await created.dispose();
-      return undefined;
-    }
-    this.session = created;
-    context.logger.debug('analysis.sessionCreated', {
-      projectKey: this.association.key,
-    });
-    return created;
-  }
-
-  private async reconcile(
+  async reconcile(
     context: ProjectRuntimeExecutionContext,
     session: LazyRegistrySession,
     controller: AbortController
@@ -296,8 +137,8 @@ export class ProjectRuntime {
     return {saved, currentFiles};
   }
 
-  /** Marks a current view as last known good and records provenance and diagnostics. */
-  private async acceptCurrentView(
+  /** Applies a view that `RunAcceptance` has already approved. */
+  async acceptCurrentView(
     context: ProjectRuntimeExecutionContext,
     view: RegistryView,
     saved: readonly TrackedDocument[],
@@ -331,28 +172,7 @@ export class ProjectRuntime {
     await this.logResources(context, view, durationMs);
   }
 
-  private isCurrent(
-    context: ProjectRuntimeExecutionContext,
-    revision: number,
-    versions: ReadonlyMap<string, {version: number; isDirty: boolean}>,
-    controller: AbortController
-  ): boolean {
-    return (
-      !context.isDisposed() &&
-      this.resident &&
-      this.revision === revision &&
-      !controller.signal.aborted &&
-      context.tracker.documents().every((document) => {
-        const captured = versions.get(document.uri);
-        if (!captured || captured.isDirty !== document.isDirty) {
-          return false;
-        }
-        return !document.isDirty || captured.version === document.version;
-      })
-    );
-  }
-
-  private sessionOptions(
+  sessionOptions(
     context: ProjectRuntimeExecutionContext
   ): DiscoveryOptions & {eagerness: 'lazy'} {
     const base = {
@@ -413,15 +233,4 @@ export class ProjectRuntime {
       recentRequests: timing.recentRequests,
     });
   }
-}
-
-function captureVersions(tracker: DocumentTracker): DocumentVersions {
-  return new Map(
-    tracker
-      .documents()
-      .map((document) => [
-        document.uri,
-        {version: document.version, isDirty: document.isDirty},
-      ])
-  );
 }

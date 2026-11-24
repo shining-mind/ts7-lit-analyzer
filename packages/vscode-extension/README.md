@@ -30,10 +30,17 @@ classDiagram
     revisions and timers
     mutationQueue
   }
+  class ProjectRunExecutor {
+    one run orchestration
+    stale-session disposal
+  }
+  class RunAcceptance {
+    revision and version freshness
+    generation and residency checks
+  }
   class ProjectRuntime {
-    one project's analysis lifecycle
+    project-local state
     session and overlays
-    execution and acceptance
   }
   class ProjectRouter {
     <<interface>>
@@ -51,7 +58,9 @@ classDiagram
   EditorAnalysisCoordinator --> AnalysisScheduler
   ProjectAssociationRegistry --> ProjectRouter
   ProjectAssociationRegistry --> ProjectRuntime : creates and evicts
-  AnalysisScheduler --> ProjectRuntime : schedules execution
+  AnalysisScheduler --> ProjectRunExecutor : schedules execution
+  ProjectRunExecutor --> RunAcceptance : validates freshness
+  ProjectRunExecutor --> ProjectRuntime : project-local operations
   ProjectRuntime --> LazyRegistrySession : owns at most one
   ProjectRouter <|.. SpawnedProjectRouter
 ```

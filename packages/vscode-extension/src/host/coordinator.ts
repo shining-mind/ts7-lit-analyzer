@@ -10,8 +10,10 @@ import {DocumentTracker, type TrackedDocument} from './documents.js';
 import type {CoordinatorLogger} from './logging.js';
 import type {ProjectRuntime} from './project-runtime.js';
 import type {ProjectRuntimeExecutionContext} from './project-runtime.js';
+import {ProjectRunExecutor} from './project-run-executor.js';
 import type {ProjectRouter} from './project-router.js';
 import {ProjectAssociationRegistry} from './project-association-registry.js';
+import {RunAcceptance} from './run-acceptance.js';
 
 export type {CoordinatorLogger} from './logging.js';
 
@@ -80,6 +82,7 @@ export class EditorAnalysisCoordinator implements Disposable {
   private readonly activeSubscription: Disposable;
   private readonly registry: ProjectAssociationRegistry;
   private readonly scheduler: AnalysisScheduler;
+  private readonly executor: ProjectRunExecutor;
   private readonly savedDocuments = new Map<string, TrackedDocument>();
   private settings: CoordinatorSettings;
   private disposed = false;
@@ -107,6 +110,13 @@ export class EditorAnalysisCoordinator implements Disposable {
       maxResidentProjects: () => this.settings.maxResidentProjects,
       clearTimers: (runtime) => this.scheduler.clearTimers(runtime),
     });
+    this.executor = new ProjectRunExecutor(
+      new RunAcceptance({
+        tracker: this.tracker,
+        isDisposed: () => this.disposed,
+        logger: this.logger,
+      })
+    );
     this.activeSubscription = window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
         const document = this.tracker.get(editor.document.uri);
@@ -334,7 +344,7 @@ export class EditorAnalysisCoordinator implements Disposable {
       return;
     }
     await this.registry.makeResident(runtime);
-    await runtime.execute(this.executionContext());
+    await this.executor.execute(runtime, this.executionContext());
   }
 
   private executionContext(): ProjectRuntimeExecutionContext {
