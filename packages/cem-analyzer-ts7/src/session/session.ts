@@ -138,6 +138,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   private readonly api: API;
   private readonly project: ProjectIdentity;
   private readonly lazy: boolean;
+  private readonly collectTiming: boolean;
   private readonly configuration: SessionConfiguration;
   private readonly snapshots: SnapshotFactory;
   private readonly registry: ComponentRegistry;
@@ -153,6 +154,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   constructor(api: API, options: DiscoveryOptions, currentDirectory: string) {
     this.api = api;
     this.lazy = options.eagerness === 'lazy';
+    this.collectTiming = options.collectTiming ?? false;
     this.project = {
       id: randomUUID(),
       currentDirectory,
@@ -161,7 +163,12 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         : {}),
     };
     this.configuration = new SessionConfiguration(options, currentDirectory);
-    this.snapshots = new SnapshotFactory(api, this.configuration, this.project);
+    this.snapshots = new SnapshotFactory(
+      api,
+      this.configuration,
+      this.project,
+      this.collectTiming
+    );
     this.registry = new ComponentRegistry(this.project);
     this.retention = new SnapshotRetention(options.retentionBound);
     for (const overlay of options.overlays ?? []) {
@@ -609,12 +616,20 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
 
   private assembleLazyResult(state: SessionState): DiscoveryResult {
     this.generation += 1;
+    const moduleResolutionFallbackCount =
+      state.graph.moduleResolutionFallbackCount === undefined
+        ? undefined
+        : state.graph.moduleResolutionFallbackCount +
+          (state.indexGraph?.moduleResolutionFallbackCount ?? 0);
     const result = this.registry.assemble({
       index: state.index!,
       graph: state.indexGraph ?? state.graph,
       snapshotId: state.snapshotId,
       generation: this.generation,
       overlayFiles: [...this.overlays.keys()],
+      ...(moduleResolutionFallbackCount !== undefined
+        ? {moduleResolutionFallbackCount}
+        : {}),
       issues: state.graph.unresolvedModules.map((module) => ({
         code: 'unresolved-module',
         message: `Cannot resolve '${module.moduleSpecifier}' from '${module.fileName}'.`,
@@ -635,6 +650,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       issues: [],
       containsOverlays: overlayFiles.length > 0,
       overlayFiles,
+      ...(this.collectTiming ? {moduleResolutionFallbackCount: 0} : {}),
     };
   }
 

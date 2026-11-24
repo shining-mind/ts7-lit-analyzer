@@ -107,6 +107,16 @@ test('view exposes snapshot identity and overlay provenance', () => {
   assert.equal(view.issues.length, 1);
 });
 
+test('view forwards the optional module-resolution fallback count', () => {
+  const instrumented = createRegistryView(
+    makeResult([], {moduleResolutionFallbackCount: 3})
+  );
+  const uninstrumented = createRegistryView(makeResult([]));
+
+  assert.equal(instrumented.moduleResolutionFallbackCount, 3);
+  assert.equal('moduleResolutionFallbackCount' in uninstrumented, false);
+});
+
 test('resolves components by registered tag and declaration identity with explicit misses', () => {
   const record = makeRecord({
     name: 'RegisteredElement',

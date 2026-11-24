@@ -38,3 +38,17 @@ Registry sessions SHALL expose the engine's serializable timing snapshot and res
 
 - **WHEN** timing is not enabled for a registry session
 - **THEN** the session reports disabled, zeroed metrics and normal collection behavior is unchanged
+
+### Requirement: Module-resolution fallback visibility
+
+Registry views SHALL forward the discovery result's optional module-resolution checker-fallback count without interpreting it or issuing additional requests.
+
+#### Scenario: Instrumented registry view
+
+- **WHEN** an instrumented discovery result records checker fallbacks
+- **THEN** its registry view exposes the same count for host diagnostics
+
+#### Scenario: Uninstrumented registry view
+
+- **WHEN** discovery instrumentation is disabled
+- **THEN** its registry view omits the fallback count

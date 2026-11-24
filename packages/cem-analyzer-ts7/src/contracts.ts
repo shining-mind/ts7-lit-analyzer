@@ -130,6 +130,8 @@ export interface DiscoveryResult {
   issues: AnalysisIssue[];
   containsOverlays: boolean;
   overlayFiles: string[];
+  /** Present only when diagnostic timing collection is enabled. */
+  moduleResolutionFallbackCount?: number;
 }
 
 export interface MemberTypeQuery {

@@ -586,6 +586,9 @@ export class EditorAnalysisCoordinator implements Disposable {
         revision,
         generation: view.generation,
         components: view.components().length,
+        ...(view.moduleResolutionFallbackCount !== undefined
+          ? {moduleResolutionFallbackCount: view.moduleResolutionFallbackCount}
+          : {}),
       });
       await this.logResources(
         runtime,

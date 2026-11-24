@@ -60,6 +60,7 @@ export interface ModuleGraph {
   rootFiles: string[];
   modules: ModuleRecord[];
   unresolvedModules: UnresolvedModule[];
+  moduleResolutionFallbackCount?: number;
 }
 
 export interface ProjectSnapshot {
@@ -86,6 +87,7 @@ interface ModuleGraphOptions {
   ): Promise<ProjectSnapshot>;
   previous?: PreviousModuleGraph;
   createResolver?(): Promise<ModuleResolver>;
+  collectModuleResolutionFallbackCount?: boolean;
 }
 
 interface ModuleSpecifier {
@@ -124,6 +126,7 @@ export async function buildModuleGraph(
     const packageHints = new Map<string, PackageHint>();
     const processed = new Set<string>();
     const queued = new Set(rootFiles);
+    let moduleResolutionFallbackCount = 0;
     let pending = [...rootFiles];
 
     while (pending.length > 0) {
@@ -194,6 +197,9 @@ export async function buildModuleGraph(
             resolvedFileName === undefined ||
             !options.fileExists(resolvedFileName)
           ) {
+            if (options.collectModuleResolutionFallbackCount) {
+              moduleResolutionFallbackCount += 1;
+            }
             resolvedFileName = await resolveModuleSourceFileName(
               current.project,
               specifier
@@ -297,6 +303,9 @@ export async function buildModuleGraph(
               moduleSpecifier: dependency.moduleSpecifier,
             }))
         ),
+        ...(options.collectModuleResolutionFallbackCount
+          ? {moduleResolutionFallbackCount}
+          : {}),
       },
     };
   } catch (error) {

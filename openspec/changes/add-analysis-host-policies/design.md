@@ -62,13 +62,15 @@ Add `removeOverlays(fileNames, options?)` to engine and core sessions. It remove
 
 Alternative considered: `update` with nullable text would make addition, replacement, and removal ambiguous and weaken the existing `SourceOverlay` contract.
 
-### Expose TS7 timing as a host-safe alias, disabled by default
+### Expose opt-in engine diagnostics, disabled by default
 
 Add `collectTiming?: boolean` to discovery options and construct `API` with it. Add `getTimingInfo()` and `resetTimingInfo()` to engine/core sessions. Publicly export `DiscoveryTimingInfo` as a type alias of TypeScript's serializable `TimingInfo`; it contains measurements only, not checker handles, AST nodes, or overlay text. The core re-exports the alias and forwards calls without interpreting metrics.
 
 Default construction preserves `collectTiming: false`. Tests verify disabled zeroed metrics, enabled request/byte/latency totals, JSON serialization, and reset semantics. Documentation notes that retrieving timing itself performs a protocol request, so counters are interpreted according to the pinned API rather than assumed to be operation-only.
 
-Alternative considered: a mirrored timing DTO would decouple field names but duplicate an already serializable upstream measurement contract without adding semantic safety.
+The same instrumentation flag controls an optional `moduleResolutionFallbackCount` on discovery results and registry views. When enabled, the module graph counts actual checker fallbacks used after ordinary resolution fails or names a missing file. The count covers work performed for the graphs backing the current result, including both scoped and project-index graphs in lazy mode; reused module resolutions add nothing. It contains no module specifier or source text and requires no additional native request. When instrumentation is disabled, the field is absent and the counter is not incremented. The editor includes the available count in verbose/debug `analysis.accepted` summaries so users can distinguish an isolated fallback from systemic resolution problems.
+
+Alternative considered: a mirrored timing DTO would decouple field names but duplicate an already serializable upstream measurement contract without adding semantic safety. A separate fallback-metrics session API would add a parallel diagnostic channel and retrieval lifecycle without providing more useful evidence than the current-result count.
 
 ### A VS Code coordinator owns global documents and per-project runtimes
 

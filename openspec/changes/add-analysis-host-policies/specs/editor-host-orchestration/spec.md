@@ -168,6 +168,11 @@ The editor host SHALL write diagnostics to a VS Code Output channel using `norma
 - **WHEN** verbose logging is enabled and an analysis run completes
 - **THEN** the Output channel records correlated routing, scheduling, lifecycle, duration, timing, and resource summaries without source text
 
+#### Scenario: Module-resolution fallback diagnostics
+
+- **WHEN** verbose or debug logging accepts an instrumented analysis result
+- **THEN** its accepted-run summary includes the current result's module-resolution fallback count without module specifiers or source text
+
 #### Scenario: Debug stale-result diagnostics
 
 - **WHEN** debug logging is enabled and work is cancelled, evicted, or rejected as stale

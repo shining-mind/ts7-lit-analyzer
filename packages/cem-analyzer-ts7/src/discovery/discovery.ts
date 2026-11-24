@@ -160,6 +160,9 @@ export async function createDiscoveryResult(
     issues,
     containsOverlays: overlayFiles.length > 0,
     overlayFiles: [...overlayFiles].sort(),
+    ...(graph.moduleResolutionFallbackCount !== undefined
+      ? {moduleResolutionFallbackCount: graph.moduleResolutionFallbackCount}
+      : {}),
   };
 }
 

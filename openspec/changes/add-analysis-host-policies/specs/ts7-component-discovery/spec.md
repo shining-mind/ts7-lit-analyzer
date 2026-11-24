@@ -66,7 +66,7 @@ Sessions SHALL remove named unsaved overlays without requiring replacement text.
 
 ### Requirement: Opt-in discovery timing
 
-Sessions SHALL expose serializable TypeScript 7 timing metrics only when instrumentation is enabled, including request counts, round-trip/server/transport timing, IPC byte counts, and node-materialization totals. Reset SHALL clear client and server measurement history.
+Sessions SHALL expose serializable TypeScript 7 timing metrics only when instrumentation is enabled, including request counts, round-trip/server/transport timing, IPC byte counts, and node-materialization totals. Reset SHALL clear client and server measurement history. Instrumented discovery results SHALL expose the number of checker fallbacks performed while building their backing module graphs; uninstrumented results SHALL omit that count and SHALL NOT increment its counter.
 
 #### Scenario: Instrumentation disabled by default
 
@@ -82,6 +82,16 @@ Sessions SHALL expose serializable TypeScript 7 timing metrics only when instrum
 
 - **WHEN** an instrumented session resets its timing history
 - **THEN** subsequent metrics count only requests made after the reset, apart from the documented timing retrieval request itself
+
+#### Scenario: Project-reference fallback is counted
+
+- **WHEN** an instrumented session resolves a referenced output import through the checker fallback
+- **THEN** its result reports a positive module-resolution fallback count without module specifiers or source text
+
+#### Scenario: Fallback counting is disabled
+
+- **WHEN** a session without instrumentation resolves the same import
+- **THEN** its result omits the module-resolution fallback count and performs no fallback-count increments
 
 ### Requirement: Declared-type anomaly regression evidence
 

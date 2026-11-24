@@ -75,6 +75,10 @@ suite('Diagnostic logging', () => {
         (runtime) => runtime.session
       )!.session!;
       assert.equal((await normalSession.getTimingInfo()).enabled, false);
+      assert.equal(
+        'moduleResolutionFallbackCount' in normalSession.current()!,
+        false
+      );
 
       logger.setLevel('verbose');
       coordinator.updateSettings({...settings, collectTiming: true});
@@ -86,6 +90,15 @@ suite('Diagnostic logging', () => {
         entries.some((entry) => entry.includes('analysis.timing')),
         false
       );
+      const accepted = entries.find(
+        (entry) =>
+          entry.includes('analysis.accepted') &&
+          entry.includes('moduleResolutionFallbackCount')
+      );
+      assert.ok(accepted);
+      assert.match(accepted, /"moduleResolutionFallbackCount":[1-9]/);
+      assert.equal(accepted.includes('../lib/dist/counter.js'), false);
+      assert.equal(accepted.includes('export {CounterElement}'), false);
 
       logger.setLevel('debug');
       coordinator.updateSettings({...settings, collectTiming: true});

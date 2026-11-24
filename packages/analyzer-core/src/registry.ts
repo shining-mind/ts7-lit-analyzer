@@ -28,6 +28,7 @@ export interface RegistryView {
   readonly containsOverlays: boolean;
   readonly overlayFiles: readonly string[];
   readonly issues: readonly AnalysisIssue[];
+  readonly moduleResolutionFallbackCount?: number;
   components(): readonly WebComponentRecord[];
   byTagName(tagName: string): WebComponentRecord | undefined;
   byDeclarationId(declarationId: string): WebComponentRecord | undefined;
@@ -54,6 +55,9 @@ export function createRegistryView(result: DiscoveryResult): RegistryView {
     containsOverlays: result.containsOverlays,
     overlayFiles: result.overlayFiles,
     issues: result.issues,
+    ...(result.moduleResolutionFallbackCount !== undefined
+      ? {moduleResolutionFallbackCount: result.moduleResolutionFallbackCount}
+      : {}),
     components: () => result.components,
     byTagName: (tagName) => byTag.get(tagName),
     byDeclarationId: (declarationId) => byDeclaration.get(declarationId),

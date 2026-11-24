@@ -21,7 +21,7 @@ A session composes discovery results into successive registry views. Multi-proje
 
 - Operations accept the engine's host-neutral `DiscoveryOperationOptions`. An aborted operation rejects and leaves the current view usable; cancellation is logical rather than native request termination.
 - `removeOverlays` produces a successor view from configured or filesystem content after unsaved overlays are removed.
-- Timing is disabled by default. `getTimingInfo` and `resetTimingInfo` forward the engine's serializable diagnostic measurements; the core does not interpret them or create parallel semantic data. Hosts decide when to enable collection.
+- Timing is disabled by default. `getTimingInfo` and `resetTimingInfo` forward the engine's serializable diagnostic measurements; the core does not interpret them or create parallel semantic data. Instrumented views also expose `moduleResolutionFallbackCount` for the graph work backing the current result; uninstrumented views omit it. Hosts decide when to enable collection.
 
 ## Validation
 

@@ -41,15 +41,19 @@ export class SnapshotFactory {
   private readonly api: API;
   private readonly configuration: SessionConfiguration;
   private readonly project: ProjectIdentity;
+  private readonly collectModuleResolutionFallbackCount: boolean;
 
   constructor(
     api: API,
     configuration: SessionConfiguration,
-    project: ProjectIdentity
+    project: ProjectIdentity,
+    collectModuleResolutionFallbackCount: boolean
   ) {
     this.api = api;
     this.configuration = configuration;
     this.project = project;
+    this.collectModuleResolutionFallbackCount =
+      collectModuleResolutionFallbackCount;
   }
 
   async build(options: SnapshotBuildOptions): Promise<DiscoverySnapshot> {
@@ -81,6 +85,8 @@ export class SnapshotFactory {
           ? {retainProgramRoots: options.retainProgramRoots}
           : {}),
         compilerOptions: this.configuration.compiler,
+        collectModuleResolutionFallbackCount:
+          this.collectModuleResolutionFallbackCount,
         fileExists: (fileName) =>
           this.configuration.fileExists(fileName, options.overlays),
         reload: (rootFiles, base) =>
@@ -122,6 +128,8 @@ export class SnapshotFactory {
             ? {retainProgramRoots: options.retainProgramRoots}
             : {}),
           compilerOptions: this.configuration.compiler,
+          collectModuleResolutionFallbackCount:
+            this.collectModuleResolutionFallbackCount,
           fileExists: (fileName) =>
             this.configuration.fileExists(fileName, options.overlays),
           reload: (rootFiles, base) =>

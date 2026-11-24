@@ -124,6 +124,50 @@ test('redirects referenced output imports to source in eager mode', async () => 
   }
 });
 
+test('counts checker module fallbacks only when instrumentation is enabled', async () => {
+  const plain = await createDiscoverySession(options());
+  try {
+    const result = await plain.collect();
+    assert.equal('moduleResolutionFallbackCount' in result, false);
+  } finally {
+    await plain.dispose();
+  }
+
+  const eager = await createDiscoverySession({
+    ...options(),
+    collectTiming: true,
+  });
+  try {
+    const initial = await eager.collect();
+    assert.ok(
+      initial.moduleResolutionFallbackCount !== undefined &&
+        initial.moduleResolutionFallbackCount > 0
+    );
+
+    const reused = await eager.update([]);
+    assert.equal(reused.moduleResolutionFallbackCount, 0);
+  } finally {
+    await eager.dispose();
+  }
+
+  const lazy = await createDiscoverySession({
+    ...options('lazy'),
+    collectTiming: true,
+  });
+  try {
+    const initial = await lazy.collectScope([appFile]);
+    assert.ok(
+      initial.moduleResolutionFallbackCount !== undefined &&
+        initial.moduleResolutionFallbackCount > 0
+    );
+
+    const reused = await lazy.update([]);
+    assert.equal(reused.moduleResolutionFallbackCount, 0);
+  } finally {
+    await lazy.dispose();
+  }
+});
+
 test('enriches referenced output imports and overlays in lazy mode', async () => {
   const session = await createDiscoverySession(options('lazy'));
   try {
