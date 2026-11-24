@@ -36,14 +36,14 @@ export class ProjectAssociationRegistry {
     this.clearTimers = options.clearTimers;
   }
 
-  /** Associates a document once and adds it to its project runtime. */
-  async route(document: TrackedDocument): Promise<void> {
+  /** Associates a document with its project runtime, deduplicating concurrent requests. */
+  async associateDocument(document: TrackedDocument): Promise<void> {
     if (this.isDisposed() || this.associations.has(document.uri)) {
       return;
     }
     let pending = this.routing.get(document.uri);
     if (!pending) {
-      pending = this.associate(document);
+      pending = this.createAssociation(document);
       this.routing.set(document.uri, pending);
     }
     await pending;
@@ -88,7 +88,7 @@ export class ProjectAssociationRegistry {
     return key ? this.runtimes.get(key) : undefined;
   }
 
-  private associate(document: TrackedDocument): Promise<void> {
+  private createAssociation(document: TrackedDocument): Promise<void> {
     return this.router.associate(document).then((association) => {
       if (this.isDisposed()) {
         return;

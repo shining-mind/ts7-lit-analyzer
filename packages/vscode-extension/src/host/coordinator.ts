@@ -234,14 +234,14 @@ export class EditorAnalysisCoordinator implements Disposable {
   private opened(document: TrackedDocument): void {
     this.logger.verbose('document.opened', this.documentFields(document));
     void this.registry
-      .route(document)
+      .associateDocument(document)
       .then(() => this.scheduleDocument(document, true));
   }
 
   private changed(document: TrackedDocument): void {
     this.logger.verbose('document.changed', this.documentFields(document));
     this.savedDocuments.delete(document.uri);
-    void this.registry.route(document).then(() => {
+    void this.registry.associateDocument(document).then(() => {
       if (this.settings.trigger === 'onSave') {
         const runtime = this.registry.runtimeFor(document);
         if (runtime) {
@@ -258,7 +258,9 @@ export class EditorAnalysisCoordinator implements Disposable {
   private saved(document: TrackedDocument): void {
     this.logger.verbose('document.saved', this.documentFields(document));
     this.savedDocuments.set(document.uri, document);
-    void this.registry.route(document).then(() => this.scheduleResidents(true));
+    void this.registry
+      .associateDocument(document)
+      .then(() => this.scheduleResidents(true));
   }
 
   private closed(document: TrackedDocument): void {
@@ -277,7 +279,7 @@ export class EditorAnalysisCoordinator implements Disposable {
   }
 
   private async activate(document: TrackedDocument): Promise<void> {
-    await this.registry.route(document);
+    await this.registry.associateDocument(document);
     const key = this.associations.get(document.uri);
     if (key) {
       this.registry.activeProjectKey = key;
