@@ -9,7 +9,7 @@ From the repository root, using the pinned Node.js and pnpm versions:
 ```sh
 pnpm --dir tests/fixtures/webcomponents install --frozen-lockfile
 pnpm build
-node probes/host-policy-performance.mjs --runs=3
+node openspec/changes/add-analysis-host-policies/probes/host-policy-performance.mjs --runs=3
 ```
 
 The probe uses only the public `@ts7-lit-analyzer/analyzer-core` session API. It runs eager and lazy scenarios serially and emits JSON containing the environment, fixture revision and status, every operation sample, and min/median/max/mean wall-time summaries. `--runs=N` accepts an integer from 1 to 20. The default is three runs.

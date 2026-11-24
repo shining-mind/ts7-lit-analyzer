@@ -197,7 +197,7 @@ These are instrumentation smoke measurements on a trivial project, not represent
 
 > Update (2026-11-18): discovery sessions expose `collectTiming` (disabled by default), `getTimingInfo`, and `resetTimingInfo` with serializable metrics. Retrieving timing itself performs a `getServerTiming` protocol request, so request totals and recent history include that retrieval; probes compare deltas and reset semantics rather than treating totals as operation-only measurements. The extension enables timing only in `verbose`/`debug`; `normal` performs no timing retrieval, memory sampling, performance timers, or instrumentation intervals (`packages/vscode-extension/src/test/logging.test.ts`).
 >
-> `probes/host-policy-performance.mjs` now provides serial cold/warm eager/lazy, enrichment/query, overlay update/removal, IPC/node, memory, and cleanup measurements through the public registry API. The three-run environment, spread, attribution limits, and preliminary non-gating budgets are recorded in `docs/performance.md`. Representative performance and adaptive memory policies remain #26 work.
+> `openspec/changes/add-analysis-host-policies/probes/host-policy-performance.mjs` now provides serial cold/warm eager/lazy, enrichment/query, overlay update/removal, IPC/node, memory, and cleanup measurements through the public registry API. The three-run environment, spread, attribution limits, and preliminary non-gating budgets are recorded in `docs/performance.md`. Representative performance and adaptive memory policies remain #26 work.
 
 ## Content mappers
 

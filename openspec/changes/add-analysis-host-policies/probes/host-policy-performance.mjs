@@ -6,7 +6,7 @@ import {performance} from 'node:perf_hooks';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 
-const repoRoot = fileURLToPath(new URL('../', import.meta.url));
+const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url));
 const {createRegistrySession, findProperty} = await import(
   join(repoRoot, 'packages/analyzer-core/dist/index.js')
 );
