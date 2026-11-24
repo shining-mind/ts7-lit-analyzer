@@ -37,7 +37,7 @@ export class ProjectAssociationRegistry {
   }
 
   /** Associates a document with its project runtime, deduplicating concurrent requests. */
-  async associateDocument(document: TrackedDocument): Promise<void> {
+  async associate(document: TrackedDocument): Promise<void> {
     if (this.isDisposed() || this.associations.has(document.uri)) {
       return;
     }
