@@ -49,6 +49,11 @@ export class ProjectAssociationRegistry {
     await pending;
   }
 
+  /**
+   * Ensures the runtime is resident, evicting the least-recently-used non-active
+   * runtime when the resident-project limit is reached. The evicted session is
+   * disposed before execution can continue.
+   */
   async makeResident(runtime: ProjectRuntime): Promise<void> {
     const residents = this.runtimes
       .values()
