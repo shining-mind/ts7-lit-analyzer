@@ -111,10 +111,10 @@ export class EditorAnalysisCoordinator implements Disposable {
     this.logger = options.logger ?? silentLogger;
     this.createSession = options.createSession ?? createRegistrySession;
     this.tracker = new DocumentTracker({
-      opened: (document) => this.opened(document),
-      changed: (document) => this.changed(document),
-      saved: (document) => this.saved(document),
-      closed: (document) => this.closed(document),
+      opened: this.opened.bind(this),
+      changed: this.changed.bind(this),
+      saved: this.saved.bind(this),
+      closed: this.closed.bind(this),
     });
     this.activeSubscription = window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
