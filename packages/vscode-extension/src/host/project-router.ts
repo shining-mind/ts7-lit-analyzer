@@ -1,9 +1,5 @@
 import {dirname, relative} from 'node:path';
 
-import {
-  createProjectAssociationSession,
-  type ProjectAssociationSession,
-} from '@ts7-lit-analyzer/analyzer-core';
 import {Uri, workspace, type WorkspaceFolder} from 'vscode';
 
 import type {TrackedDocument} from './documents.js';
@@ -71,48 +67,6 @@ export class SpawnedProjectRouter implements ProjectRouter {
         return path !== '' && !path.startsWith('..') && !path.startsWith('/');
       })
       .sort((first, second) => second.length - first.length)[0];
-  }
-}
-
-export class Ts7ProjectRouter implements ProjectRouter {
-  private readonly session: ProjectAssociationSession;
-
-  private constructor(session: ProjectAssociationSession) {
-    this.session = session;
-  }
-
-  static async create(
-    currentDirectory: string,
-    configFileNames: readonly string[]
-  ): Promise<Ts7ProjectRouter> {
-    return new Ts7ProjectRouter(
-      await createProjectAssociationSession({
-        currentDirectory,
-        configFileNames,
-      })
-    );
-  }
-
-  async associate(document: TrackedDocument): Promise<HostProjectAssociation> {
-    const project = await this.session.associate(
-      document.fileName,
-      document.text
-    );
-    return {
-      key: `${project.kind}:${project.configFileName ?? project.currentDirectory}`,
-      kind: project.kind,
-      currentDirectory: project.currentDirectory,
-      ...(project.configFileName
-        ? {configFileName: project.configFileName}
-        : {}),
-      ...(document.workspaceFolder
-        ? {workspaceFolder: document.workspaceFolder}
-        : {}),
-    };
-  }
-
-  async dispose(): Promise<void> {
-    await this.session.dispose();
   }
 }
 

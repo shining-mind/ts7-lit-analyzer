@@ -27,7 +27,7 @@ The editor host SHALL track supported workspace documents by URI and document ve
 
 ### Requirement: Per-document project association
 
-The editor host SHALL use TS7's default-project association for a document when available, including inferred projects. Otherwise it SHALL apply an explicit configured/inferred fallback and own an independent lazy registry session per resident association.
+The spawned editor host SHALL apply an explicit configured/inferred project association and own an independent lazy registry session per resident association. Default-project routing through a shared TS7 transport remains follow-up editor integration work rather than a separate production association session.
 
 #### Scenario: Several project configurations
 
@@ -41,13 +41,22 @@ The editor host SHALL use TS7's default-project association for a document when 
 
 #### Scenario: Document without a configured project
 
-- **WHEN** an open document has no configured project and TS7 or the spawned fallback associates it with an inferred project
+- **WHEN** an open document has no configured project and the spawned fallback associates it with an inferred project
 - **THEN** the host analyzes it under a stable inferred-project identity without fabricating a tsconfig path
+
+### Requirement: TypeScript default-project association evidence
+
+The change SHALL retain an executable probe demonstrating TS7 default-project association for configured, inferred, and multiply included files without creating a production association session or selecting a synthetic analysis program.
 
 #### Scenario: Multiple containing projects
 
-- **WHEN** a document belongs to multiple configured projects and a TS7 association is available
-- **THEN** the host uses the default project returned by TS7 rather than choosing by configuration-path proximity
+- **WHEN** the association probe evaluates a document included in multiple configured projects
+- **THEN** TS7 returns its configured default project rather than the probe choosing by configuration-path proximity
+
+#### Scenario: Document without a configured project in the probe
+
+- **WHEN** the association probe evaluates a document outside the configured projects
+- **THEN** TS7 returns an inferred-project identity
 
 ### Requirement: Configurable analysis triggers
 
