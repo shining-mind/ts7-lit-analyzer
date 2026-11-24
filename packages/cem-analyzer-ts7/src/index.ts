@@ -22,8 +22,10 @@ export type {
 } from './contracts.js';
 export type {
   ConsumerDiscoveryOptions,
+  DiscoveryOperationOptions,
   DiscoveryOptions,
   DiscoverySession,
+  DiscoveryTimingInfo,
   LazyDiscoverySession,
   StandaloneDiscoveryOptions,
   VirtualSymlink,

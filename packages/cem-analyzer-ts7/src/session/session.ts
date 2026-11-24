@@ -5,12 +5,15 @@ import {API} from 'typescript/async';
 
 import {ComponentRegistry} from '../registry/component-registry.js';
 import type {
+  DiscoveryOperationOptions,
   DiscoveryOptions,
   DiscoveryResult,
+  DiscoveryTimingInfo,
   MemberTypeQuery,
   ProjectIdentity,
   SemanticReference,
   SourceOverlay,
+  WebComponentRecord,
 } from '../contracts.js';
 import {
   applySuperclassProvenance,
@@ -29,6 +32,7 @@ import {RegistrationIndex} from '../registry/registration-index.js';
 import {SessionConfiguration} from './configuration.js';
 import {SnapshotFactory, type DiscoverySnapshot} from './snapshot-factory.js';
 import {SnapshotRetention} from './snapshot-retention.js';
+import {assertNotCancelled} from './operations.js';
 import {
   collectFrameworkMetadata,
   type ComponentFrameworkFragment,
@@ -36,33 +40,55 @@ import {
 
 export type {
   ConsumerDiscoveryOptions,
+  DiscoveryOperationOptions,
   DiscoveryOptions,
+  DiscoveryTimingInfo,
   StandaloneDiscoveryOptions,
   VirtualSymlink,
 } from '../contracts.js';
 
 export interface DiscoverySession {
-  collect(): Promise<DiscoveryResult>;
-  update(overlays: readonly SourceOverlay[]): Promise<DiscoveryResult>;
+  collect(options?: DiscoveryOperationOptions): Promise<DiscoveryResult>;
+  update(
+    overlays: readonly SourceOverlay[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult>;
+  removeOverlays(
+    fileNames: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult>;
   getTypeAtPosition(
     fileName: string,
-    position: number
+    position: number,
+    options?: DiscoveryOperationOptions
   ): Promise<SemanticReference | undefined>;
   isAssignable(
     source: SemanticReference,
-    target: SemanticReference
+    target: SemanticReference,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean>;
+  getTimingInfo(): Promise<DiscoveryTimingInfo>;
+  resetTimingInfo(): Promise<void>;
   dispose(): Promise<void>;
 }
 
 export interface LazyDiscoverySession extends DiscoverySession {
-  collectScope(files: readonly string[]): Promise<DiscoveryResult>;
-  enrich(componentIds: readonly string[]): Promise<DiscoveryResult>;
+  collectScope(
+    files: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult>;
+  enrich(
+    componentIds: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult>;
   getMemberType(
     componentId: string,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined>;
-  materializeTypes(): Promise<DiscoveryResult>;
+  materializeTypes(
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult>;
 }
 
 interface SessionState extends DiscoverySnapshot {
@@ -87,7 +113,11 @@ export async function createDiscoverySession(
     throw new Error('retentionBound must be a non-negative integer.');
   }
   const currentDirectory = resolve(options.currentDirectory ?? process.cwd());
-  const api = new API({cwd: currentDirectory, runExternalCode: false});
+  const api = new API({
+    cwd: currentDirectory,
+    runExternalCode: false,
+    collectTiming: options.collectTiming ?? false,
+  });
   const session = new DiscoverySessionImpl(api, options, currentDirectory);
   try {
     await session.initialize();
@@ -108,6 +138,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   private readonly api: API;
   private readonly project: ProjectIdentity;
   private readonly lazy: boolean;
+  private readonly collectTiming: boolean;
   private readonly configuration: SessionConfiguration;
   private readonly snapshots: SnapshotFactory;
   private readonly registry: ComponentRegistry;
@@ -123,6 +154,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   constructor(api: API, options: DiscoveryOptions, currentDirectory: string) {
     this.api = api;
     this.lazy = options.eagerness === 'lazy';
+    this.collectTiming = options.collectTiming ?? false;
     this.project = {
       id: randomUUID(),
       currentDirectory,
@@ -131,7 +163,12 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         : {}),
     };
     this.configuration = new SessionConfiguration(options, currentDirectory);
-    this.snapshots = new SnapshotFactory(api, this.configuration, this.project);
+    this.snapshots = new SnapshotFactory(
+      api,
+      this.configuration,
+      this.project,
+      this.collectTiming
+    );
     this.registry = new ComponentRegistry(this.project);
     this.retention = new SnapshotRetention(options.retentionBound);
     for (const overlay of options.overlays ?? []) {
@@ -149,7 +186,8 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     }
   }
 
-  async collect(): Promise<DiscoveryResult> {
+  async collect(options?: DiscoveryOperationOptions): Promise<DiscoveryResult> {
+    assertNotCancelled(options);
     if (this.lazy) {
       this.ensureNotDisposed();
       if (this.state === undefined) {
@@ -159,7 +197,10 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       return this.state.result;
     }
     const state = this.ensureActive();
-    state.result ??= await createDiscoveryResult(
+    if (state.result) {
+      return state.result;
+    }
+    const result = await createDiscoveryResult(
       this.project,
       state.snapshotId,
       this.generation,
@@ -170,58 +211,78 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       undefined,
       {baseDocumentationCache: this.baseDocumentationCache}
     );
-    return state.result;
+    assertNotCancelled(options);
+    state.result = result;
+    return result;
   }
 
-  async collectScope(files: readonly string[]): Promise<DiscoveryResult> {
+  async collectScope(
+    files: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult> {
     this.ensureLazy();
-    this.registry.extendScope(
-      files.map((fileName) => this.configuration.absolutePath(fileName))
-    );
-    if (this.registry.activeScope.size === 0) {
+    assertNotCancelled(options);
+    const scope = new Set(this.registry.activeScope);
+    for (const fileName of files) {
+      scope.add(this.configuration.absolutePath(fileName));
+    }
+    if (scope.size === 0) {
       return this.emptyResult();
     }
     if (this.state === undefined) {
-      const state = await this.buildSnapshot();
+      let state: SessionState | undefined;
       try {
+        state = await this.buildSnapshot(undefined, [], [...scope], options);
         state.index = new RegistrationIndex();
         await this.refreshIndex(state);
+        assertNotCancelled(options);
       } catch (error) {
-        await state.snapshot.dispose();
+        if (state) await state.snapshot.dispose();
         throw error;
       }
+      this.registry.extendScope([...scope]);
       this.state = state;
       return this.assembleLazyResult(state);
     }
     const previous = this.state;
-    const next = await this.buildSnapshot(previous, []);
+    let next: SessionState | undefined;
+    let hasNewModules = false;
     try {
+      next = await this.buildSnapshot(previous, [], [...scope], options);
       const previousFiles = new Set(
         (previous.indexGraph ?? previous.graph).modules.map(
           (module) => module.fileName
         )
       );
-      const hasNewModules = (next.indexGraph ?? next.graph).modules.some(
+      hasNewModules = (next.indexGraph ?? next.graph).modules.some(
         (module) => !previousFiles.has(module.fileName)
       );
       if (hasNewModules) {
         next.index = new RegistrationIndex();
         await this.refreshIndex(next);
-        this.registry.retainIndexed(next.index.ids());
       } else {
         next.index = previous.index;
       }
+      assertNotCancelled(options);
     } catch (error) {
-      await next.snapshot.dispose();
+      if (next) await next.snapshot.dispose();
       throw error;
     }
-    await this.retention.retain(previous.snapshot);
+    this.registry.extendScope([...scope]);
+    if (hasNewModules) {
+      this.registry.retainIndexed(next.index!.ids());
+    }
     this.state = next;
+    await this.retention.retain(previous.snapshot);
     return this.assembleLazyResult(next);
   }
 
-  async enrich(componentIds: readonly string[]): Promise<DiscoveryResult> {
+  async enrich(
+    componentIds: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult> {
     this.ensureLazy();
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const context = await createMetadataContext(
       state.project.program,
@@ -232,8 +293,12 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         baseDocumentationCache: this.baseDocumentationCache,
       }
     );
-    state.fullFragments ??= await collectFrameworkMetadata(context);
+    assertNotCancelled(options);
+    const fullFragments =
+      state.fullFragments ?? (await collectFrameworkMetadata(context));
+    const records: WebComponentRecord[] = [];
     for (const id of componentIds) {
+      assertNotCancelled(options);
       if (this.registry.getEnriched(id)) {
         continue;
       }
@@ -259,7 +324,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       const [merged] = await mergeComponentMetadata(
         [record],
         context,
-        state.fullFragments
+        fullFragments
       );
       if (merged) {
         applySuperclassProvenance(
@@ -271,17 +336,24 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
           state.graph.modules,
           state.semantics
         );
-        this.registry.setEnriched(merged);
+        records.push(merged);
       }
+    }
+    assertNotCancelled(options);
+    state.fullFragments = fullFragments;
+    for (const record of records) {
+      this.registry.setEnriched(record);
     }
     return this.assembleLazyResult(state);
   }
 
   async getMemberType(
     componentId: string,
-    memberName: string
+    memberName: string,
+    options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined> {
     this.ensureLazy();
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const record = this.registry.getEnriched(componentId);
     if (!record) {
@@ -291,6 +363,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       record.declarationEvidence,
       memberName
     );
+    assertNotCancelled(options);
     if (query) {
       this.lazyQueries.track(
         query.reference,
@@ -301,11 +374,24 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     return query;
   }
 
-  async materializeTypes(): Promise<DiscoveryResult> {
+  async materializeTypes(
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult> {
     this.ensureLazy();
+    assertNotCancelled(options);
     const state = this.ensureActive();
-    for (const record of this.registry.enrichedRecords()) {
+    const materialized: {
+      record: WebComponentRecord;
+      stored: {memberName: string; reference: SemanticReference}[];
+    }[] = [];
+    for (const current of this.registry.enrichedRecords()) {
+      const record = structuredClone(current);
       const stored = await state.semantics.materializeRecordTypes(record);
+      assertNotCancelled(options);
+      materialized.push({record, stored});
+    }
+    for (const {record, stored} of materialized) {
+      this.registry.setEnriched(record);
       for (const {memberName, reference} of stored) {
         this.lazyQueries.track(
           reference,
@@ -317,16 +403,50 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     return this.assembleLazyResult(state);
   }
 
-  async update(overlays: readonly SourceOverlay[]): Promise<DiscoveryResult> {
+  async update(
+    overlays: readonly SourceOverlay[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult> {
+    return this.changeOverlays(overlays, [], options);
+  }
+
+  async removeOverlays(
+    fileNames: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult> {
+    assertNotCancelled(options);
+    const removed = fileNames
+      .map((fileName) => this.configuration.absolutePath(fileName))
+      .filter((fileName) => this.overlays.has(fileName));
+    if (removed.length === 0) {
+      return this.collect(options);
+    }
+    return this.changeOverlays([], removed, options);
+  }
+
+  private async changeOverlays(
+    overlays: readonly SourceOverlay[],
+    removedFileNames: readonly string[],
+    options?: DiscoveryOperationOptions
+  ): Promise<DiscoveryResult> {
+    assertNotCancelled(options);
     if (this.lazy) {
-      return this.updateLazy(overlays);
+      return this.updateLazy(overlays, removedFileNames, options);
     }
     const previous = this.ensureActive();
-    const {changedFiles, originalOverlays} = this.applyOverlays(overlays);
+    const {changedFiles, originalOverlays} = this.applyOverlays(
+      overlays,
+      removedFileNames
+    );
     this.baseDocumentationCache.invalidate(changedFiles);
     let next: SessionState | undefined;
     try {
-      next = await this.buildSnapshot(previous, changedFiles);
+      next = await this.buildSnapshot(
+        removedFileNames.length > 0 ? undefined : previous,
+        changedFiles,
+        undefined,
+        options
+      );
       next.result = await createDiscoveryResult(
         this.project,
         next.snapshotId,
@@ -349,21 +469,24 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
           : undefined,
         {baseDocumentationCache: this.baseDocumentationCache}
       );
-      await this.retention.retain(previous.snapshot);
+      assertNotCancelled(options);
       this.state = next;
       this.generation += 1;
-      return next.result;
     } catch (error) {
       if (next) await next.snapshot.dispose();
       this.restoreOverlays(originalOverlays);
       throw error;
     }
+    await this.retention.retain(previous.snapshot);
+    return next.result;
   }
 
   async getTypeAtPosition(
     fileName: string,
-    position: number
+    position: number,
+    options?: DiscoveryOperationOptions
   ): Promise<SemanticReference | undefined> {
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const canonicalFileName = this.configuration.absolutePath(fileName);
     if (
@@ -372,15 +495,34 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     ) {
       return undefined;
     }
-    return state.semantics.getTypeAtPosition(canonicalFileName, position);
+    const result = await state.semantics.getTypeAtPosition(
+      canonicalFileName,
+      position
+    );
+    assertNotCancelled(options);
+    return result;
   }
 
   async isAssignable(
     source: SemanticReference,
-    target: SemanticReference
+    target: SemanticReference,
+    options?: DiscoveryOperationOptions
   ): Promise<boolean> {
+    assertNotCancelled(options);
     const state = this.ensureActive();
-    return state.semantics.isAssignable(source, target);
+    const result = await state.semantics.isAssignable(source, target);
+    assertNotCancelled(options);
+    return result;
+  }
+
+  async getTimingInfo(): Promise<DiscoveryTimingInfo> {
+    this.ensureNotDisposed();
+    return this.api.getTimingInfo();
+  }
+
+  async resetTimingInfo(): Promise<void> {
+    this.ensureNotDisposed();
+    return this.api.resetTimingInfo();
   }
 
   dispose(): Promise<void> {
@@ -390,10 +532,16 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   }
 
   private async updateLazy(
-    overlays: readonly SourceOverlay[]
+    overlays: readonly SourceOverlay[],
+    removedFileNames: readonly string[],
+    options?: DiscoveryOperationOptions
   ): Promise<DiscoveryResult> {
     this.ensureNotDisposed();
-    const {changedFiles, originalOverlays} = this.applyOverlays(overlays);
+    assertNotCancelled(options);
+    const {changedFiles, originalOverlays} = this.applyOverlays(
+      overlays,
+      removedFileNames
+    );
     this.baseDocumentationCache.invalidate(changedFiles);
     if (this.state === undefined) {
       this.generation += 1;
@@ -402,30 +550,39 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     const previous = this.state;
     let next: SessionState | undefined;
     try {
-      next = await this.buildSnapshot(previous, changedFiles);
+      next = await this.buildSnapshot(
+        removedFileNames.length > 0 ? undefined : previous,
+        changedFiles,
+        undefined,
+        options
+      );
       next.index = new RegistrationIndex();
       await this.refreshIndex(next);
       const affectedFiles = getAffectedModuleFiles(
         previous.indexGraph ?? previous.graph,
         changedFiles
       );
+      assertNotCancelled(options);
       this.registry.invalidateAffected(affectedFiles);
       this.registry.retainIndexed(next.index.ids());
       this.lazyQueries.registerSuccessors(
         next.semantics,
         this.registry.enrichedIds()
       );
-      await this.retention.retain(previous.snapshot);
       this.state = next;
-      return this.assembleLazyResult(next);
     } catch (error) {
       if (next) await next.snapshot.dispose();
       this.restoreOverlays(originalOverlays);
       throw error;
     }
+    await this.retention.retain(previous.snapshot);
+    return this.assembleLazyResult(next);
   }
 
-  private applyOverlays(overlays: readonly SourceOverlay[]): {
+  private applyOverlays(
+    overlays: readonly SourceOverlay[],
+    removedFileNames: readonly string[] = []
+  ): {
     changedFiles: string[];
     originalOverlays: Map<string, string>;
   } {
@@ -435,6 +592,11 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       const fileName = this.configuration.absolutePath(overlay.fileName);
       nextOverlays.set(fileName, overlay.text);
       changedFiles.push(fileName);
+    }
+    for (const fileName of removedFileNames) {
+      if (nextOverlays.delete(fileName)) {
+        changedFiles.push(fileName);
+      }
     }
 
     const originalOverlays = new Map(this.overlays);
@@ -454,12 +616,20 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
 
   private assembleLazyResult(state: SessionState): DiscoveryResult {
     this.generation += 1;
+    const moduleResolutionFallbackCount =
+      state.graph.moduleResolutionFallbackCount === undefined
+        ? undefined
+        : state.graph.moduleResolutionFallbackCount +
+          (state.indexGraph?.moduleResolutionFallbackCount ?? 0);
     const result = this.registry.assemble({
       index: state.index!,
       graph: state.indexGraph ?? state.graph,
       snapshotId: state.snapshotId,
       generation: this.generation,
       overlayFiles: [...this.overlays.keys()],
+      ...(moduleResolutionFallbackCount !== undefined
+        ? {moduleResolutionFallbackCount}
+        : {}),
       issues: state.graph.unresolvedModules.map((module) => ({
         code: 'unresolved-module',
         message: `Cannot resolve '${module.moduleSpecifier}' from '${module.fileName}'.`,
@@ -480,6 +650,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       issues: [],
       containsOverlays: overlayFiles.length > 0,
       overlayFiles,
+      ...(this.collectTiming ? {moduleResolutionFallbackCount: 0} : {}),
     };
   }
 
@@ -494,13 +665,16 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
 
   private buildSnapshot(
     previous?: SessionState,
-    changedFiles: readonly string[] = []
+    changedFiles: readonly string[] = [],
+    scope?: readonly string[],
+    options?: DiscoveryOperationOptions
   ): Promise<SessionState> {
     return this.snapshots.build({
       graphRoots: this.lazy
-        ? [...this.registry.activeScope]
+        ? [...(scope ?? this.registry.activeScope)]
         : this.configuration.roots,
       overlays: this.overlays,
+      ...(options ? {operation: options} : {}),
       ...(this.lazy
         ? {
             indexGraphRoots: this.configuration.roots,

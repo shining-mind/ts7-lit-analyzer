@@ -21,6 +21,7 @@ export interface RegistryAssembly {
   generation: number;
   overlayFiles: readonly string[];
   issues: AnalysisIssue[];
+  moduleResolutionFallbackCount?: number;
 }
 
 /**
@@ -110,6 +111,12 @@ export class ComponentRegistry {
       issues: assembly.issues,
       containsOverlays: assembly.overlayFiles.length > 0,
       overlayFiles: [...assembly.overlayFiles].sort(),
+      ...(assembly.moduleResolutionFallbackCount !== undefined
+        ? {
+            moduleResolutionFallbackCount:
+              assembly.moduleResolutionFallbackCount,
+          }
+        : {}),
     };
   }
 

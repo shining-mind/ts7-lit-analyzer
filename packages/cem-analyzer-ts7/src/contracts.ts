@@ -1,4 +1,7 @@
 import type {CustomElementDeclaration} from 'custom-elements-manifest';
+import type {TimingInfo} from 'typescript/async';
+
+export type DiscoveryTimingInfo = TimingInfo;
 
 export interface SourceRange {
   start: number;
@@ -127,6 +130,8 @@ export interface DiscoveryResult {
   issues: AnalysisIssue[];
   containsOverlays: boolean;
   overlayFiles: string[];
+  /** Present only when diagnostic timing collection is enabled. */
+  moduleResolutionFallbackCount?: number;
 }
 
 export interface MemberTypeQuery {
@@ -143,6 +148,10 @@ export interface SourceOverlay extends VirtualSourceFile {
   version?: number;
 }
 
+export interface DiscoveryOperationOptions {
+  signal?: AbortSignal;
+}
+
 export interface VirtualSymlink {
   target: string;
 }
@@ -154,6 +163,7 @@ interface DiscoveryOptionsBase {
   symlinks?: Readonly<Record<string, VirtualSymlink>>;
   eagerness?: 'eager' | 'lazy';
   retentionBound?: number;
+  collectTiming?: boolean;
 }
 
 export interface StandaloneDiscoveryOptions extends DiscoveryOptionsBase {

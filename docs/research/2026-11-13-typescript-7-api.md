@@ -1,7 +1,7 @@
 # TypeScript 7 API and architecture research
 
 **Date:** 2026-11-13
-**Status:** Research only. Version selection and architecture changes are recommendations, not implemented behavior. Runtime verification covers spawned and native-LSP scenarios on TypeScript 7.1.0-beta. Exact-beta VS Code behavior and native in-flight cancellation remain unverified. TypeScript 7.0.2 is retained only as a short migration reference.
+**Status:** Research record with dated implementation updates. Version selection and architecture changes remain recommendations unless an update names executable evidence. Runtime verification covers spawned and native-LSP scenarios on TypeScript 7.1.0-beta. Spawned Extension Host orchestration is now implemented and tested; exact-beta native-preview pipe behavior and native in-flight cancellation remain unverified and belong to #25 or later API work. TypeScript 7.0.2 is retained only as a short migration reference.
 
 ## Version and compatibility
 
@@ -94,7 +94,7 @@ In contrast:
 checker.getDeclaredTypeOfSymbol(countSymbol); // any
 ```
 
-The same result occurred for the imported property in a project-reference fixture before and after an overlay update. The probes establish the discrepancy, not its native-checker root cause.
+The same result occurred for the imported property in a project-reference fixture before and after an overlay update. The probes establish the discrepancy, not its native-checker root cause. The permanent `retains the declared-type anomaly and location-based alternatives` regression in `packages/cem-analyzer-ts7/test/project-references.test.ts` now verifies `any` from the declared-type shortcut and `number`/`string` from `getTypeOfSymbolAtLocation` before and after a referenced-source overlay on the pinned beta.
 
 **This is not a blocker for the `count: number` POC.** Three alternatives returned the real target type, and assignability worked. It becomes a blocker only if a required declaration, inheritance, or JS/JSDoc scenario cannot be resolved through those alternatives. Using `any` silently would be unsafe because it could make invalid bindings appear valid. The provider must avoid this method for the POC, verify type results, report unknown/error types as incomplete analysis, and retain a regression probe.
 
@@ -129,6 +129,10 @@ The app config contained `"references": [{"path": "../lib"}]` and the app import
 - The old snapshot retained the original type and TS2322.
 
 Project-reference source redirection and unsaved cross-reference updates work in this scenario. The adapter must not expect every referenced config in `getProjects()`.
+
+> Update (2026-11-18): the production discovery session now retains parsed references and passes them through `createPrograms[0].options.projectReferences` on creation and updates. The eager/lazy regressions in `packages/cem-analyzer-ts7/test/project-references.test.ts` import through `../lib/dist/counter.js` with no generated declaration output, enrich/materialize the redirected source, and verify unsaved changes plus old-snapshot isolation. The standalone module resolver does not expose that redirection to the discovery graph, so the graph falls back to the checker's module-symbol declaration instead of manually mapping output paths. Runtime tsconfig/reference-list changes and solution-builder watching remain unsupported.
+>
+> The same test file also covers successive overlays on a real disk-backed referenced source. On the pinned beta, removing the last overlay while reusing the previous native snapshot could retain the removed overlay's source text even though a fresh snapshot reads the configured disk content. `removeOverlays` therefore builds a fresh program snapshot while preserving registry invalidation and remaining-overlay provenance; ordinary replacement overlays stay incremental. `restores disk-backed referenced source after overlay removal` is the executable regression, and `docs/performance.md` records the resulting removal cost.
 
 ## Native LSP pipe integration
 
@@ -167,6 +171,16 @@ Searches of shipped API and editor declarations/source found no `AbortSignal`, `
 - `analyzer-ts7` must attach monotonically increasing generation/document versions and discard results whose generation or snapshot is no longer current.
 - Old snapshots returning valid old answers is not stale-result protection. That policy belongs in the adapter and editor host.
 
+Update (2026-11-18): engine and registry operations now accept host-neutral `AbortSignal`, reject at logical boundaries, and commit overlay/scope changes transactionally. The editor serializes mutations and rejects superseded run/generation/document-version results. `packages/cem-analyzer-ts7/test/cancellation.test.ts`, `packages/analyzer-core/test/session.test.ts`, and `packages/vscode-extension/src/test/coordinator-races.test.ts` exercise these guarantees, including native completion after logical abort. This does not terminate native requests or change the public-client limitation above.
+
+### Editor and document lifecycle
+
+Update (2026-11-18): [microsoft/vscode#199282](https://github.com/microsoft/vscode/issues/199282) and [microsoft/vscode#291739](https://github.com/microsoft/vscode/issues/291739) document that closing an editor and disposing a `TextDocument` are different lifecycles. A model opened through `workspace.openTextDocument` can remain in `workspace.textDocuments` after its tabs close, with close notification delayed by minutes. `tabGroups.onDidChangeTabs` is therefore the appropriate signal for editor-overlay removal; split editors require per-tab identity and a visible-tab check on reopen races.
+
+The legacy `packages/vscode-lit-plugin/src/extension.ts` has no document-close handler. Its `ts-lit-plugin` receives `info.project` from tsserver (`packages/ts-lit-plugin/src/index.ts:40-60`) and computes semantic diagnostics on demand against the current language-service program. TypeScript and VS Code consequently own the legacy open-file/program lifecycle; there is no legacy overlay-eviction policy to copy. The new host additionally owns native sessions and must remove overlays when the editor tab closes rather than waiting for model disposal.
+
+The spawned host now implements that policy in `packages/vscode-extension/src/host/documents.ts`. Real Extension Development Host tests cover open/change/save/tab-close, split-safe document identity, unsaved referenced-source updates, and disk-backed overlay restoration in `packages/vscode-extension/src/test/orchestration.test.ts` and `coordinator.test.ts`. Closing does not shrink the engine's historical lazy scope; it removes unsaved overlay state and prevents stale publication.
+
 ## Timing and smoke measurements
 
 Three independent native sessions created the same one-file project and ran one initial query followed by five identical warm queries:
@@ -180,6 +194,10 @@ Three independent native sessions created the same one-file project and ran one 
 Each run reported 15 requests, 3,097 bytes sent, 4,922 bytes received, 39 materialized AST nodes, and one fetched source file. Server time was 16.45–17.46 ms; estimated transport overhead was 6.37–7.02 ms. Native RSS was 49,200–49,632 KB.
 
 These are instrumentation smoke measurements on a trivial project, not representative performance budgets. Async batching and warm queries work.
+
+> Update (2026-11-18): discovery sessions expose `collectTiming` (disabled by default), `getTimingInfo`, and `resetTimingInfo` with serializable metrics. Retrieving timing itself performs a `getServerTiming` protocol request, so request totals and recent history include that retrieval; probes compare deltas and reset semantics rather than treating totals as operation-only measurements. The extension enables timing only in `verbose`/`debug`; `normal` performs no timing retrieval, memory sampling, performance timers, or instrumentation intervals (`packages/vscode-extension/src/test/logging.test.ts`).
+>
+> `openspec/changes/add-analysis-host-policies/probes/host-policy-performance.mjs` now provides serial cold/warm eager/lazy, enrichment/query, overlay update/removal, IPC/node, memory, and cleanup measurements through the public registry API. The three-run environment, spread, attribution limits, and preliminary non-gating budgets are recorded in `docs/performance.md`. Representative performance and adaptive memory policies remain #26 work.
 
 ## Content mappers
 
@@ -213,6 +231,11 @@ The proposal is potentially useful, especially for embedded-language projections
 - CLI and VS Code consume both core and adapter.
 - VS Code obtains the pipe from the native-preview extension and passes it to `analyzer-ts7`; it does not duplicate session or analyzer semantics.
 - Exact-beta VS Code remains unverified. The locally installed `TypeScriptTeam.native-preview` bundles TypeScript 7.0.2, and the existing isolated test launch disables other extensions.
+- Update (2026-11-24): `openspec/changes/add-analysis-host-policies/probes/project-association.mjs` exercises `Snapshot.getDefaultProjectForFile` against real TS7 snapshots for configured, inferred, and multiply included files without synthetic-program selection. The unused production `createProjectAssociationSession`, its public exports, and `Ts7ProjectRouter` were removed because the spawned editor does not consume them and a separate routing session would duplicate TypeScript project ownership. Native-preview pipe connection, default-project routing, and restart lifecycle remain #25 work; the probe is API evidence, not production integration.
+
+Upstream native-preview project cleanup is liveness-based rather than a numerical LRU: [`cleanupConfiguredProjects`](https://github.com/microsoft/typescript-go/blob/main/internal/project/projectcollectionbuilder.go) retains default projects required by open files, their references and ancestors, and explicitly opened API projects; [`ProjectCollection`](https://github.com/microsoft/typescript-go/blob/main/internal/project/projectcollection.go) has no corresponding small fixed capacity. Thus many open files can legitimately retain many programs in the shared native server. The spawned extension instead owns independent native API sessions and implements a configurable live-and-creating bound (default eight) with active-project priority and automatic LRU recovery, covered by `packages/vscode-extension/src/test/coordinator-races.test.ts` and `coordinator.test.ts`. This bound is not a claim about native-preview behavior or an adaptive memory policy.
+
+The production Extension Host currently uses the spawned nearest-containing-config fallback with workspace-qualified configured identities and a synthetic inferred association when no config contains the file. It does not reproduce solution-style or multiply-included project-service selection, does not reload tsconfig/reference graphs at runtime, and does not connect to native-preview; those transport and lifecycle scenarios remain #25. The implemented `onType`/`onSave`, 100 ms debounce, 500 ms maximum wait, and logging-level settings are declared in `packages/vscode-extension/package.json` and exercised by the real Extension Host suite.
 
 ## Registry model and preliminary CEM reuse
 

@@ -8,7 +8,7 @@ Status: implemented and tested in `analyzer-core` (issue #21). Template analysis
 
 The registry is the host-independent index over the discovery engine's component records, shared by the CLI and editor hosts. It does not collect components or touch the TypeScript AST: the `cem-analyzer-ts7` engine owns discovery and checker semantics, and the core consumes its public session API. There is no separate TypeScript 7 adapter package.
 
-A registry session is **single-project** — one TypeScript configuration, one engine program, snapshots and generations within it. Multi-project coordination and host policies (open-file tracking, scheduling, cancellation) belong to the hosts and are follow-up work; see [architecture](architecture.md).
+A registry session is **single-project** — one TypeScript configuration, one engine program, snapshots and generations within it. Multi-project coordination and host policies (open-file tracking and scheduling) belong to the hosts; see [architecture](architecture.md). Package-specific session controls are documented in the [analyzer-core package guide](../packages/analyzer-core/README.md).
 
 ## Key entities
 
@@ -25,6 +25,8 @@ A registry session is **single-project** — one TypeScript configuration, one e
 
 **Semantics are checker-only.** Type queries and assignability delegate to the engine through references from one project and snapshot; cross-project and cross-snapshot references are rejected. CEM `type.text` is display documentation, never an assignability input or fallback. Display-oriented features (hover, completion) legitimately consume metadata and materialized text; the checker-only constraint applies to checking, not displaying.
 
+**Cancellation preserves the last good view.** An aborted operation rejects without replacing the current view; it does not imply native in-flight cancellation.
+
 ## Boundaries and intentional differences
 
 **Superclass provenance is richer than the CEM analyzer.** The CEM analyzer chooses `package` XOR `module` by import-specifier form, so a base imported through a relative specifier inside a dependency loses its package identity. The registry resolves the base through the checker to its canonical declaration: dependency bases carry the canonical package name and declaration module path (including relative imports within a dependency), local bases carry module identity, and built-in bases carry only the class name. This is schema-valid (the CEM `Reference` shape permits both fields) and required for dependency declaration identity; it is a documented compatibility difference, not CEM-identical output. Class-level JSDoc metadata is likewise inherited from checker-resolved base classes with subclass precedence and declaration authority.
@@ -33,4 +35,4 @@ A registry session is **single-project** — one TypeScript configuration, one e
 
 ## Where to look
 
-The API surface is the exported types in `packages/analyzer-core/src` (`registry`, `semantics`, `session`) and the adopted `cem-analyzer-ts7` contracts. Behavior is covered by package-local unit tests and `tests/registry-integration.test.ts` against the shared webcomponents fixture; engine inheritance and provenance scenarios live in the engine's own tests.
+See the [analyzer-core package guide](../packages/analyzer-core/README.md) for the public surface and session controls. Behavior is covered by package-local unit tests and `tests/registry-integration.test.ts` against the shared webcomponents fixture; engine inheritance and provenance scenarios live in the engine's own tests.

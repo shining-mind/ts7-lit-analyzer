@@ -8,7 +8,7 @@ export default defineConfig({
   files: '.test-dist/test/**/*.test.js',
   version: '1.140.0',
   extensionDevelopmentPath: '.',
-  workspaceFolder: 'fixtures/smoke',
+  workspaceFolder: 'fixtures/orchestration/orchestration.code-workspace',
   launchArgs: [
     '--disable-extensions',
     `--user-data-dir=${join(testDataDirectory, 'user')}`,

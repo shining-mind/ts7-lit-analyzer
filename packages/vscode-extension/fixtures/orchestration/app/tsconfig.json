@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
+  },
+  "files": ["./index.ts"],
+  "references": [{"path": "../lib"}]
+}
