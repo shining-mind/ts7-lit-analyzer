@@ -8,6 +8,11 @@ import type {DocumentTracker, TrackedDocument} from './documents.js';
 import type {CoordinatorLogger} from './logging.js';
 import type {HostProjectAssociation} from './project-router.js';
 
+type DocumentVersions = ReadonlyMap<
+  string,
+  {version: number; isDirty: boolean}
+>;
+
 export interface ProjectRuntimeExecutionContext {
   tracker: DocumentTracker;
   savedDocuments: ReadonlyMap<string, TrackedDocument>;
@@ -20,6 +25,13 @@ export interface ProjectRuntimeExecutionContext {
   ): Promise<LazyRegistrySession>;
 }
 
+/**
+ * Owns one project association's analysis state and at most one lazy registry
+ * session. Reconciles current document inputs and accepts results only while
+ * revision, document versions, and residency remain current. Scheduling,
+ * routing, and eviction are delegated to `AnalysisScheduler` and
+ * `RuntimeRegistry`.
+ */
 export class ProjectRuntime {
   association: HostProjectAssociation;
   readonly openFiles = new Set<string>();
@@ -50,14 +62,7 @@ export class ProjectRuntime {
     }
     const startedAt = context.collectTiming() ? performance.now() : undefined;
     const revision = this.revision;
-    const versions = new Map(
-      context.tracker
-        .documents()
-        .map((document) => [
-          document.uri,
-          {version: document.version, isDirty: document.isDirty},
-        ])
-    );
+    const versions = captureVersions(context.tracker);
     const controller = new AbortController();
     this.controller = controller;
     this.pending = false;
@@ -83,34 +88,7 @@ export class ProjectRuntime {
         controller
       );
       const view = session.current();
-      if (!view || !this.isCurrent(context, revision, versions, controller)) {
-        context.logger.debug('analysis.rejected', {
-          projectKey: this.association.key,
-          revision,
-          runtimeRevision: this.revision,
-          resident: this.resident,
-          aborted: controller.signal.aborted,
-          capturedVersions: Object.fromEntries(versions),
-          currentVersions: context.tracker.documents().map((document) => ({
-            uri: document.uri,
-            version: document.version,
-            isDirty: document.isDirty,
-          })),
-        });
-        return;
-      }
-      if (
-        this.view &&
-        this.acceptedRevision === revision &&
-        view.generation <= this.view.generation
-      ) {
-        context.logger.debug('analysis.generationRejected', {
-          projectKey: this.association.key,
-          revision,
-          acceptedRevision: this.acceptedRevision,
-          viewGeneration: view.generation,
-          currentGeneration: this.view.generation,
-        });
+      if (!this.canAccept(context, view, revision, versions, controller)) {
         return;
       }
       await this.accept(
@@ -122,30 +100,89 @@ export class ProjectRuntime {
         startedAt === undefined ? 0 : performance.now() - startedAt
       );
     } catch (error) {
-      if (this.isCurrent(context, revision, versions, controller)) {
-        if (controller.signal.aborted) {
-          context.logger.debug('analysis.cancelled', {
-            projectKey: this.association.key,
-            revision,
-          });
-        } else {
-          this.error = error instanceof Error ? error.message : String(error);
-          context.logger.error('analysis.failed', {
-            projectKey: this.association.key,
-            error: this.error,
-          });
-        }
-      }
+      this.handleFailure(context, error, revision, versions, controller);
     } finally {
-      context.logger.debug('analysis.finished', {
+      this.finish(context, revision, controller);
+    }
+  }
+
+  private canAccept(
+    context: ProjectRuntimeExecutionContext,
+    view: RegistryView | undefined,
+    revision: number,
+    versions: DocumentVersions,
+    controller: AbortController
+  ): view is RegistryView {
+    if (!view || !this.isCurrent(context, revision, versions, controller)) {
+      context.logger.debug('analysis.rejected', {
+        projectKey: this.association.key,
+        revision,
+        runtimeRevision: this.revision,
+        resident: this.resident,
+        aborted: controller.signal.aborted,
+        capturedVersions: Object.fromEntries(versions),
+        currentVersions: context.tracker.documents().map((document) => ({
+          uri: document.uri,
+          version: document.version,
+          isDirty: document.isDirty,
+        })),
+      });
+      return false;
+    }
+    if (
+      this.view &&
+      this.acceptedRevision === revision &&
+      view.generation <= this.view.generation
+    ) {
+      context.logger.debug('analysis.generationRejected', {
         projectKey: this.association.key,
         revision,
         acceptedRevision: this.acceptedRevision,
-        viewGeneration: this.view?.generation,
+        viewGeneration: view.generation,
+        currentGeneration: this.view.generation,
       });
-      if (this.controller === controller) {
-        this.controller = undefined;
-      }
+      return false;
+    }
+    return true;
+  }
+
+  private handleFailure(
+    context: ProjectRuntimeExecutionContext,
+    error: unknown,
+    revision: number,
+    versions: DocumentVersions,
+    controller: AbortController
+  ): void {
+    if (!this.isCurrent(context, revision, versions, controller)) {
+      return;
+    }
+    if (controller.signal.aborted) {
+      context.logger.debug('analysis.cancelled', {
+        projectKey: this.association.key,
+        revision,
+      });
+    } else {
+      this.error = error instanceof Error ? error.message : String(error);
+      context.logger.error('analysis.failed', {
+        projectKey: this.association.key,
+        error: this.error,
+      });
+    }
+  }
+
+  private finish(
+    context: ProjectRuntimeExecutionContext,
+    revision: number,
+    controller: AbortController
+  ): void {
+    context.logger.debug('analysis.finished', {
+      projectKey: this.association.key,
+      revision,
+      acceptedRevision: this.acceptedRevision,
+      viewGeneration: this.view?.generation,
+    });
+    if (this.controller === controller) {
+      this.controller = undefined;
     }
   }
 
@@ -365,4 +402,15 @@ export class ProjectRuntime {
       recentRequests: timing.recentRequests,
     });
   }
+}
+
+function captureVersions(tracker: DocumentTracker): DocumentVersions {
+  return new Map(
+    tracker
+      .documents()
+      .map((document) => [
+        document.uri,
+        {version: document.version, isDirty: document.isDirty},
+      ])
+  );
 }

@@ -11,6 +11,11 @@ export interface RuntimeRegistryOptions {
   clearTimers(runtime: ProjectRuntime): void;
 }
 
+/**
+ * Owns document-to-project associations and their runtimes. Deduplicates
+ * asynchronous routing and enforces bounded LRU residency without implementing
+ * analysis or scheduling policies.
+ */
 export class RuntimeRegistry {
   readonly associations = new Map<string, string>();
   readonly runtimes = new Map<string, ProjectRuntime>();

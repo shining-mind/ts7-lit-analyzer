@@ -16,6 +16,11 @@ export interface AnalysisSchedulerOptions {
   logger: CoordinatorLogger;
 }
 
+/**
+ * Schedules per-runtime revisions and serializes session mutations. Applies
+ * immediate and save-driven runs, debounce, and maximum wait; result acceptance
+ * remains the project runtime's responsibility.
+ */
 export class AnalysisScheduler {
   /** Serializes session mutations and disposal across all resident projects. */
   private mutationQueue: Promise<void> = Promise.resolve();

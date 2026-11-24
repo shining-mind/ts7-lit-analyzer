@@ -67,6 +67,10 @@ const silentLogger: CoordinatorLogger = {
   error() {},
 };
 
+/**
+ * Mediates document events, project routing, scheduling, and per-project
+ * execution without implementing analyzer semantics.
+ */
 export class EditorAnalysisCoordinator implements Disposable {
   private readonly logger: CoordinatorLogger;
   private readonly createSession: (

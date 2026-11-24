@@ -12,6 +12,7 @@ export interface HostProjectAssociation {
   configFileName?: string;
 }
 
+/** Associates a tracked document with the identity of its analysis project. */
 export interface ProjectRouter {
   associate(document: TrackedDocument): Promise<HostProjectAssociation>;
 }

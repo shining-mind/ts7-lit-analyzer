@@ -31,6 +31,7 @@ classDiagram
     mutationQueue
   }
   class ProjectRuntime {
+    one project's analysis lifecycle
     session and overlays
     execution and acceptance
   }
