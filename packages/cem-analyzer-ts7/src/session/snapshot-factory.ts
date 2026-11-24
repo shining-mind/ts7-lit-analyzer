@@ -114,16 +114,16 @@ export class SnapshotFactory {
               changedFiles: options.previous.changedFiles,
             }
           : {graph: built.graph, changedFiles: [] as readonly string[]};
+        const indexProgramRoots = new Set(options.indexGraphRoots);
+        for (const module of built.graph.modules) {
+          indexProgramRoots.add(module.fileName);
+        }
+
         const projectBuilt = await buildModuleGraph({
           api: this.api,
           initial: {snapshot: built.snapshot, project: built.project},
           rootFiles: options.indexGraphRoots,
-          initialProgramRoots: [
-            ...new Set([
-              ...options.indexGraphRoots,
-              ...built.graph.modules.map((module) => module.fileName),
-            ]),
-          ],
+          initialProgramRoots: [...indexProgramRoots],
           ...(options.retainProgramRoots
             ? {retainProgramRoots: options.retainProgramRoots}
             : {}),
