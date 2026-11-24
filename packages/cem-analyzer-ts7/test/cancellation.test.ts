@@ -5,6 +5,7 @@ import type {ClassField} from 'custom-elements-manifest';
 import dedent from 'ts-dedent';
 
 import type {DiscoveryResult} from '../dist/contracts.js';
+import {SnapshotRetention} from '../dist/session/snapshot-retention.js';
 import {
   createDiscoverySession,
   type DiscoveryOptions,
@@ -70,6 +71,25 @@ async function expectAbort(
   reason: Error
 ): Promise<void> {
   await assert.rejects(operation, (error) => error === reason);
+}
+
+function deferred(): {promise: Promise<void>; resolve(): void} {
+  let resolve!: () => void;
+  const promise = new Promise<void>((accept) => {
+    resolve = accept;
+  });
+  return {promise, resolve};
+}
+
+class GatedRetention extends SnapshotRetention {
+  readonly started = deferred();
+  readonly release = deferred();
+
+  override async retain(snapshot: Parameters<SnapshotRetention['retain']>[0]) {
+    this.started.resolve();
+    await this.release.promise;
+    return super.retain(snapshot);
+  }
 }
 
 async function depId(session: LazyDiscoverySession): Promise<string> {
@@ -159,6 +179,60 @@ test('cancelled lazy scope requests do not commit prospective scope', async () =
     );
   } finally {
     await session.dispose();
+  }
+});
+
+test('commits before retention cleanup and does not roll back on abort during cleanup', async () => {
+  for (const lazy of [false, true]) {
+    const session = await createDiscoverySession(
+      lazy ? options('lazy') : options()
+    );
+    const internals = session as unknown as {
+      retention: SnapshotRetention;
+      state?: {snapshotId: string};
+    };
+    const retention = new GatedRetention();
+    internals.retention = retention;
+    try {
+      if (lazy) {
+        await (session as LazyDiscoverySession).collectScope([appFile]);
+      } else {
+        await session.collect();
+      }
+      const previousSnapshotId = internals.state?.snapshotId;
+      const controller = new AbortController();
+      const pending = lazy
+        ? (session as LazyDiscoverySession).collectScope([secondFile], {
+            signal: controller.signal,
+          })
+        : session.update(
+            [
+              {
+                fileName: depFile,
+                text: depSource.replace(
+                  'count: number = 0',
+                  "count: string = 'x'"
+                ),
+              },
+            ],
+            {signal: controller.signal}
+          );
+      await retention.started.promise;
+      assert.notEqual(internals.state?.snapshotId, previousSnapshotId);
+      controller.abort(
+        new Error(`abort during ${lazy ? 'lazy' : 'eager'} cleanup`)
+      );
+      retention.release.resolve();
+      const result = await pending;
+      if (lazy) {
+        component(result, 'SecondElement');
+      } else {
+        assert.equal(memberText(result, 'DepElement'), 'string');
+      }
+    } finally {
+      retention.release.resolve();
+      await session.dispose();
+    }
   }
 });
 

@@ -268,12 +268,12 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       if (next) await next.snapshot.dispose();
       throw error;
     }
-    await this.retention.retain(previous.snapshot);
     this.registry.extendScope([...scope]);
     if (hasNewModules) {
       this.registry.retainIndexed(next.index!.ids());
     }
     this.state = next;
+    await this.retention.retain(previous.snapshot);
     return this.assembleLazyResult(next);
   }
 
@@ -470,15 +470,15 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         {baseDocumentationCache: this.baseDocumentationCache}
       );
       assertNotCancelled(options);
-      await this.retention.retain(previous.snapshot);
       this.state = next;
       this.generation += 1;
-      return next.result;
     } catch (error) {
       if (next) await next.snapshot.dispose();
       this.restoreOverlays(originalOverlays);
       throw error;
     }
+    await this.retention.retain(previous.snapshot);
+    return next.result;
   }
 
   async getTypeAtPosition(
@@ -563,7 +563,6 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         changedFiles
       );
       assertNotCancelled(options);
-      await this.retention.retain(previous.snapshot);
       this.registry.invalidateAffected(affectedFiles);
       this.registry.retainIndexed(next.index.ids());
       this.lazyQueries.registerSuccessors(
@@ -571,12 +570,13 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         this.registry.enrichedIds()
       );
       this.state = next;
-      return this.assembleLazyResult(next);
     } catch (error) {
       if (next) await next.snapshot.dispose();
       this.restoreOverlays(originalOverlays);
       throw error;
     }
+    await this.retention.retain(previous.snapshot);
+    return this.assembleLazyResult(next);
   }
 
   private applyOverlays(
