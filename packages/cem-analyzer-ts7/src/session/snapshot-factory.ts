@@ -11,7 +11,7 @@ import {
   type SemanticCollector,
 } from '../semantics/collector.js';
 import type {SessionConfiguration} from './configuration.js';
-import {checkCancelled} from './operations.js';
+import {assertNotCancelled} from './operations.js';
 
 export interface DiscoverySnapshot extends ProjectSnapshot {
   graph: ModuleGraph;
@@ -53,7 +53,7 @@ export class SnapshotFactory {
   }
 
   async build(options: SnapshotBuildOptions): Promise<DiscoverySnapshot> {
-    checkCancelled(options.operation);
+    assertNotCancelled(options.operation);
     const initialProgramRoots = options.previous
       ? [
           ...new Set([
@@ -71,7 +71,7 @@ export class SnapshotFactory {
     );
     let current: ProjectSnapshot = initial;
     try {
-      checkCancelled(options.operation);
+      assertNotCancelled(options.operation);
       const built = await buildModuleGraph({
         api: this.api,
         initial,
@@ -95,7 +95,7 @@ export class SnapshotFactory {
           : {}),
       });
       current = built;
-      checkCancelled(options.operation);
+      assertNotCancelled(options.operation);
       let final = built;
       let indexGraph: ModuleGraph | undefined;
       if (options.indexGraphRoots) {
@@ -136,7 +136,7 @@ export class SnapshotFactory {
           project: projectBuilt.project,
         };
       }
-      checkCancelled(options.operation);
+      assertNotCancelled(options.operation);
       const snapshotId = `snapshot-${final.snapshot.id}`;
       return {
         ...final,

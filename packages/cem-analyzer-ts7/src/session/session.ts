@@ -32,7 +32,7 @@ import {RegistrationIndex} from '../registry/registration-index.js';
 import {SessionConfiguration} from './configuration.js';
 import {SnapshotFactory, type DiscoverySnapshot} from './snapshot-factory.js';
 import {SnapshotRetention} from './snapshot-retention.js';
-import {checkCancelled} from './operations.js';
+import {assertNotCancelled} from './operations.js';
 import {
   collectFrameworkMetadata,
   type ComponentFrameworkFragment,
@@ -180,7 +180,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
   }
 
   async collect(options?: DiscoveryOperationOptions): Promise<DiscoveryResult> {
-    checkCancelled(options);
+    assertNotCancelled(options);
     if (this.lazy) {
       this.ensureNotDisposed();
       if (this.state === undefined) {
@@ -204,7 +204,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       undefined,
       {baseDocumentationCache: this.baseDocumentationCache}
     );
-    checkCancelled(options);
+    assertNotCancelled(options);
     state.result = result;
     return result;
   }
@@ -214,7 +214,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     options?: DiscoveryOperationOptions
   ): Promise<DiscoveryResult> {
     this.ensureLazy();
-    checkCancelled(options);
+    assertNotCancelled(options);
     const scope = new Set(this.registry.activeScope);
     for (const fileName of files) {
       scope.add(this.configuration.absolutePath(fileName));
@@ -228,7 +228,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         state = await this.buildSnapshot(undefined, [], [...scope], options);
         state.index = new RegistrationIndex();
         await this.refreshIndex(state);
-        checkCancelled(options);
+        assertNotCancelled(options);
       } catch (error) {
         if (state) await state.snapshot.dispose();
         throw error;
@@ -256,7 +256,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       } else {
         next.index = previous.index;
       }
-      checkCancelled(options);
+      assertNotCancelled(options);
     } catch (error) {
       if (next) await next.snapshot.dispose();
       throw error;
@@ -275,7 +275,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     options?: DiscoveryOperationOptions
   ): Promise<DiscoveryResult> {
     this.ensureLazy();
-    checkCancelled(options);
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const context = await createMetadataContext(
       state.project.program,
@@ -286,12 +286,12 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         baseDocumentationCache: this.baseDocumentationCache,
       }
     );
-    checkCancelled(options);
+    assertNotCancelled(options);
     const fullFragments =
       state.fullFragments ?? (await collectFrameworkMetadata(context));
     const records: WebComponentRecord[] = [];
     for (const id of componentIds) {
-      checkCancelled(options);
+      assertNotCancelled(options);
       if (this.registry.getEnriched(id)) {
         continue;
       }
@@ -332,7 +332,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         records.push(merged);
       }
     }
-    checkCancelled(options);
+    assertNotCancelled(options);
     state.fullFragments = fullFragments;
     for (const record of records) {
       this.registry.setEnriched(record);
@@ -346,7 +346,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined> {
     this.ensureLazy();
-    checkCancelled(options);
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const record = this.registry.getEnriched(componentId);
     if (!record) {
@@ -356,7 +356,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       record.declarationEvidence,
       memberName
     );
-    checkCancelled(options);
+    assertNotCancelled(options);
     if (query) {
       this.lazyQueries.track(
         query.reference,
@@ -371,7 +371,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     options?: DiscoveryOperationOptions
   ): Promise<DiscoveryResult> {
     this.ensureLazy();
-    checkCancelled(options);
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const materialized: {
       record: WebComponentRecord;
@@ -380,7 +380,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     for (const current of this.registry.enrichedRecords()) {
       const record = structuredClone(current);
       const stored = await state.semantics.materializeRecordTypes(record);
-      checkCancelled(options);
+      assertNotCancelled(options);
       materialized.push({record, stored});
     }
     for (const {record, stored} of materialized) {
@@ -407,7 +407,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     fileNames: readonly string[],
     options?: DiscoveryOperationOptions
   ): Promise<DiscoveryResult> {
-    checkCancelled(options);
+    assertNotCancelled(options);
     const removed = fileNames
       .map((fileName) => this.configuration.absolutePath(fileName))
       .filter((fileName) => this.overlays.has(fileName));
@@ -422,7 +422,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     removedFileNames: readonly string[],
     options?: DiscoveryOperationOptions
   ): Promise<DiscoveryResult> {
-    checkCancelled(options);
+    assertNotCancelled(options);
     if (this.lazy) {
       return this.updateLazy(overlays, removedFileNames, options);
     }
@@ -462,7 +462,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
           : undefined,
         {baseDocumentationCache: this.baseDocumentationCache}
       );
-      checkCancelled(options);
+      assertNotCancelled(options);
       await this.retention.retain(previous.snapshot);
       this.state = next;
       this.generation += 1;
@@ -479,7 +479,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     position: number,
     options?: DiscoveryOperationOptions
   ): Promise<SemanticReference | undefined> {
-    checkCancelled(options);
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const canonicalFileName = this.configuration.absolutePath(fileName);
     if (
@@ -492,7 +492,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
       canonicalFileName,
       position
     );
-    checkCancelled(options);
+    assertNotCancelled(options);
     return result;
   }
 
@@ -501,10 +501,10 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     target: SemanticReference,
     options?: DiscoveryOperationOptions
   ): Promise<boolean> {
-    checkCancelled(options);
+    assertNotCancelled(options);
     const state = this.ensureActive();
     const result = await state.semantics.isAssignable(source, target);
-    checkCancelled(options);
+    assertNotCancelled(options);
     return result;
   }
 
@@ -530,7 +530,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
     options?: DiscoveryOperationOptions
   ): Promise<DiscoveryResult> {
     this.ensureNotDisposed();
-    checkCancelled(options);
+    assertNotCancelled(options);
     const {changedFiles, originalOverlays} = this.applyOverlays(
       overlays,
       removedFileNames
@@ -555,7 +555,7 @@ class DiscoverySessionImpl implements LazyDiscoverySession {
         previous.indexGraph ?? previous.graph,
         changedFiles
       );
-      checkCancelled(options);
+      assertNotCancelled(options);
       await this.retention.retain(previous.snapshot);
       this.registry.invalidateAffected(affectedFiles);
       this.registry.retainIndexed(next.index.ids());
