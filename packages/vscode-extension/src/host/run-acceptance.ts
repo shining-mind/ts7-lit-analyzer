@@ -9,6 +9,14 @@ export type DocumentVersions = ReadonlyMap<
   {version: number; isDirty: boolean}
 >;
 
+export interface AnalysisRun {
+  runtime: ProjectRuntime;
+  revision: number;
+  versions: DocumentVersions;
+  controller: AbortController;
+  startedAt: number | undefined;
+}
+
 export interface RunAcceptanceOptions {
   tracker: DocumentTracker;
   isDisposed(): boolean;
@@ -39,13 +47,11 @@ export class RunAcceptance {
   }
 
   canAccept(
-    runtime: ProjectRuntime,
-    view: RegistryView | undefined,
-    revision: number,
-    versions: DocumentVersions,
-    controller: AbortController
+    run: AnalysisRun,
+    view: RegistryView | undefined
   ): view is RegistryView {
-    if (!view || !this.isCurrent(runtime, revision, versions, controller)) {
+    const {runtime, revision, versions, controller} = run;
+    if (!view || !this.isCurrent(run)) {
       this.logger.debug('analysis.rejected', {
         projectKey: runtime.association.key,
         revision,
@@ -78,12 +84,8 @@ export class RunAcceptance {
     return true;
   }
 
-  isCurrent(
-    runtime: ProjectRuntime,
-    revision: number,
-    versions: DocumentVersions,
-    controller: AbortController
-  ): boolean {
+  isCurrent(run: AnalysisRun): boolean {
+    const {runtime, revision, versions, controller} = run;
     return (
       !this.isDisposed() &&
       runtime.resident &&
@@ -99,14 +101,9 @@ export class RunAcceptance {
     );
   }
 
-  handleFailure(
-    runtime: ProjectRuntime,
-    error: unknown,
-    revision: number,
-    versions: DocumentVersions,
-    controller: AbortController
-  ): void {
-    if (!this.isCurrent(runtime, revision, versions, controller)) {
+  handleFailure(run: AnalysisRun, error: unknown): void {
+    const {runtime, revision, controller} = run;
+    if (!this.isCurrent(run)) {
       return;
     }
     if (controller.signal.aborted) {

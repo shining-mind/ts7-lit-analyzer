@@ -4,7 +4,7 @@ import type {
   ProjectRuntime,
   ProjectRuntimeExecutionContext,
 } from './project-runtime.js';
-import {RunAcceptance, type DocumentVersions} from './run-acceptance.js';
+import {RunAcceptance, type AnalysisRun} from './run-acceptance.js';
 
 /** Orchestrates one analysis run without taking ownership of runtime state. */
 export class ProjectRunExecutor {
@@ -22,10 +22,14 @@ export class ProjectRunExecutor {
       runtime.pending = false;
       return;
     }
-    const startedAt = context.collectTiming() ? performance.now() : undefined;
-    const revision = runtime.revision;
-    const versions = this.acceptance.captureVersions();
-    const controller = new AbortController();
+    const run: AnalysisRun = {
+      runtime,
+      revision: runtime.revision,
+      versions: this.acceptance.captureVersions(),
+      controller: new AbortController(),
+      startedAt: context.collectTiming() ? performance.now() : undefined,
+    };
+    const {revision, controller} = run;
     runtime.controller = controller;
     runtime.pending = false;
     runtime.due = false;
@@ -35,13 +39,7 @@ export class ProjectRunExecutor {
     });
 
     try {
-      const session = await this.ensureSession(
-        runtime,
-        context,
-        revision,
-        versions,
-        controller
-      );
+      const session = await this.ensureSession(run, context);
       if (!session) {
         return;
       }
@@ -51,33 +49,18 @@ export class ProjectRunExecutor {
         controller
       );
       const view = session.current();
-      if (
-        !this.acceptance.canAccept(
-          runtime,
-          view,
-          revision,
-          versions,
-          controller
-        )
-      ) {
+      if (!this.acceptance.canAccept(run, view)) {
         return;
       }
-      await runtime.acceptCurrentView(
-        context,
+      await runtime.acceptCurrentView(context, run, {
         view,
         saved,
         currentFiles,
-        revision,
-        startedAt === undefined ? 0 : performance.now() - startedAt
-      );
+        durationMs:
+          run.startedAt === undefined ? 0 : performance.now() - run.startedAt,
+      });
     } catch (error) {
-      this.acceptance.handleFailure(
-        runtime,
-        error,
-        revision,
-        versions,
-        controller
-      );
+      this.acceptance.handleFailure(run, error);
     } finally {
       context.logger.debug('analysis.finished', {
         projectKey: runtime.association.key,
@@ -92,25 +75,24 @@ export class ProjectRunExecutor {
   }
 
   private async ensureSession(
-    runtime: ProjectRuntime,
-    context: ProjectRuntimeExecutionContext,
-    revision: number,
-    versions: DocumentVersions,
-    controller: AbortController
+    run: AnalysisRun,
+    context: ProjectRuntimeExecutionContext
   ): Promise<LazyRegistrySession | undefined> {
+    const {runtime, revision} = run;
     if (runtime.session) {
       return runtime.session;
     }
     const created = await context.createSession(
       runtime.sessionOptions(context)
     );
-    if (!this.acceptance.isCurrent(runtime, revision, versions, controller)) {
+    if (!this.acceptance.isCurrent(run)) {
       await created.dispose();
       return undefined;
     }
     runtime.session = created;
     context.logger.debug('analysis.sessionCreated', {
       projectKey: runtime.association.key,
+      revision,
     });
     return created;
   }

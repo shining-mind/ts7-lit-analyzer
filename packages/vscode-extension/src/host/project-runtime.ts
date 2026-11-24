@@ -7,6 +7,14 @@ import {
 import type {DocumentTracker, TrackedDocument} from './documents.js';
 import type {CoordinatorLogger} from './logging.js';
 import type {HostProjectAssociation} from './project-router.js';
+import type {AnalysisRun} from './run-acceptance.js';
+
+export interface AcceptedRunResult {
+  view: RegistryView;
+  saved: readonly TrackedDocument[];
+  currentFiles: ReadonlyMap<string, string>;
+  durationMs: number;
+}
 
 export interface ProjectRuntimeExecutionContext {
   tracker: DocumentTracker;
@@ -140,12 +148,10 @@ export class ProjectRuntime {
   /** Applies a view that `RunAcceptance` has already approved. */
   async acceptCurrentView(
     context: ProjectRuntimeExecutionContext,
-    view: RegistryView,
-    saved: readonly TrackedDocument[],
-    currentFiles: ReadonlyMap<string, string>,
-    revision: number,
-    durationMs: number
+    run: AnalysisRun,
+    result: AcceptedRunResult
   ): Promise<void> {
+    const {view, saved, currentFiles, durationMs} = result;
     for (const document of saved) {
       const currentDocument = context.tracker
         .documents()
@@ -156,13 +162,13 @@ export class ProjectRuntime {
     }
     this.appliedOverlays = new Map(currentFiles);
     this.view = view;
-    this.acceptedRevision = revision;
+    this.acceptedRevision = run.revision;
     this.stale = false;
     this.error = undefined;
     this.lastUsed = Date.now();
     context.logger.verbose('analysis.accepted', {
       projectKey: this.association.key,
-      revision,
+      revision: run.revision,
       generation: view.generation,
       components: view.components().length,
       ...(view.moduleResolutionFallbackCount !== undefined
