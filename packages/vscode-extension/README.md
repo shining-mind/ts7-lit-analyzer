@@ -4,6 +4,57 @@ This package owns editor activation, document tracking, project routing, analysi
 
 The current implementation provides spawned host orchestration with real Extension Development Host coverage. Template analysis and language-feature providers remain follow-up work, and each TS7 program remains project-wide. Logical cancellation does not terminate native requests; native-preview pipe integration and runtime-complete packaging remain [#25](https://github.com/shining-mind/ts7-lit-analyzer/issues/25).
 
+## Class structure
+
+`EditorAnalysisCoordinator` is a mediator rather than an owner of every policy. Its collaborators keep document state, routing, scheduling, and per-project execution separate; analyzer semantics remain in `analyzer-core` and the engine.
+
+```mermaid
+classDiagram
+  class EditorAnalysisCoordinator {
+    +initialize()
+    +updateSettings(settings)
+    +snapshot()
+    +idle()
+    +dispose()
+  }
+  class DocumentTracker {
+    visible tabs
+    open and dirty documents
+  }
+  class RuntimeRegistry {
+    associations and runtimes
+    deduplicated routing
+    LRU residency
+  }
+  class AnalysisScheduler {
+    revisions and timers
+    mutationQueue
+  }
+  class ProjectRuntime {
+    session and overlays
+    execution and acceptance
+  }
+  class ProjectRouter {
+    <<interface>>
+    +associate(document)
+  }
+  class SpawnedProjectRouter {
+    primitive pre-#25 fallback
+  }
+  class LazyRegistrySession {
+    <<analyzer-core>>
+  }
+
+  EditorAnalysisCoordinator --> DocumentTracker
+  EditorAnalysisCoordinator --> RuntimeRegistry
+  EditorAnalysisCoordinator --> AnalysisScheduler
+  RuntimeRegistry --> ProjectRouter
+  RuntimeRegistry --> ProjectRuntime : creates and evicts
+  AnalysisScheduler --> ProjectRuntime : schedules execution
+  ProjectRuntime --> LazyRegistrySession : owns at most one
+  ProjectRouter <|.. SpawnedProjectRouter
+```
+
 ## Configuration
 
 The extension contributes these settings through `package.json`:
@@ -15,7 +66,7 @@ The extension contributes these settings through `package.json`:
 
 ## Project routing
 
-The spawned Extension Host router selects the nearest containing `tsconfig.json` discovered at router creation and uses a workspace-scoped inferred association when none contains the document. It does not reproduce TypeScript's complete project-service algorithm for solution-style or multiply included files, and runtime tsconfig/reference-graph reloads remain unsupported. Connecting the native-preview transport, its default-project routing, and restart lifecycle remains #25. The `getDefaultProjectForFile` API evidence is preserved in `openspec/changes/add-analysis-host-policies/probes/project-association.mjs`, not in a production association session.
+`SpawnedProjectRouter` is a **primitive pre-#25 fallback**, not TypeScript project-service routing. It selects the nearest containing `tsconfig.json` discovered once at router creation and uses a workspace-scoped inferred association when none contains the document. It does not honor custom config names or reproduce TypeScript's complete project-service algorithm for solution-style or multiply included files, and runtime tsconfig/reference-graph reloads remain unsupported. Connecting the native-preview transport, its default-project routing, and restart lifecycle remains #25. The `getDefaultProjectForFile` API evidence is preserved in `openspec/changes/add-analysis-host-policies/probes/project-association.mjs`, not in a production association session.
 
 Native-preview uses open-file liveness rather than a numerical project LRU: [`cleanupConfiguredProjects`](https://github.com/microsoft/typescript-go/blob/main/internal/project/projectcollectionbuilder.go) retains default projects needed by open files, their references and ancestors, and explicitly opened API projects, while [`ProjectCollection`](https://github.com/microsoft/typescript-go/blob/main/internal/project/projectcollection.go) has no equivalent eight-project capacity. The extension's configurable bound applies only to its independent spawned registry sessions and must not be described as a native-preview limit. Deterministic residency races and real VS Code eviction and recovery are covered by `src/test/coordinator-races.test.ts` and `src/test/coordinator.test.ts`.
 

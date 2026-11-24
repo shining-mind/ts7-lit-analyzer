@@ -1,8 +1,13 @@
 import {window, type Disposable, type LogOutputChannel} from 'vscode';
 
-import type {CoordinatorLogger} from './coordinator.js';
-
 export type LoggingLevel = 'normal' | 'verbose' | 'debug';
+
+export interface CoordinatorLogger {
+  normal(event: string, fields?: Readonly<Record<string, unknown>>): void;
+  verbose(event: string, fields?: Readonly<Record<string, unknown>>): void;
+  debug(event: string, fields?: Readonly<Record<string, unknown>>): void;
+  error(event: string, fields?: Readonly<Record<string, unknown>>): void;
+}
 
 export class ExtensionLogger implements CoordinatorLogger, Disposable {
   private readonly channel: LogOutputChannel;

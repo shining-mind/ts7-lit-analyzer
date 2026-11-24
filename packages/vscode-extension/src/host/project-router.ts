@@ -16,6 +16,11 @@ export interface ProjectRouter {
   associate(document: TrackedDocument): Promise<HostProjectAssociation>;
 }
 
+/**
+ * Primitive pre-#25 fallback, not TypeScript project-service routing. It scans
+ * `tsconfig.json` once and chooses by path, so custom config names, solution
+ * style projects, and multiply included files require native-preview routing.
+ */
 export class SpawnedProjectRouter implements ProjectRouter {
   private readonly configFileNames: readonly string[];
 

@@ -47,7 +47,7 @@ The editor host SHALL track supported workspace documents by URI and document ve
 
 ### Requirement: Per-document project association
 
-The spawned editor host SHALL apply an explicit configured/inferred project association and own an independent lazy registry session per resident association. Default-project routing through a shared TS7 transport remains follow-up editor integration work rather than a separate production association session.
+The spawned editor host SHALL apply an explicit configured/inferred project association and own an independent lazy registry session per resident association. `SpawnedProjectRouter` SHALL be documented as a primitive pre-#25 nearest-config fallback, not TypeScript project-service selection. Default-project routing through a shared TS7 transport remains follow-up editor integration work rather than a separate production association session.
 
 #### Scenario: Several project configurations
 
