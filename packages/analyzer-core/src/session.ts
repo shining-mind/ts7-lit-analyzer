@@ -25,46 +25,94 @@ import type {WebComponentRecord} from '@ts7-lit-analyzer/cem-analyzer-ts7';
  * operations to the engine; it owns no parallel TypeScript semantics.
  */
 export interface RegistrySession {
+  /**
+   * Collects an eager registry view. A lazy session returns its current view
+   * without expanding the active scope.
+   */
   collect(options?: DiscoveryOperationOptions): Promise<RegistryView>;
+
+  /** Applies unsaved source overlays and returns a successor registry view. */
   update(
     overlays: readonly SourceOverlay[],
     options?: DiscoveryOperationOptions
   ): Promise<RegistryView>;
+
+  /**
+   * Removes unsaved overlays and restores configured or filesystem content.
+   * Names without an active overlay are ignored.
+   */
   removeOverlays(
     fileNames: readonly string[],
     options?: DiscoveryOperationOptions
   ): Promise<RegistryView>;
+
+  /**
+   * Returns a member's display type and semantic reference, or `undefined`
+   * when no collected type is available.
+   */
   memberType(
     componentId: string,
     memberName: string,
     options?: DiscoveryOperationOptions
   ): Promise<MemberTypeQuery | undefined>;
+
+  /**
+   * Checks assignability through the TypeScript checker. Both references must
+   * belong to the current project and snapshot.
+   */
   isAssignable(
     source: SemanticReference,
     target: SemanticReference,
     options?: DiscoveryOperationOptions
   ): Promise<boolean>;
+
+  /**
+   * Checks a source type against a member's collected semantic reference.
+   * Display type text is never used for assignability.
+   *
+   * @throws {Error} If the member has no collected semantic type.
+   */
   isAssignableToMember(
     source: SemanticReference,
     record: WebComponentRecord,
     memberName: string,
     options?: DiscoveryOperationOptions
   ): Promise<boolean>;
+
+  /** Returns the engine's serializable diagnostic timing measurements. */
   getTimingInfo(): Promise<DiscoveryTimingInfo>;
+
+  /** Clears client and native timing history for subsequent measurements. */
   resetTimingInfo(): Promise<void>;
+
+  /** Returns the latest successfully applied view, if one exists. */
   current(): RegistryView | undefined;
+
+  /** Disposes the engine and all snapshots retained by the session. */
   dispose(): Promise<void>;
 }
 
 export interface LazyRegistrySession extends RegistrySession {
+  /**
+   * Extends the active scope and returns a view whose records may still require
+   * enrichment for complete semantics.
+   */
   collectScope(
     files: readonly string[],
     options?: DiscoveryOperationOptions
   ): Promise<RegistryView>;
+
+  /**
+   * Collects complete component semantics and metadata for indexed IDs.
+   *
+   * @throws {Error} If an ID is not present in the current registration index.
+   */
   enrich(
     componentIds: readonly string[],
     options?: DiscoveryOperationOptions
   ): Promise<RegistryView>;
+
+  /** Materializes display types for enriched members without expanding scope. */
   materializeTypes(options?: DiscoveryOperationOptions): Promise<RegistryView>;
 }
 
