@@ -8,7 +8,7 @@ Coordinates VS Code documents, projects, and registry sessions so interactive an
 
 ### Requirement: Open-document state tracking
 
-The editor host SHALL track supported workspace documents by URI and document version. Dirty document text SHALL become analysis overlay input when the selected trigger policy runs analysis; saving or closing SHALL remove that overlay while retaining already collected scope data.
+The editor host SHALL track supported workspace documents by URI and document version only while at least one visible editor tab contains each document. Background text models without a visible tab SHALL NOT enter analysis state. Dirty document text SHALL become analysis overlay input when the selected trigger policy runs analysis; saving or closing SHALL remove that overlay while retaining already collected scope data.
 
 #### Scenario: Dirty document opened
 
@@ -24,6 +24,26 @@ The editor host SHALL track supported workspace documents by URI and document ve
 
 - **WHEN** a tracked document is saved or closed
 - **THEN** its unsaved overlay is removed and no later scheduled update reintroduces the old version
+
+#### Scenario: Background text model without a visible tab
+
+- **WHEN** a supported text model is loaded or already known without a visible editor tab
+- **THEN** it is excluded from tracked documents and does not schedule analysis
+
+#### Scenario: Retained model is reopened
+
+- **WHEN** the last tab was closed but VS Code retained the text model and a tab for that document opens again
+- **THEN** tracking resumes with the current model text and version without depending on another model-open event
+
+#### Scenario: One of several visible tabs closes
+
+- **WHEN** a document is shown in split or multiple visible tabs and only some of them close
+- **THEN** tracking continues until the last visible tab closes
+
+#### Scenario: Tracker initializes with background models
+
+- **WHEN** the tracker initializes while supported text models are known but only some have visible tabs
+- **THEN** it loads and tracks only the visible documents
 
 ### Requirement: Per-document project association
 
@@ -217,7 +237,7 @@ Editor deactivation, project removal, and runtime eviction SHALL cancel pending 
 
 ### Requirement: Real editor-host verification
 
-Open/change/save/close behavior, both trigger modes, type-driven maximum wait, project routing, cross-project updates, LRU eviction/recovery, staleness, logging levels, and normal-mode instrumentation inactivity SHALL be exercised in a real Extension Development Host; deterministic scheduler tests alone SHALL NOT establish VS Code integration.
+Open/change/save/close behavior, visible-only initialization, background-model exclusion, retained-model reopen, split-tab lifecycle, both trigger modes, type-driven maximum wait, project routing, cross-project updates, LRU eviction/recovery, staleness, logging levels, and normal-mode instrumentation inactivity SHALL be exercised in a real Extension Development Host; deterministic scheduler tests alone SHALL NOT establish VS Code integration.
 
 #### Scenario: Extension Host orchestration
 

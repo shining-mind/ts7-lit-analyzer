@@ -54,7 +54,7 @@ export class DocumentTracker implements Disposable {
       window.tabGroups.onDidChangeTabs((event) => {
         for (const tab of event.opened) {
           if (tab.input instanceof TabInputText) {
-            this.openTab(tab);
+            void this.openTab(tab);
           }
         }
         for (const tab of event.closed) {
@@ -70,12 +70,9 @@ export class DocumentTracker implements Disposable {
     for (const group of window.tabGroups.all) {
       for (const tab of group.tabs) {
         if (tab.input instanceof TabInputText) {
-          this.openTab(tab);
+          void this.openTab(tab);
         }
       }
-    }
-    for (const document of workspace.textDocuments) {
-      this.openDocument(document);
     }
   }
 
@@ -102,8 +99,9 @@ export class DocumentTracker implements Disposable {
   }
 
   private openDocument(document: TextDocument): void {
+    const wasOpen = this.open.has(document.uri.toString(true));
     const tracked = this.track(document);
-    if (tracked) {
+    if (tracked && !wasOpen) {
       this.listener.opened(tracked);
     }
   }
@@ -125,7 +123,7 @@ export class DocumentTracker implements Disposable {
     }
   }
 
-  private openTab(tab: Tab): void {
+  private async openTab(tab: Tab): Promise<void> {
     if (!(tab.input instanceof TabInputText)) {
       return;
     }
@@ -133,6 +131,23 @@ export class DocumentTracker implements Disposable {
     const tabs = this.openTabs.get(key) ?? new Set<Tab>();
     tabs.add(tab);
     this.openTabs.set(key, tabs);
+
+    const existing = workspace.textDocuments.find(
+      (document) => document.uri.toString(true) === key
+    );
+    if (existing) {
+      this.openDocument(existing);
+      return;
+    }
+
+    try {
+      const document = await workspace.openTextDocument(tab.input.uri);
+      if (!this.disposed && this.openTabs.has(key)) {
+        this.openDocument(document);
+      }
+    } catch {
+      return;
+    }
   }
 
   private closeTab(tab: Tab): void {
@@ -169,10 +184,10 @@ export class DocumentTracker implements Disposable {
   }
 
   private track(document: TextDocument): TrackedDocument | undefined {
-    if (this.disposed || !isSupported(document)) {
+    const key = document.uri.toString(true);
+    if (this.disposed || !this.openTabs.has(key) || !isSupported(document)) {
       return undefined;
     }
-    const key = document.uri.toString(true);
     const tracked: TrackedDocument = {
       uri: key,
       fileName: document.fileName,

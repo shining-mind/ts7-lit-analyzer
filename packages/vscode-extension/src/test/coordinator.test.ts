@@ -67,6 +67,15 @@ async function closeAllEditors(): Promise<void> {
   await vscode.commands.executeCommand('workbench.action.closeAllEditors');
 }
 
+async function restoreFile(uri: vscode.Uri, original: string): Promise<void> {
+  await vscode.workspace.fs.writeFile(uri, Buffer.from(original));
+  const document = await vscode.workspace.openTextDocument(uri);
+  await waitFor(
+    () => document.getText() === original && !document.isDirty,
+    `restore ${uri.toString(true)}`
+  );
+}
+
 suite('Editor analysis coordinator', () => {
   const appConfig = fixtureUri('app', 'tsconfig.json');
   const libConfig = fixtureUri('lib', 'tsconfig.json');
@@ -152,7 +161,7 @@ suite('Editor analysis coordinator', () => {
     } finally {
       await coordinator.dispose();
       await closeAllEditors();
-      await vscode.workspace.fs.writeFile(libSource, Buffer.from(original));
+      await restoreFile(libSource, original);
       await filesConfiguration.update(
         'autoSave',
         previousAutoSave,
@@ -213,7 +222,7 @@ suite('Editor analysis coordinator', () => {
     } finally {
       await coordinator.dispose();
       await closeAllEditors();
-      await vscode.workspace.fs.writeFile(libSource, Buffer.from(original));
+      await restoreFile(libSource, original);
     }
   });
 
@@ -343,7 +352,7 @@ suite('Editor analysis coordinator', () => {
     } finally {
       await coordinator.dispose();
       await closeAllEditors();
-      await vscode.workspace.fs.writeFile(secondSource, Buffer.from(original));
+      await restoreFile(secondSource, original);
     }
   });
 });

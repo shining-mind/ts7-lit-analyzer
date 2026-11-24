@@ -27,6 +27,15 @@ async function waitFor(
   }
 }
 
+async function restoreFile(uri: vscode.Uri, original: string): Promise<void> {
+  await vscode.workspace.fs.writeFile(uri, Buffer.from(original));
+  const document = await vscode.workspace.openTextDocument(uri);
+  await waitFor(
+    () => document.getText() === original && !document.isDirty,
+    `restore ${uri.toString(true)}`
+  );
+}
+
 suite('Diagnostic logging', () => {
   test('normal is quiet while debug enables timing and scoped memory', async () => {
     const entries: string[] = [];
@@ -130,7 +139,7 @@ suite('Diagnostic logging', () => {
       await coordinator.dispose();
       logger.dispose();
       await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-      await vscode.workspace.fs.writeFile(appUri, Buffer.from(original));
+      await restoreFile(appUri, original);
     }
   });
 });

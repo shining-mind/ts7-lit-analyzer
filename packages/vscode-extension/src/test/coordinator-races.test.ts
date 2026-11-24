@@ -201,6 +201,15 @@ async function closeEditors(): Promise<void> {
   await vscode.commands.executeCommand('workbench.action.closeAllEditors');
 }
 
+async function restoreFile(uri: vscode.Uri, original: string): Promise<void> {
+  await vscode.workspace.fs.writeFile(uri, Buffer.from(original));
+  const document = await vscode.workspace.openTextDocument(uri);
+  await waitFor(
+    () => document.getText() === original && !document.isDirty,
+    `restore ${uri.toString(true)}`
+  );
+}
+
 suite('Coordinator deferred races', () => {
   test('disposes superseded session creation before admitting the next project', async () => {
     const appSession = deferred<ControlledSession>();
@@ -252,7 +261,11 @@ suite('Coordinator deferred races', () => {
   });
 
   test('keeps the last good view stale when the current operation fails', async () => {
-    const session = controlledSession(fixtureUri('app', 'index.ts').fsPath);
+    const appUri = fixtureUri('app', 'index.ts');
+    const original = Buffer.from(
+      await vscode.workspace.fs.readFile(appUri)
+    ).toString();
+    const session = controlledSession(appUri.fsPath);
     const coordinator = new EditorAnalysisCoordinator({
       router,
       settings: settings(2),
@@ -260,9 +273,7 @@ suite('Coordinator deferred races', () => {
     });
     coordinator.initialize();
     try {
-      const document = await vscode.workspace.openTextDocument(
-        fixtureUri('app', 'index.ts')
-      );
+      const document = await vscode.workspace.openTextDocument(appUri);
       const editor = await vscode.window.showTextDocument(document, {
         preview: false,
       });
@@ -286,6 +297,7 @@ suite('Coordinator deferred races', () => {
     } finally {
       await coordinator.dispose();
       await closeEditors();
+      await restoreFile(appUri, original);
     }
   });
 
@@ -341,6 +353,10 @@ suite('Coordinator deferred races', () => {
       await editor.edit((edit) => {
         edit.insert(new vscode.Position(0, 0), '// first\n');
       });
+      await waitFor(
+        () => session.activeScopeCalls === 1,
+        'first change scope is unsettled'
+      );
       await editor.edit((edit) => {
         edit.insert(new vscode.Position(0, 0), '// second\n');
       });
