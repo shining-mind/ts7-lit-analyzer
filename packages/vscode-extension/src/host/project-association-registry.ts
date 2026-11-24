@@ -3,7 +3,7 @@ import type {CoordinatorLogger} from './logging.js';
 import {ProjectRuntime} from './project-runtime.js';
 import type {HostProjectAssociation, ProjectRouter} from './project-router.js';
 
-export interface RuntimeRegistryOptions {
+export interface ProjectAssociationRegistryOptions {
   router: ProjectRouter;
   logger: CoordinatorLogger;
   isDisposed(): boolean;
@@ -16,7 +16,7 @@ export interface RuntimeRegistryOptions {
  * asynchronous routing and enforces bounded LRU residency without implementing
  * analysis or scheduling policies.
  */
-export class RuntimeRegistry {
+export class ProjectAssociationRegistry {
   readonly associations = new Map<string, string>();
   readonly runtimes = new Map<string, ProjectRuntime>();
   activeProjectKey: string | undefined;
@@ -28,7 +28,7 @@ export class RuntimeRegistry {
   private readonly maxResidentProjects: () => number;
   private readonly clearTimers: (runtime: ProjectRuntime) => void;
 
-  constructor(options: RuntimeRegistryOptions) {
+  constructor(options: ProjectAssociationRegistryOptions) {
     this.router = options.router;
     this.logger = options.logger;
     this.isDisposed = options.isDisposed;

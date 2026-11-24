@@ -21,7 +21,7 @@ classDiagram
     visible tabs
     open and dirty documents
   }
-  class RuntimeRegistry {
+  class ProjectAssociationRegistry {
     associations and runtimes
     deduplicated routing
     LRU residency
@@ -47,10 +47,10 @@ classDiagram
   }
 
   EditorAnalysisCoordinator --> DocumentTracker
-  EditorAnalysisCoordinator --> RuntimeRegistry
+  EditorAnalysisCoordinator --> ProjectAssociationRegistry
   EditorAnalysisCoordinator --> AnalysisScheduler
-  RuntimeRegistry --> ProjectRouter
-  RuntimeRegistry --> ProjectRuntime : creates and evicts
+  ProjectAssociationRegistry --> ProjectRouter
+  ProjectAssociationRegistry --> ProjectRuntime : creates and evicts
   AnalysisScheduler --> ProjectRuntime : schedules execution
   ProjectRuntime --> LazyRegistrySession : owns at most one
   ProjectRouter <|.. SpawnedProjectRouter

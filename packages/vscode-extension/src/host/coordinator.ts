@@ -11,7 +11,7 @@ import type {CoordinatorLogger} from './logging.js';
 import type {ProjectRuntime} from './project-runtime.js';
 import type {ProjectRuntimeExecutionContext} from './project-runtime.js';
 import type {ProjectRouter} from './project-router.js';
-import {RuntimeRegistry} from './runtime-registry.js';
+import {ProjectAssociationRegistry} from './project-association-registry.js';
 
 export type {CoordinatorLogger} from './logging.js';
 
@@ -78,7 +78,7 @@ export class EditorAnalysisCoordinator implements Disposable {
   ) => Promise<LazyRegistrySession>;
   private readonly tracker: DocumentTracker;
   private readonly activeSubscription: Disposable;
-  private readonly registry: RuntimeRegistry;
+  private readonly registry: ProjectAssociationRegistry;
   private readonly scheduler: AnalysisScheduler;
   private readonly savedDocuments = new Map<string, TrackedDocument>();
   private settings: CoordinatorSettings;
@@ -100,7 +100,7 @@ export class EditorAnalysisCoordinator implements Disposable {
       execute: this.execute.bind(this),
       logger: this.logger,
     });
-    this.registry = new RuntimeRegistry({
+    this.registry = new ProjectAssociationRegistry({
       router: options.router,
       logger: this.logger,
       isDisposed: () => this.disposed,

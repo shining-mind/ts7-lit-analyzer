@@ -30,7 +30,7 @@ export interface ProjectRuntimeExecutionContext {
  * session. Reconciles current document inputs and accepts results only while
  * revision, document versions, and residency remain current. Scheduling,
  * routing, and eviction are delegated to `AnalysisScheduler` and
- * `RuntimeRegistry`.
+ * `ProjectAssociationRegistry`.
  */
 export class ProjectRuntime {
   association: HostProjectAssociation;
@@ -91,7 +91,7 @@ export class ProjectRuntime {
       if (!this.canAccept(context, view, revision, versions, controller)) {
         return;
       }
-      await this.accept(
+      await this.acceptCurrentView(
         context,
         view,
         saved,
@@ -219,6 +219,7 @@ export class ProjectRuntime {
     const currentFiles = new Map(
       dirty.map((document) => [document.fileName, document.text])
     );
+
     const removed = this.appliedOverlays
       .keys()
       .filter((fileName) => !currentFiles.has(fileName))
@@ -228,20 +229,24 @@ export class ProjectRuntime {
       text: document.text,
       version: document.version,
     }));
+
     if (removed.length > 0) {
       await session.removeOverlays(removed, {signal: controller.signal});
     }
+
     if (overlays.length > 0) {
       await session.update(overlays, {signal: controller.signal});
     } else if (removed.length === 0) {
       await session.update([], {signal: controller.signal});
     }
+
     const saved = context.savedDocuments
       .values()
       .filter(
         (document) => this.savedVersions.get(document.uri) !== document.version
       )
       .toArray();
+
     if (saved.length > 0) {
       await session.update(
         saved.map((document) => ({
@@ -256,6 +261,7 @@ export class ProjectRuntime {
         {signal: controller.signal}
       );
     }
+
     await session.collectScope(
       this.openFiles
         .values()
@@ -271,11 +277,14 @@ export class ProjectRuntime {
     context.logger.debug('analysis.scopeCollected', {
       projectKey: this.association.key,
     });
-    const ids =
-      session
-        .current()
-        ?.components()
-        .map((component) => component.declarationEvidence.id) ?? [];
+
+    const current = session.current();
+    const ids = current
+      ? current
+          .components()
+          .map((component) => component.declarationEvidence.id)
+      : [];
+
     if (ids.length > 0) {
       await session.enrich(ids, {signal: controller.signal});
       await session.materializeTypes({signal: controller.signal});
@@ -283,10 +292,12 @@ export class ProjectRuntime {
     context.logger.debug('analysis.materialized', {
       projectKey: this.association.key,
     });
+
     return {saved, currentFiles};
   }
 
-  private async accept(
+  /** Marks a current view as last known good and records provenance and diagnostics. */
+  private async acceptCurrentView(
     context: ProjectRuntimeExecutionContext,
     view: RegistryView,
     saved: readonly TrackedDocument[],
